@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>周报管理</title>
+    <link rel="stylesheet" href="../../../js/lib/zui/css/zui.min.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-tab href="#person-manage">人员管理</a></li>
+            <li><a data-tab href="#history-view">历史查看</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="person-manage">
+                <h2>人员管理</h2>
+                <div class="cards" id="person-list">
+                    <div v-for="(user,index) in users" class="col-xs-6 col-md-3 col-sm-4 col-lg-3">
+                        <!-- 人员组件 -->
+                        <user-item v-bind:user="user" v-bind:index="index" v-bind:groups="groups" v-bind:edit_id:="edit_id" v-on:edit="edit"></user-item>
+                    </div>
+                    <!-- 新增人员 -->
+                    <div class="col-xs-6 col-md-3 col-sm-4 col-lg-3">
+                        <div class="card">
+                            <div class="person-item" data-toggle="modal" data-target="#new-user"> </div>
+                        </div>
+                    </div>
+                    <!-- 新增人员dialog -->
+                    <div class="modal fade" id="new-user">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                                    <h4 class="modal-title">新增人员</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div :class="addNameClass">
+                                        <span class="input-group-addon"><i class="icon icon-user"></i></span>
+                                        <input type="text" class="form-control" placeholder="姓名" v-model="new_name" >
+                                    </div>
+                                    <div :class="groupChooseClass">
+                                        <span class="input-group-addon"><i class="icon icon-group"></i></span>
+                                        <select class="form-control" v-model="new_groupId">
+                                            <option v-for="group in groups" :value="group.id">{{group.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary" @click="addPerson">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            <div class="tab-pane fade" id="history-view">
+                <h2>历史周报查看</h2>
+            </div>
+        </div>
+
+    </div>
+    <!-- 新增人员弹窗 -->
+
+    <script src="../../../js/lib/jquery.min.js"></script>
+    <script src="../../../js/lib/zui/zui.min.js"></script>
+    <script src="../../../js/lib/vue.js"></script>
+    <script src="https://cdn1.lncld.net/static/js/av-min-1.2.1.js"></script>
+    <script src="../api.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+
+.person-item {
+    position: relative;
+
+    overflow: hidden;
+
+    width: 100%;
+    height: 140px;
+
+    text-align: center;
+}
+.input-group {
+    margin: 10px;
+}
+
+
+.person-face {
+    display: block;
+
+    width: 60px;
+    height: 60px;
+    margin: 10px auto;
+
+    color: #fff;
+    border: 1px solid #64b1ca;
+    border-radius: 50%;
+    background: #64b1ca;
+}
+.face-text {
+    font-size: 14px;
+    line-height: 58px;
+}
+.person-group {
+    line-height: 30px;
+}
+.person-info {
+    overflow: hidden;
+
+    width: 100%;
+    height: 100%;
+
+    -webkit-transition: width .4s linear;
+            transition: width .4s linear;
+}
+.person-info .icon-edit {
+    font-size: 16px;
+}
+.editor-cover {
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,.15);
+}
+.person-edit {
+    overflow: hidden;
+
+    height: 100%;
+    margin-left: 60px;
+    /* -webkit-transition: margin-left .4s linear; */
+    /* transition: margin-left .4s linear; */
+
+    background: #fff;
+}
+.person-item.in-edit .person-info {
+    position: absolute;
+    z-index: -1;
+
+    width: 60px;
+}
+/* .silde-enter-active .person-edit {
+    margin-left: 100%;
+} 
+.silde-enter-to .person-edit {
+    margin-left: 60px;
+} */
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-enter-active ,
+.slide-leave-active {
+    -webkit-transition: all .4s linear;
+            transition: all .4s linear;
+}
+
+.slide-enter ,
+.slide-fade-leave-to 
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+    margin-left: 100%;
+}
