@@ -1,6 +1,6 @@
 (function (win) {
     // 应用 ID，用来识别应用
-    var APP_ID = '在此填入您的应用id';
+    var APP_ID = '在此填入您的应用id'; 
 
     // 应用 Key，用来校验权限（Web 端可以配置安全域名来保护数据安全）
     var APP_KEY = '在此填入你的应用key';
