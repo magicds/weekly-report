@@ -22,13 +22,13 @@ export default {
   methods:{
       login() {
           console.log(this);
-          
+          console.log(this.name,this.pwd);
       }
   }
 }
 
 </script>
 
-<style >
+<style>
 
 </style>
