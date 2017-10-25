@@ -4,6 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+import Table from 'iview/src/components/table/table';
+import 'iview/dist/styles/iview.css';    // 使用 CSS
+
+Vue.component('Table', Table);
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
