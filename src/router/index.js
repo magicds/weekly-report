@@ -14,13 +14,13 @@ export default new Router({
     //   component: Hello
     // },
     {
-      path:'/',
-      name:'Login',
+      path: '/',
+      name: 'Login',
       component: Login
     },
     {
-      path:'/table',
-      name:'Table',
+      path: '/table',
+      name: 'Table',
       component: Table
     }
   ]
