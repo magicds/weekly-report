@@ -1,12 +1,11 @@
 import AV from 'leancloud-storage'
 import throwError from './error.js'
-import dataApi from './data.js'
 
 export default {
   login(name, pwd) {
     return AV.User.logIn(name, pwd)
   },
-  signUp(name, pwd, email) {
+  signup(name, pwd, email) {
     let user = new AV.User()
 
     user.setUsername(name)
@@ -16,6 +15,7 @@ export default {
     return user
       .save()
       .then(user => {
+        console.log('注册成功')
         // 注册成功后查询是否为第一个用户 为其添加 管理员角色
         return this.getUsersCount().then(count => {
           if (count > 1) return
@@ -32,7 +32,7 @@ export default {
    * @param {Object} user
    * @returns {Promise}
    */
-  addAdminRole(user) {
+  createAdminRole(user) {
     // 新建acl权限控制
     let roleAcl = new AV.ACL()
     // 允许公共读、禁止公共写
@@ -47,9 +47,10 @@ export default {
     return administratorRole
       .save()
       .then(role => {
-        console.log(role, '成功添加给', user)
+        console.log()
       })
       .catch(throwError)
   },
+
   getAllUsers() {}
 }

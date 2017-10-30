@@ -1,6 +1,6 @@
 <template>
-  <div class="login-wrap">
-      <div class="login-box">
+  <div class="signup-wrap">
+      <div class="signup-box">
           <i-form ref="form" :model="user" :rules="relues">
             <FormItem prop="name">
               <i-input type="text" v-model="user.name" placeholder="请输入用户名" style="width: 300px"></i-input>
@@ -8,10 +8,12 @@
             <FormItem prop="pwd">
               <i-input type="password" v-model="user.pwd" placeholder="请输入密码" style="width: 300px"></i-input>
             </FormItem>
-            <FormItem>
-              <i-button type="primary" @click="login">登录</i-button>
+            <FormItem prop="email">
+              <i-input type="text" v-model="user.email" placeholder="请输入邮箱" style="width: 300px"></i-input>
             </FormItem>
-            <i-button href="#" @click="signup">注册</i-button>
+            <FormItem>
+              <i-button type="primary" @click="signup">登录</i-button>
+            </FormItem>
           </i-form>
       </div>
   </div>
@@ -22,10 +24,12 @@ import Form from 'iview/src/components/form/form'
 import FormItem from 'iview/src/components/form/form-item'
 import Input from 'iview/src/components/input/input'
 import Button from 'iview/src/components/button/button'
-import AV from 'leancloud-storage'
+import Api from '@/api/index.js'
+
+console.log(Api)
 
 export default {
-  name: 'login',
+  name: 'signup',
   components: {
     'i-form': Form,
     FormItem,
@@ -36,7 +40,8 @@ export default {
     return {
       user: {
         name: '',
-        pwd: ''
+        pwd: '',
+        email: ''
       },
       relues: {
         name: [
@@ -52,39 +57,36 @@ export default {
             message: '请填写密码',
             trigger: 'blur'
           }
-          // ,
-          // { type: 'string', min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
+        ],
+        email: [
+          {
+            required: true,
+            message: '请填写邮箱',
+            trigger: 'blur'
+          },
+          {
+            type: 'email',
+            message: '邮箱格式不正确',
+            trigger: 'blur'
+          }
         ]
       }
     }
   },
-
-  created() {
-    if (AV.User.current() !== null) {
-      this.$router.push('/table')
-    }
-  },
-
   methods: {
-    login() {
+    signup() {
       this.$refs.form.validate(isValidated => {
         console.log(isValidated)
         console.log(this.user)
+        let user = this.user
+        Api.signup(user.name, user.pwd, user.email)
       })
-    },
-    signup() {
-      this.$router.push('/signup')
     }
   }
 }
 </script>
 
 <style>
-.login-wrap {
-  padding: 20px 0;
-}
-.login-box {
-  width: 300px;
-  margin: 0 auto;
-}
+
 </style>
+
