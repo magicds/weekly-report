@@ -13,27 +13,68 @@
       </ol>
       <p>请大家跳出自我的角度，多从管理者的角度、团队的角度考虑问题，就能理解其中的必要性。</p>
     </div>
-    <form >
+    <i-form :model="data"  label-position="top">
       <fieldset>
         <legend>基本信息</legend>
       </fieldset>
-       <fieldset>
-         <legend>工作内容</legend>
+      <fieldset>
+        <legend>工作内容</legend>
 
-       </fieldset>
-    </form>
+        <RadioGroup v-model="type">
+          <i-radio v-for="item in types" :label="item.key" :key="item.key">
+            <span>{{item.text}}</span>
+          </i-radio>
+        </RadioGroup>
+        <div class="type-info">
+          <ul>
+            <li v-for="item in types" :class="item.key == type ? 'light' : ''">{{item.text}}：{{item.info}}</li>
+          </ul>
+        </div>
+
+        <!-- <div class="title">{{currType.text}}</div> -->
+        <FormItem :lable="currType.text" props="data.content">
+          <i-input v-model="data.content"></i-input>
+        </FormItem>
+
+        <div class="content-info">
+          {{currType.explain}}
+        </div>
+
+      </fieldset>
+    </i-form>
   </div>
 </template>
 
 <script>
 import config from '@/config/input.config.js'
+import Form from 'iview/src/components/form/'
+import Input from 'iview/src/components/input/input'
+import Button from 'iview/src/components/button/button'
+import RadioGroup from 'iview/src/components/radio/radio-group'
+import Radio from 'iview/src/components/radio/radio'
 
 export default {
   name: 'input',
+  components: {
+    'i-form': Form,
+    FormItem: Form.Item,
+    'i-input': Input,
+    'i-button': Button,
+    RadioGroup,
+    'i-radio': Radio
+  },
   data() {
     return {
       type: config.defaultType,
-      types: config.types
+      types: config.types,
+      data: {
+        content: ''
+      }
+    }
+  },
+  computed: {
+    currType() {
+      return this.types.filter(item => item.key === this.type)[0]
     }
   }
 }
@@ -41,7 +82,7 @@ export default {
 
 <style>
 .header-wraings {
-  text-align: left
+  text-align: left;
 }
 </style>
 
