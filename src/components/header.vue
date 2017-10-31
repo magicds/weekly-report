@@ -21,7 +21,8 @@ import AV from 'leancloud-storage'
 import Dropdown from 'iview/src/components/dropdown'
 import Icon from 'iview/src/components/icon'
 import Avatar from 'iview/src/components/avatar'
-import userApi from '@/api/user';
+import userApi from '@/api/user'
+
 export default {
   name: 'header',
   components: {
@@ -33,13 +34,10 @@ export default {
   },
   data() {
     return {
-      user: AV.User.current().attributes,
-
+      user: AV.User.current().attributes
     }
   },
-  methods:{
-
-  }
+  methods: {}
 }
 </script>
 
