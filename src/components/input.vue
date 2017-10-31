@@ -13,7 +13,7 @@
       </ol>
       <p>请大家跳出自我的角度，多从管理者的角度、团队的角度考虑问题，就能理解其中的必要性。</p>
     </div>
-    <i-form :model="data"  label-position="top">
+    <i-form ref="form" :model="data" :rules="relues"  label-position="top">
       <fieldset>
         <legend>基本信息</legend>
       </fieldset>
@@ -32,14 +32,22 @@
         </div>
 
         <!-- <div class="title">{{currType.text}}</div> -->
-        <FormItem :lable="currType.text" props="data.content">
-          <i-input v-model="data.content"></i-input>
+        <FormItem :label="currType.text" prop="content">
+          <i-input type="textarea" :rows="4" placeholder="请输入内容，回车将被自动分割为多条" element-id="content-input" v-model="data.content"></i-input>          
         </FormItem>
 
         <div class="content-info">
           {{currType.explain}}
         </div>
 
+        <FormItem :label="timeLabel.title" prop="time">
+          <InputNumber :max="100" :min="0.1" :step="1" v-model="data.time"></InputNumber>
+        </FormItem>
+
+      </fieldset>
+
+      <fieldset>
+        <legend></legend>
       </fieldset>
     </i-form>
   </div>
@@ -52,6 +60,9 @@ import Input from 'iview/src/components/input/input'
 import Button from 'iview/src/components/button/button'
 import RadioGroup from 'iview/src/components/radio/radio-group'
 import Radio from 'iview/src/components/radio/radio'
+import InputNumber from 'iview/src/components/input-number/'
+
+console.log(Form)
 
 export default {
   name: 'input',
@@ -61,20 +72,46 @@ export default {
     'i-input': Input,
     'i-button': Button,
     RadioGroup,
-    'i-radio': Radio
+    'i-radio': Radio,
+    InputNumber
   },
   data() {
     return {
       type: config.defaultType,
       types: config.types,
+      timeLabel: config.time,
       data: {
-        content: ''
+        content: '',
+        time: 0
+      },
+      relues: {
+        content: [
+          {
+            required: true,
+            message: '请输入任务描述',
+            trigger: 'blur'
+          }
+        ]
       }
     }
   },
   computed: {
     currType() {
       return this.types.filter(item => item.key === this.type)[0]
+    }
+  },
+  watch: {
+    currType() {
+      this.relues.content[0].message = '请输入' + this.currType.title
+      this.$refs.form.validate()
+    }
+  },
+  methods: {
+    ok() {
+      this.$refs.form.validate(isValidated => {
+        if (isValidated) {
+        }
+      })
     }
   }
 }
