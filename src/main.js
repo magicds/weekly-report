@@ -6,6 +6,7 @@ import router from './router'
 
 import Table from 'iview/src/components/table'
 import 'iview/dist/styles/iview.css' // 使用 CSS
+import '@/assets/style/table.css' // 使用 CSS
 
 // AV初始化
 require('./api/init.js')
