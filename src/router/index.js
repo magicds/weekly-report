@@ -5,6 +5,7 @@ import Login from '@/components/login'
 import Signup from '@/components/signup'
 import Main from '@/components/main'
 import Input from '@/components/input'
+import Summary from '@/components/summary'
 
 Vue.use(Router)
 
@@ -27,13 +28,17 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'input',
           component: Input
         },
         {
           path: 'input',
           name: 'input',
           component: Input
+        },
+        {
+          path: 'summary',
+          name: 'summary',
+          component: Summary
         }
       ]
     },
