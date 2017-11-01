@@ -1,17 +1,21 @@
 <template>
   <header class="header">
-    <div class="left"></div>
-    <div class="right">.
-      <Dropdown >
+    <div class="left">
+      <router-link class="nav-link" :to="{ name: 'input'}">周报填写</router-link>
+      <router-link class="nav-link" :to="{ name: 'summary'}">周报汇总</router-link>
+
+    </div>
+    <div class="right">
+      <Dropdown :on-click="itemClick" placement="bottom-end">
         <a class href="javascript:void(0)">
           <Avatar>{{user.username}}</Avatar>
-          <Icon type="arrow-down-b"></Icon>
+          <!-- <Icon type="arrow-down-b"></Icon> -->
         </a>
         <DropdownMenu slot="list">
-            <DropdownItem >注销登录</DropdownItem>
+            <DropdownItem name="userinfo">个人信息</DropdownItem>
+            <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-
     </div>
   </header>
 </template>
@@ -34,14 +38,30 @@ export default {
   },
   data() {
     return {
-      user: AV.User.current().attributes
+      user: userApi.getCurrUser().attributes
     }
   },
-  methods: {}
+  methods: {
+    itemClick(name) {
+      console.log(name)
+    }
+  }
 }
 </script>
 
 <style>
+.header:after {
+    display: table;
+    clear: both;
+
+    content: "";
+}
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
 
 </style>
 
