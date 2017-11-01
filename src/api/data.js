@@ -1,7 +1,41 @@
 import AV from 'leancloud-storage'
 import moment from 'moment'
+import userApi from './user.js'
 
 import throwError from './error.js'
+
+/**
+ * 根据日期获取周一和周日的date
+ * @param {Date} d 指定的日期，省略则取当天
+ */
+function getStartEnd(d) {
+  d = d || new Date()
+  // 根据当天 获取周一和周日
+  let date = moment(d)
+    .hour(0)
+    .minute(0)
+    .second(0)
+    .millisecond(0)
+  let day = date.isoWeekday()
+  let startDate = date
+    .clone()
+    .subtract(day - 1, 'days')
+    .toDate()
+  // 结束时间直接取到下周一凌晨
+  let endDate = date
+    .clone()
+    .add(8 - day, 'days')
+    // .hour(23)
+    // .minute(59)
+    // .second(59)
+    // .millisecond(999)
+    .toDate()
+
+  return {
+    startDate: startDate,
+    endDate: endDate
+  }
+}
 
 var dataApi = {
   /**
@@ -19,13 +53,13 @@ var dataApi = {
    * @returns
    */
   getData(cls, conditions, sorts) {
-    let query = new AV.query(cls)
+    let query = new AV.Query(cls)
 
     if (conditions) {
       if (!(conditions instanceof Array)) {
         conditions = [conditions]
       }
-      conditions.forEach(function (item) {
+      conditions.forEach(function(item) {
         query[item.action](item.field, item.value)
       })
     }
@@ -35,7 +69,7 @@ var dataApi = {
         sorts = [sorts]
       }
 
-      sorts.forEach(function (item) {
+      sorts.forEach(function(item) {
         var sort = item.sort.toLowerCase()
         if (sort == 'asc') {
           item.field && query.addAscending(item.field)
@@ -50,32 +84,34 @@ var dataApi = {
   /**
    * 查询本周的周报
    * @param {Object/Array} sorts 排序规则
+   * @param {Boolean} isCurrUser 是否仅查询当前用户
    */
-  getCurrWeekData(sorts) {
-    // 根据当天 获取周一和周日
-    let date = moment()
-      .hour(0)
-      .minute(0)
-      .second(0)
-      .millisecond(0)
-    let day = date.isoWeekday()
-    let startDate = date
-      .clone()
-      .subtract(day - 1, 'days')
-      .toDate()
-    // 结束时间直接取到下周一凌晨
-    let endDate = date
-      .clone()
-      .add(8 - day, 'days')
-      // .hour(23)
-      // .minute(59)
-      // .second(59)
-      // .millisecond(999)
-      .toDate()
-
+  getCurrWeekData(sorts, isCurrUser) {
+    // // 根据当天 获取周一和周日
+    // let date = moment()
+    //   .hour(0)
+    //   .minute(0)
+    //   .second(0)
+    //   .millisecond(0)
+    // let day = date.isoWeekday()
+    // let startDate = date
+    //   .clone()
+    //   .subtract(day - 1, 'days')
+    //   .toDate()
+    // // 结束时间直接取到下周一凌晨
+    // let endDate = date
+    //   .clone()
+    //   .add(8 - day, 'days')
+    //   // .hour(23)
+    //   // .minute(59)
+    //   // .second(59)
+    //   // .millisecond(999)
+    //   .toDate()
+    let { startDate, endDate } = getStartEnd()
     console.log(startDate, endDate)
 
-    let conditions = [{
+    let conditions = [
+      {
         action: 'greaterThanOrEqualTo',
         field: 'updatedAt',
         value: startDate
@@ -86,7 +122,14 @@ var dataApi = {
         value: endDate
       }
     ]
-    return this.getData('', sorts)
+    if (isCurrUser) {
+      conditions.push({
+        action: 'equalTo',
+        field: 'userId',
+        value: userApi.getCurrUser().id
+      })
+    }
+    return this.getData('Logs', conditions, sorts)
   },
   /**
    * 新增数据
@@ -94,7 +137,7 @@ var dataApi = {
    * @param {Object} data 存储数据
    */
   addData(cls, data) {
-    let ObjCls = AV.extend(cls)
+    let ObjCls = AV.Object.extend(cls)
     let obj = new ObjCls()
     let key
     for (key in data) {
@@ -102,18 +145,41 @@ var dataApi = {
         obj.set(key, data[key])
       }
     }
-
-    return obj.save().catch(throwError)
+    // 添加Acl权限
+    this.addReortAcl(obj)
+    return obj
+      .save()
+      .catch(throwError)
   },
-  addReprot(data) {
-    // 自动为数据加入当前用户
-    data.user = {
-      id: '',
-      name: '',
-      group: ''
-    }
+  /**
+   * 为新增的帖子添加权限
+   * 设置自己可以写、管理员可写
+   * @param {Object} report 当前要提交的对象
+   */
+  addReortAcl(report) {
+    let reportAcl = new AV.ACL()
 
-    return this.addData('', data)
+    reportAcl.setPublicReadAccess(true)
+    reportAcl.setRoleWriteAccess('administrator', true)
+    reportAcl.setWriteAccess(userApi.getCurrUser(), true)
+
+    report.setACL(reportAcl)
+  },
+  //  检查本周是否已经填写
+  checkIsSubmit() {
+    return this.getCurrWeekData(undefined, true).catch(throwError)
+  },
+  // 提交周报
+  addReprot(report) {
+    let data = {}
+    // 自动为数据加入当前用户
+    let user = userApi.getCurrUser()
+    data.userId = user.id
+    data.username = user.attributes.username
+
+    data.reportList = JSON.stringify(report)
+
+    return this.addData('Logs', data)
   }
 }
 
