@@ -8,6 +8,9 @@ export default {
   logIn(name, pwd) {
     return AV.User.logIn(name, pwd)
   },
+  getCurrUser() {
+    return AV.User.current()
+  },
   logOut() {
     return AV.User.logOut()
   },
