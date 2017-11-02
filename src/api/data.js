@@ -1,26 +1,26 @@
-import AV from 'leancloud-storage'
-import moment from 'moment'
-import userApi from './user.js'
+import AV from 'leancloud-storage';
+import moment from 'moment';
+import userApi from './user.js';
 
-import throwError from './error.js'
+import throwError from './error.js';
 
 /**
  * 根据日期获取周一和周日的date
  * @param {Date} d 指定的日期，省略则取当天
  */
 function getStartEnd(d) {
-  d = d || new Date()
+  d = d || new Date();
   // 根据当天 获取周一和周日
   let date = moment(d)
     .hour(0)
     .minute(0)
     .second(0)
-    .millisecond(0)
-  let day = date.isoWeekday()
+    .millisecond(0);
+  let day = date.isoWeekday();
   let startDate = date
     .clone()
     .subtract(day - 1, 'days')
-    .toDate()
+    .toDate();
   // 结束时间直接取到下周一凌晨
   let endDate = date
     .clone()
@@ -29,12 +29,12 @@ function getStartEnd(d) {
     // .minute(59)
     // .second(59)
     // .millisecond(999)
-    .toDate()
+    .toDate();
 
   return {
     startDate: startDate,
     endDate: endDate
-  }
+  };
 }
 
 var dataApi = {
@@ -53,33 +53,33 @@ var dataApi = {
    * @returns
    */
   getData(cls, conditions, sorts) {
-    let query = new AV.Query(cls)
+    let query = new AV.Query(cls);
 
     if (conditions) {
       if (!(conditions instanceof Array)) {
-        conditions = [conditions]
+        conditions = [conditions];
       }
       conditions.forEach(function(item) {
-        query[item.action](item.field, item.value)
-      })
+        query[item.action](item.field, item.value);
+      });
     }
 
     if (sorts) {
       if (!(sorts instanceof Array)) {
-        sorts = [sorts]
+        sorts = [sorts];
       }
 
       sorts.forEach(function(item) {
-        var sort = item.sort.toLowerCase()
+        var sort = item.sort.toLowerCase();
         if (sort == 'asc') {
-          item.field && query.addAscending(item.field)
+          item.field && query.addAscending(item.field);
         } else if (sort == 'desc') {
-          item.field && query.addDescending(item.field)
+          item.field && query.addDescending(item.field);
         }
-      })
+      });
     }
 
-    return query.find().catch(throwError)
+    return query.find().catch(throwError);
   },
   /**
    * 查询本周的周报
@@ -107,8 +107,8 @@ var dataApi = {
     //   // .second(59)
     //   // .millisecond(999)
     //   .toDate()
-    let { startDate, endDate } = getStartEnd()
-    console.log(startDate, endDate)
+    let { startDate, endDate } = getStartEnd();
+    console.log(startDate, endDate);
 
     let conditions = [
       {
@@ -121,15 +121,15 @@ var dataApi = {
         field: 'updatedAt',
         value: endDate
       }
-    ]
+    ];
     if (isCurrUser) {
       conditions.push({
         action: 'equalTo',
         field: 'userId',
         value: userApi.getCurrUser().id
-      })
+      });
     }
-    return this.getData('Logs', conditions, sorts)
+    return this.getData('Logs', conditions, sorts);
   },
   /**
    * 新增数据
@@ -137,19 +137,17 @@ var dataApi = {
    * @param {Object} data 存储数据
    */
   addData(cls, data) {
-    let ObjCls = AV.Object.extend(cls)
-    let obj = new ObjCls()
-    let key
+    let ObjCls = AV.Object.extend(cls);
+    let obj = new ObjCls();
+    let key;
     for (key in data) {
       if (data.hasOwnProperty(key)) {
-        obj.set(key, data[key])
+        obj.set(key, data[key]);
       }
     }
     // 添加Acl权限
-    this.addReortAcl(obj)
-    return obj
-      .save()
-      .catch(throwError)
+    this.addReortAcl(obj);
+    return obj.save().catch(throwError);
   },
   /**
    * 为新增的帖子添加权限
@@ -157,30 +155,36 @@ var dataApi = {
    * @param {Object} report 当前要提交的对象
    */
   addReortAcl(report) {
-    let reportAcl = new AV.ACL()
+    let reportAcl = new AV.ACL();
 
-    reportAcl.setPublicReadAccess(true)
-    reportAcl.setRoleWriteAccess('administrator', true)
-    reportAcl.setWriteAccess(userApi.getCurrUser(), true)
+    reportAcl.setPublicReadAccess(true);
+    reportAcl.setRoleWriteAccess('administrator', true);
+    reportAcl.setWriteAccess(userApi.getCurrUser(), true);
 
-    report.setACL(reportAcl)
+    report.setACL(reportAcl);
   },
   //  检查本周是否已经填写
   checkIsSubmit() {
-    return this.getCurrWeekData(undefined, true).catch(throwError)
+    return this.getCurrWeekData(undefined, true).catch(throwError);
   },
   // 提交周报
   addReprot(report) {
-    let data = {}
+    let data = {};
     // 自动为数据加入当前用户
-    let user = userApi.getCurrUser()
-    data.userId = user.id
-    data.username = user.attributes.username
+    let user = userApi.getCurrUser();
+    data.userId = user.id;
+    data.username = user.attributes.username;
+    data.report = JSON.stringify(report);
 
-    data.reportList = JSON.stringify(report)
+    return this.addData('Logs', data);
+  },
+  updateReport(id, report) {
+    let obj = AV.Object.createWithoutData('Logs', id);
 
-    return this.addData('Logs', data)
+    obj.set('report', JSON.stringify(report));
+
+    return obj.save();
   }
-}
+};
 
-export default dataApi
+export default dataApi;

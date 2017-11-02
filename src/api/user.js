@@ -152,7 +152,7 @@ export default {
     return arr
   },
   // 第一个用户注册后的后续操作
-  // 先创建两个决定
+  // 先创建两个角色
   // 之后再 初始化创建小组、将角色权限加到此用户身上
   initApp(user) {
     let rolePromises = [
