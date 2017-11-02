@@ -18,36 +18,40 @@ export default {
 .container-fixed-sm,
 .container-fixed-xs,
 .container-fluid {
-  padding-right: 10px;
-  padding-left: 10px;
-  margin-right: auto;
-  margin-left: auto;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 @media (min-width: 768px) {
-  .container {
-    max-width: 740px;
-  }
+    .container {
+        max-width: 740px;
+    }
 }
 
 @media (min-width: 992px) {
-  .container {
-    max-width: 960px;
-  }
+    .container {
+        max-width: 960px;
+    }
 }
 
 @media (min-width: 1200px) {
-  .container {
-    max-width: 1160px;
-  }
+    .container {
+        max-width: 1160px;
+    }
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
-  color: #2c3e50;
-  margin-top: 60px;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+
+    margin-top: 60px;
+    /* text-align: center; */
+
+    color: #2c3e50;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
 </style>
