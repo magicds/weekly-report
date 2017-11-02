@@ -98,33 +98,33 @@
 </template>
 
 <script>
-import config from '@/config/input.config.js'
-import api from '@/api/index.js'
-import Form from 'iview/src/components/form/'
-import Input from 'iview/src/components/input/input'
-import Button from 'iview/src/components/button/button'
-import RadioGroup from 'iview/src/components/radio/radio-group'
-import Radio from 'iview/src/components/radio/radio'
-import InputNumber from 'iview/src/components/input-number/'
-import Table from 'iview/src/components/table/table'
-import Message from 'iview/src/components/Message/'
-import Modal from 'iview/src/components/Modal/index.js'
+import config from '@/config/input.config.js';
+import api from '@/api/index.js';
+import Form from 'iview/src/components/form/';
+import Input from 'iview/src/components/input/input';
+import Button from 'iview/src/components/button/button';
+import RadioGroup from 'iview/src/components/radio/radio-group';
+import Radio from 'iview/src/components/radio/radio';
+import InputNumber from 'iview/src/components/input-number/';
+import Table from 'iview/src/components/table/table';
+import Message from 'iview/src/components/Message/';
+import Modal from 'iview/src/components/Modal/index.js';
 
 // 从输入的内容中分隔出多条
 function getItems(content) {
-  let items = content.split(/\n|\r|\r\n/)
+  let items = content.split(/\n|\r|\r\n/);
   for (var i = items.length - 1; i > 0; --i) {
     if (items[i].trim() === '') {
-      items.splice(i, 1)
+      items.splice(i, 1);
     }
   }
-  return items
+  return items;
 }
 
 // 自动生成一个id
-let listIndex = 1
+let listIndex = 1;
 function getIndex() {
-  return 'list-' + listIndex++
+  return 'list-' + listIndex++;
 }
 
 export default {
@@ -185,9 +185,9 @@ export default {
           key: 'time',
           render: (h, params) => {
             if (params.row.showTime) {
-              return h('span', params.row.time)
+              return h('span', params.row.time);
             } else {
-              return h('span', '--')
+              return h('span', '--');
             }
           }
         },
@@ -207,7 +207,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.editItem(params.row)
+                      this.editItem(params.row);
                     }
                   }
                 },
@@ -222,77 +222,77 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteItem(params.row)
+                      this.deleteItem(params.row);
                     }
                   }
                 },
                 '删除'
               )
-            ])
+            ]);
           }
         }
       ],
       isSaving: false
-    }
+    };
   },
   computed: {
     currType() {
-      return this.types.filter(item => item.key === this.type)[0]
+      return this.types.filter(item => item.key === this.type)[0];
     },
     taskTime() {
-      let time = 0
+      let time = 0;
       this.taskList.forEach(task => {
-        time += task.time
-      })
-      return time
+        time += task.time;
+      });
+      return time;
     },
     studyTime() {
-      let time = 0
+      let time = 0;
       this.studyList.forEach(study => {
-        time += study.time
-      })
-      return time
+        time += study.time;
+      });
+      return time;
     },
     communicationTime() {
-      let time = 0
+      let time = 0;
       this.communicationList.forEach(communication => {
-        time += communication.time
-      })
-      return time
+        time += communication.time;
+      });
+      return time;
     },
     leaveTime() {
-      let time = 0
+      let time = 0;
       this.leaveList.forEach(leave => {
-        time += leave.time
-      })
-      return time
+        time += leave.time;
+      });
+      return time;
     },
     workList() {
-      return this.taskList.concat(this.studyList, this.communicationList)
+      return this.taskList.concat(this.studyList, this.communicationList);
     },
     reportList() {
-      return this.workList.concat(this.leaveList)
+      return this.workList.concat(this.leaveList);
     }
   },
   watch: {
     currType() {
-      this.relues.content[0].message = '请输入' + this.currType.title
-      this.$refs.form.validate()
+      this.relues.content[0].message = '请输入' + this.currType.title;
+      this.$refs.form.validate();
     }
   },
   mounted() {
     Message.config({
       top: window.innerHeight * 0.4 || 400
-    })
+    });
   },
   methods: {
     addItem() {
       this.$refs.form.validate(isValidated => {
         // 验证通过才处理
         if (isValidated) {
-          let items = getItems(this.data.content)
-          let length = items.length
-          let showTime = length > 1 ? false : true
+          let items = getItems(this.data.content);
+          let length = items.length;
+          let showTime = length > 1 ? false : true;
 
           items.forEach((item, i) => {
             this[this.currType.key + 'List'].push({
@@ -302,16 +302,16 @@ export default {
               content: item,
               showTime,
               time: parseFloat((this.data.time / length).toFixed(2))
-            })
-          })
+            });
+          });
 
-          this.data.content = ''
-          this.data.time = 0
+          this.data.content = '';
+          this.data.time = 0;
         }
-      })
+      });
     },
     deleteItem(row) {
-      this[row.type + 'List'].splice(this.getItemIndex(row))
+      this[row.type + 'List'].splice(this.getItemIndex(row));
     },
     editItem(row) {
       // // 编辑前先检查当前是否有内容 有则提示
@@ -324,36 +324,36 @@ export default {
       // })
 
       if (this.data.content.trim() || this.data.time) {
-        Message.warning('请先处理当前正在输入的内容')
-        return
+        Message.warning('请先处理当前正在输入的内容');
+        return;
       }
 
       let currData = this[row.type + 'List'].splice(
         this.getItemIndex(row),
         1
-      )[0]
+      )[0];
 
-      console.log(currData)
-      this.type = currData.type
-      this.data.content = currData.content
-      this.data.time = currData.time
+      console.log(currData);
+      this.type = currData.type;
+      this.data.content = currData.content;
+      this.data.time = currData.time;
     },
     addToCloud() {
-      this.isSaving = true
+      this.isSaving = true;
 
       api.checkIsSubmit().then(result => {
         // 存在结果则表示本周已经提交
         if (result.length) {
-          let data = result[0]
+          let data = result[0];
           let content = JSON.stringify(
-            JSON.parse(data.attributes.reportList),
+            JSON.parse(data.attributes.report),
             0,
             2
-          )
+          );
           // let content = data.reportList
-          let created = data.createdAt
-          let updated = data.updatedAt
-          console.log(data)
+          let created = data.createdAt;
+          let updated = data.updatedAt;
+          console.log(data);
           Modal.confirm({
             title: '本周已经提交过了',
             content: `
@@ -363,54 +363,82 @@ export default {
             <pre>${content}</pre>
             `,
             onOk: () => {
-              data.set('reportList', JSON.stringify(this.reportList))
-              data.save().then(savedData => {
-                console.log(savedData)
-                this.isSaving = false
-                this.showSuccessTips()
-              })
+              // data.set(
+              //   'report',
+              //   JSON.stringify({
+              //     reportList: this.workList,
+              //     studyTime: this.studyTime,
+              //     taskTime: this.taskTime,
+              //     communicationTime: this.communicationTime,
+              //     leaveTime: this.leaveTime
+              //   })
+              // );
+              // data.save()
+
+              api
+                .updateReport(data.id, {
+                  workList: this.workList,
+                  leaveList: this.leaveList,
+                  studyTime: this.studyTime,
+                  taskTime: this.taskTime,
+                  communicationTime: this.communicationTime,
+                  leaveTime: this.leaveTime
+                })
+                .then(savedData => {
+                  console.log(savedData);
+                  this.isSaving = false;
+                  this.showSuccessTips();
+                });
             },
             onCancel: () => {}
-          })
+          });
         } else {
-          api.addReprot(this.workList).then(savedData => {
-            console.log(savedData)
-            this.isSaving = false
-            this.showSuccessTips()
-          })
+          api
+            .addReprot({
+              workList: this.workList,
+              leaveList: this.leaveList,
+              studyTime: this.studyTime,
+              taskTime: this.taskTime,
+              communicationTime: this.communicationTime,
+              leaveTime: this.leaveTime
+            })
+            .then(savedData => {
+              console.log(savedData);
+              this.isSaving = false;
+              this.showSuccessTips();
+            });
         }
-      })
+      });
     },
     showSuccessTips() {
-      Message.success('提交成功')
+      Message.success('提交成功');
     },
 
     getItemIndex(item) {
-      let index = -1
-      let list = this[item.type + 'List']
+      let index = -1;
+      let list = this[item.type + 'List'];
 
       for (let i = 0, l = list.length; i < l; ++i) {
         if (list[i].id === item.id) {
-          return (index = i)
+          return (index = i);
         }
       }
     }
   }
-}
+};
 </script>
 
 <style>
 .header-wraings {
-    text-align: left;
+  text-align: left;
 }
 .ivu-input-number {
-    width: 100%;
+  width: 100%;
 }
 .table td,
 .table th {
-    vertical-align: middle;
+  vertical-align: middle;
 }
-
 </style>
 
 
