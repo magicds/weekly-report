@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import AV from 'leancloud-storage'
-import Dropdown from 'iview/src/components/dropdown'
-import Icon from 'iview/src/components/icon'
-import Avatar from 'iview/src/components/avatar'
-import userApi from '@/api/user'
+import AV from 'leancloud-storage';
+import Dropdown from 'iview/src/components/dropdown';
+import Icon from 'iview/src/components/icon';
+import Avatar from 'iview/src/components/avatar';
+import userApi from '@/api/user';
 
 export default {
   name: 'header',
@@ -39,29 +39,28 @@ export default {
   data() {
     return {
       user: userApi.getCurrUser().attributes
-    }
+    };
   },
   methods: {
     itemClick(name) {
-      console.log(name)
+      console.log(name);
     }
   }
-}
+};
 </script>
 
 <style>
 .header:after {
-    display: table;
-    clear: both;
+  display: table;
+  clear: both;
 
-    content: "";
+  content: '';
 }
 .left {
-    float: left;
+  float: left;
 }
 .right {
-    float: right;
+  float: right;
 }
-
 </style>
 

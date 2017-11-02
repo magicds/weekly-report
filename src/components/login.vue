@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import Form from 'iview/src/components/form/form'
-import FormItem from 'iview/src/components/form/form-item'
-import Input from 'iview/src/components/input/input'
-import Button from 'iview/src/components/button/button'
-import AV from 'leancloud-storage'
-import userApi from '@/api/user'
+import Form from 'iview/src/components/form/form';
+import FormItem from 'iview/src/components/form/form-item';
+import Input from 'iview/src/components/input/input';
+import Button from 'iview/src/components/button/button';
+import AV from 'leancloud-storage';
+import userApi from '@/api/user';
 
 export default {
   name: 'login',
@@ -55,12 +55,12 @@ export default {
           }
         ]
       }
-    }
+    };
   },
 
   created() {
     if (AV.User.current() !== null) {
-      this.$router.push('/main')
+      this.$router.push('/main');
     }
   },
 
@@ -68,16 +68,16 @@ export default {
     login() {
       this.$refs.form.validate(isValidated => {
         userApi.logIn(this.user.name, this.user.pwd).then(user => {
-          console.log(user)
-          this.$router.push('/main')
-        })
-      })
+          console.log(user);
+          this.$router.push('/main');
+        });
+      });
     },
     signup() {
-      this.$router.push('/signup')
+      this.$router.push('/signup');
     }
   }
-}
+};
 </script>
 
 <style>
