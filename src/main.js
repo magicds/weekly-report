@@ -5,8 +5,8 @@ import App from './App'
 import router from './router'
 
 import Table from 'iview/src/components/table'
-import 'iview/dist/styles/iview.css' // 使用 CSS
-import '@/assets/style/table.css' // 使用 CSS
+import 'iview/dist/styles/iview.css' // 使用 iview CSS
+import 'zui/dist/css/zui.min.css' // 使用 zui-css
 
 // AV初始化
 require('./api/init.js')
