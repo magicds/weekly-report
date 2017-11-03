@@ -130,7 +130,9 @@ var ExcellentExport = (function() {
         var data = "";
         for (var i = 0, row; row = table.rows[i]; i++) {
             for (var j = 0, col; col = row.cells[j]; j++) {
-                data = data + (j ? ',' : '') + fixCSVField(col.innerHTML);
+                // data = data + (j ? ',' : '') + fixCSVField(col.innerHTML);
+                // 使用text 避免不必要的html
+                data = data + (j ? ',' : '') + fixCSVField(col.innerText);
             }
             data = data + "\r\n";
         }
