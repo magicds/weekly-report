@@ -1,13 +1,14 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Hello from '@/components/Hello'
-import Login from '@/components/login'
-import Signup from '@/components/signup'
-import Main from '@/components/main'
-import Input from '@/components/input'
-import Summary from '@/components/summary'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Hello from '@/components/Hello';
+import Login from '@/components/login';
+import Signup from '@/components/signup';
+import Main from '@/components/main';
+import Input from '@/components/input';
+import Summary from '@/components/summary';
+import UserSetting from '@/components/usersetting';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -46,6 +47,11 @@ export default new Router({
       path: '/signup',
       name: 'Signup',
       component: Signup
+    },
+    {
+      path: '/setting',
+      name: 'UserSetting',
+      component: UserSetting
     }
   ]
-})
+});
