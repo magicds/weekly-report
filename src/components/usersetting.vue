@@ -8,12 +8,21 @@
 
       <transition name="slide">
         <div class="userinfo-edit">
-          <i-input v-modal="user.username" placeholder="请输入姓名">
+          <i-input v-modal="user.username" placeholder="请输入姓名" style="margin-bottom:10px;">
             <span slot="prepend">姓名</span>
           </i-input>
-          <i-select v-model="user.groupIndex" >
+
+          <!-- 不填写周报则无需选择所在小组 -->
+          <i-select v-if="!user.onInput" v-model="user.groupIndex" style="margin-bottom:10px;">
+            <i-option value="-1">请选择所在小组</i-option>
             <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
           </i-select>
+
+          <!-- 管理角色可以选择不填写周报 -->
+          <Checkbox v-if="isAdmin" v-model="user.noInput" style="margin-bottom:10px;">管理员，不填写周报</Checkbox>
+          <br>
+          <i-button @click="save" type="primary">保存</i-button>
+          <i-button @click="end">取消</i-button>
         </div>
       </transition>
     </Card>
@@ -27,6 +36,7 @@ import Icon from 'iview/src/components/icon';
 import Button from 'iview/src/components/button';
 import Input from 'iview/src/components/input';
 import { Select, Option } from 'iview/src/components/select';
+import Checkbox from 'iview/src/components/checkbox/checkbox';
 import api from '@/api/';
 
 export default {
@@ -38,7 +48,8 @@ export default {
     'i-button': Button,
     'i-input': Input,
     'i-select': Select,
-    'i-option': Option
+    'i-option': Option,
+    Checkbox
   },
   filters: {
     getAvatarText(v) {
@@ -68,7 +79,9 @@ export default {
           name: 'Front End Mobile'
         }
       ],
-      inEdit: false
+      inEdit: false,
+      noInput: true,
+      isAdmin: true
     };
   },
   methods: {

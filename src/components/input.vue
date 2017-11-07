@@ -16,6 +16,7 @@
     <i-form ref="form" :model="data" :rules="relues"  label-position="top">
       <fieldset>
         <legend>基本信息</legend>
+        <div>{{user.groupName}} - {{user.username}} </div>
       </fieldset>
       <fieldset>
         <legend>工作内容</legend>
@@ -76,9 +77,9 @@
                     </li>
                 </ul>
               </td>
-              <td>{{taskTime}}</td>
-              <td>{{studyTime}}</td>
-              <td>{{communicationTime}}</td>
+              <td>{{taskTime | getInt}}</td>
+              <td>{{studyTime | getInt}}</td>
+              <td>{{communicationTime | getInt}}</td>
               <td>
                 <ul v-if="leaveList.length">
                   <li v-for="item in leaveList">
@@ -235,6 +236,11 @@ export default {
       isSaving: false
     };
   },
+  filters: {
+    getInt(v) {
+      return parseInt(v);
+    }
+  },
   computed: {
     currType() {
       return this.types.filter(item => item.key === this.type)[0];
@@ -301,7 +307,7 @@ export default {
               typeText: this.currType.text,
               content: item,
               showTime,
-              time: parseFloat((this.data.time / length).toFixed(2))
+              time: parseFloat(this.data.time / length)
             });
           });
 
@@ -311,7 +317,7 @@ export default {
       });
     },
     deleteItem(row) {
-      this[row.type + 'List'].splice(this.getItemIndex(row));
+      this[row.type + 'List'].splice(this.getItemIndex(row), 1);
     },
     editItem(row) {
       // // 编辑前先检查当前是否有内容 有则提示

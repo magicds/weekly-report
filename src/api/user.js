@@ -16,12 +16,21 @@ export default {
   logOut() {
     return AV.User.logOut();
   },
-  signUp(name, pwd, email) {
-    let user = new AV.User();
+  signUp(userInfo) {
+    let user = new AV.User(),
+      groupIndex = userInfo.groupIndex,
+      groupName = userInfo.groupName;
 
-    user.setUsername(name);
-    user.setPassword(pwd);
-    user.setEmail(email);
+    user.setUsername(userInfo.name);
+    user.setPassword(userInfo.pwd);
+    user.setEmail(userInfo.eamil);
+
+    if (groupIndex != undefined) {
+      user.set('groupIndex', groupIndex);
+    }
+    if (groupName) {
+      user.set('groupName', groupName);
+    }
 
     return user
       .signUp()
@@ -45,7 +54,7 @@ export default {
           //   this.afterUserSignUp(user)
           // })
 
-          if (count > 0) {
+          if (count > 1) {
             return this.addRole('normal', user).then(data => {
               return this.afterUserSignUp(user);
             });
@@ -70,7 +79,7 @@ export default {
     let roleAcl = new AV.ACL();
     // 允许公共读、禁止公共写
     roleAcl.setPublicReadAccess(true);
-    roleAcl.setPublicWriteAccess(false);
+    roleAcl.setPublicWriteAccess(name == 'normal' ? true : false);
 
     // 此角色可读可写
     roleAcl.setRoleReadAccess(name, true);
@@ -106,10 +115,15 @@ export default {
           console.log(user, '已经是', name, '角色了');
           return result[0];
         } else {
-          let role = result[0];
-          role.getUsers().add(user);
-          return role.save().then(currRole => {
-            console.log('已经为', user, '添加', currRole);
+          let query = new AV.Query(AV.Role);
+          query.equalTo('name', name);
+
+          return query.find().then(roles => {
+            let role = roles[0];
+            role.getUsers().add(user);
+            return role.save().then(currRole => {
+              console.log('已经为', user, '添加', currRole);
+            });
           });
         }
       })
@@ -143,8 +157,8 @@ export default {
   initGroups() {
     let arr = [];
 
-    if (groupInfo.group && groupInfo.group.length) {
-      groupInfo.group.forEach(item => {
+    if (groupInfo.groups && groupInfo.groups.length) {
+      groupInfo.groups.forEach(item => {
         arr.push(dataApi.addData('Group', item));
       });
     }
@@ -160,13 +174,15 @@ export default {
       this.createRole('normal', user)
     ];
     // 角色创建完成
-    return Promise.all(rolePromises).then(() => {
-      // 创建小组和角色权限
-      let arr = [].concat(this.initGroups());
-      arr.push(this.afterUserSignUp(user));
-      return Promise.all(arr);
-    });
-  },
-
-  getAllUsers() {}
+    return Promise.all(rolePromises)
+      .then(() => {
+        // 创建小组和角色权限
+        let arr = [].concat(this.initGroups());
+        arr.push(this.afterUserSignUp(user));
+        return Promise.all(arr);
+      })
+      .then(result => {
+        console.log('创建角色和小组完成！');
+      });
+  }
 };

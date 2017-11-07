@@ -3,7 +3,7 @@
     <div class="left">
       <router-link class="nav-link" :to="{ name: 'input'}">周报填写</router-link>
       <router-link class="nav-link" :to="{ name: 'summary'}">周报汇总</router-link>
-
+      <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
     </div>
     <div class="right">
       <Dropdown :on-click="itemClick" placement="bottom-end">

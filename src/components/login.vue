@@ -43,7 +43,7 @@ export default {
         name: [
           {
             required: true,
-            message: '请填写用户名',
+            message: '请填写姓名',
             trigger: 'blur'
           }
         ],

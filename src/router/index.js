@@ -5,7 +5,8 @@ import Login from '@/components/login';
 import Signup from '@/components/signup';
 import Main from '@/components/main';
 import Input from '@/components/input';
-import Summary from '@/components/summary';
+// import Summary from '@/components/summary';
+import CurrWeekSummary from '@/components/currweeksummary';
 import UserSetting from '@/components/usersetting';
 
 Vue.use(Router);
@@ -39,7 +40,7 @@ export default new Router({
         {
           path: 'summary',
           name: 'summary',
-          component: Summary
+          component: CurrWeekSummary
         }
       ]
     },

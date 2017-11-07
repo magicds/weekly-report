@@ -147,7 +147,12 @@ var dataApi = {
     }
     // 添加Acl权限
     this.addReortAcl(obj);
-    return obj.save().catch(throwError);
+    return obj
+      .save()
+      .then(data => {
+        console.log(cls + '已经创建', data);
+      })
+      .catch(throwError);
   },
   /**
    * 为新增的帖子添加权限
@@ -173,7 +178,6 @@ var dataApi = {
     // 自动为数据加入当前用户
     let user = userApi.getCurrUser();
     data.userId = user.id;
-    data.username = user.attributes.username;
     data.report = JSON.stringify(report);
 
     return this.addData('Logs', data);

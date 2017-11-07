@@ -1,3 +1,4 @@
 export default function throwError(err) {
-  throw err
+  console.log(err);
+  throw err;
 }

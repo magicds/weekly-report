@@ -1,5 +1,5 @@
 <template>
-  <div class="summary">
+  <div class="summary" :data="data" :full-time="fullTime">
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <thead>
         <tr>
@@ -39,6 +39,8 @@
       </tbody>
     </table>
     <i-button type="primary" @click="exportTable">导出</i-button>
+    <div ref="person-charts" style="width:100%;height:300px"></div>
+    <div ref="group-charts" style="width:100%;height:300px"></div>
   </div>
 </template>
 
@@ -119,110 +121,15 @@ export default {
   components: {
     'i-button': Button
   },
+  props:{
+    'data':Array,
+    'fullTime':Number
+  },
   mounted() {
 
-    this.data.push({
-      username: 'admin',
-      workList: [
-        {
-          id: '1',
-          content: '任务1',
-          time: 2,
-          type: 'task',
-          showTime: true
-        },
-        {
-          id: '1-1',
-          content: '任务1-1',
-          time: 2,
-          type: 'task',
-          showTime: false
-        },
-        {
-          id: '1-2',
-          content: '任务1-2',
-          time: 2,
-          type: 'task',
-          showTime: false
-        },
-        {
-          id: '2',
-          content: '学习',
-          time: 10,
-          type: 'study',
-          showTime: true
-        },
-        {
-          id: '3',
-          content: '沟通',
-          time: 10,
-          type: 'communication',
-          showTime: true
-        }
-      ],
-      leaveList: [],
-      studyTime: 18,
-      taskTime: 8,
-      communicationTime: 16,
-      leaveTime: 0,
-      saturation: '80%',
-      createdAt: '2017-11-1',
-      saturation: (8 + 16) / this.fullTime
-    });
-    this.data.push({
-      username: 'admin2',
-      workList: [
-        {
-          id: '1',
-          content: '任务1',
-          time: 12,
-          type: 'task',
-          showTime: true
-        },
-        {
-          id: '1-1',
-          content: '任务1-1',
-          time: 3,
-          type: 'task',
-          showTime: false
-        },
-        {
-          id: '1-2',
-          content: '任务1-2',
-          time: 3,
-          type: 'task',
-          showTime: false
-        },
-        {
-          id: '2',
-          content: '学习',
-          time: 8,
-          type: 'study',
-          showTime: true
-        },
-        {
-          id: '3',
-          content: '沟通',
-          time: 16,
-          type: 'communication',
-          showTime: true
-        }
-      ],
-      leaveList: [],
-      studyTime: 6,
-      taskTime: 10,
-      communicationTime: 10,
-      leaveTime: 0,
-      saturation: '90%',
-      createdAt: '2017-11-2',
-      saturation: (10 + 10) / this.fullTime
-    });
   },
   created() {
-    // 创建后为数据新增默认的——index 用于还原默认顺序
-    this.data.forEach((item,i) =>{
-      item._index = i;
-    })
+
   },
 
   data() {
@@ -266,10 +173,7 @@ export default {
           key: 'createdAt',
           sortable: true
         }
-      ],
-      data: [],
-      fullTime: 40,
-
+      ]
     };
   },
   filters: {
@@ -306,10 +210,10 @@ export default {
       if (column._sortType != type) {
         column._sortType = type;
         this.data = mergeSort(this.data, column.key, type);
-      }else {
+      } else {
         column._sortType = 'normal';
         // 恢复默认排序
-        this.data = mergeSort(this.data, '_index', type);;
+        this.data = mergeSort(this.data, '_index', type);
       }
       console.log(column, column._sortType);
     }
