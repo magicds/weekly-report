@@ -12,16 +12,18 @@ let prepareDataForCharts = function(data) {
       name: [],
       rate: []
     };
-  $.each(data, function(i, item) {
+  data.forEach(item => {
     // 得到个人数据
-    person.name.push(item.name);
+    person.name.push(item.username);
     person.rate.push(item.saturation);
 
     // 分离出小组
-    if (!_group[item.groupName]) {
-      _group[item.groupName] = [item.saturation];
-    } else {
-      _group[item.groupName].push(item.saturation);
+    if(item.groupName) {
+      if (!_group[item.groupName]) {
+        _group[item.groupName] = [item.saturation];
+      } else {
+        _group[item.groupName].push(item.saturation);
+      }
     }
   });
   // 统计小组数据
@@ -249,6 +251,6 @@ export default function(reports, personEl, groupEl) {
 
   personChart = personChart || echarts.init(personEl);
   groupChart = groupChart || echarts.init(groupEl);
-  renderPerson(person);
-  renderGroup(group);
+  renderPerson(data.person);
+  renderGroup(data.group);
 }
