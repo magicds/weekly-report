@@ -12,6 +12,13 @@ export default {
 </script>
 
 <style>
+body {
+  padding-bottom:20px;
+}
+ul {
+  padding: 0;
+  margin:0;
+}
 .container,
 .container-fixed,
 .container-fixed-md,
@@ -45,7 +52,7 @@ export default {
 #app {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
 
-    margin-top: 60px;
+    /* margin-top: 60px; */
     /* text-align: center; */
 
     color: #2c3e50;
