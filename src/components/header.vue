@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="left">
-      <router-link class="nav-link" :to="{ name: 'input'}">周报填写</router-link>
+      <router-link class="nav-link" :to="{ name: 'input'}" v-if="user.groupName">周报填写</router-link>
       <router-link class="nav-link" :to="{ name: 'summary'}">周报汇总</router-link>
       <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
     </div>
@@ -50,17 +50,55 @@ export default {
 </script>
 
 <style>
+.header {
+  height: 38px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+
+  border-bottom: 1px solid #ddd;
+}
+
 .header:after {
   display: table;
   clear: both;
 
   content: '';
 }
+
 .left {
+  line-height: 37px;
+
   float: left;
+
+  height: 38px;
 }
+
 .right {
   float: right;
+}
+
+.nav-link {
+  display: block;
+  float: left;
+
+  margin-bottom: -1px;
+  padding: 0 15px;
+
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+
+  text-decoration: none;
+  color:#353535;
+}
+.nav-link:hover {
+  text-decoration: none;
+  color: #2d8cf0;
+}
+.router-link-exact-active.router-link-active {
+  border-color: #ddd;
+  background: #fff;
+  color: #2d8cf0;
 }
 </style>
 
