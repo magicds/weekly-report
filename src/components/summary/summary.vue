@@ -1,5 +1,5 @@
 <template>
-  <div class="summary" :data="data" :full-time="fullTime">
+  <div class="summary" :data="cloneData" :full-time="fullTime">
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <thead>
         <tr>
@@ -17,7 +17,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="person in data">
+        <tr v-for="person in cloneData">
           <td>{{person.username}}</td>
           <td>
             <ul v-if="person.workList.length > 0">
@@ -34,13 +34,16 @@
             </ul>
             <span v-else>无</span>
           </td>
-          <td>{{person.createdAt}}</td>
+          <td>
+            <span v-if="person.uncommitted">本周未提交</span>
+            <span v-else :title="getTimeTitle(person)">{{person.createdAt | formatTime}}</span>
+          </td>
         </tr>
       </tbody>
     </table>
     <i-button type="primary" @click="exportTable">导出</i-button>
-    <div ref="person-charts" style="width:100%;height:300px"></div>
-    <div ref="group-charts" style="width:100%;height:300px"></div>
+    <div ref="person-charts" style="width:100%;height:300px;margin-top:20px"></div>
+    <div ref="group-charts" style="width:100%;height:300px;"></div>
   </div>
 </template>
 
@@ -48,6 +51,10 @@
 import Button from 'iview/src/components/button/button';
 import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
+import moment from 'moment';
+import renderCharts from './rendercharts.js';
+
+const WEEKNAMES = ['一', '二', '三', '四', '五', '六', '日'];
 
 /**
  * [归并排序]
@@ -116,22 +123,44 @@ let mergeSort = (function() {
   };
 })();
 
+/**
+ * 克隆数据 并添加默认的排序标识_index
+ * 简单通过json转化实现
+ * @param {Array} data    原数组
+ * @return {Array}     克隆后数组
+ */
+function getCloneData(data) {
+  let d = JSON.parse(JSON.stringify(data));
+  d.forEach((item, i) => {
+    item._index = i;
+  });
+  return d;
+}
+
 export default {
   name: 'summary',
   components: {
     'i-button': Button
   },
-  props:{
-    'data':Array,
-    'fullTime':Number
+  props: {
+    data: Array,
+    fullTime: Number
   },
   mounted() {
-
+    renderCharts(
+      this.cloneData,
+      this.$refs['person-charts'],
+      this.$refs['group-charts']
+    );
   },
-  created() {
-
+  created() {},
+  updated() {
+    renderCharts(
+      this.cloneData,
+      this.$refs['person-charts'],
+      this.$refs['group-charts']
+    );
   },
-
   data() {
     return {
       columns: [
@@ -173,12 +202,17 @@ export default {
           key: 'createdAt',
           sortable: true
         }
-      ]
+      ],
+      cloneData: getCloneData(this.data)
     };
   },
   filters: {
     getProportion(v) {
       return (v * 100).toFixed(2) + '%';
+    },
+    formatTime(v) {
+      let c = moment(v);
+      return c.format('MM-DD HH:mm') + ' 周' + WEEKNAMES[c.isoWeekday() - 1];
     }
   },
   methods: {
@@ -209,24 +243,41 @@ export default {
     sort(column, type) {
       if (column._sortType != type) {
         column._sortType = type;
-        this.data = mergeSort(this.data, column.key, type);
+        this.cloneData = mergeSort(this.cloneData, column.key, type);
       } else {
         column._sortType = 'normal';
         // 恢复默认排序
-        this.data = mergeSort(this.data, '_index', type);
+        this.cloneData = mergeSort(this.cloneData, '_index', type);
       }
       console.log(column, column._sortType);
+    },
+    getTimeTitle(person) {
+      let c = moment(person.createdAt);
+      let u = moment(person.updatedAt);
+      let title =
+        '提交时间' + c.format('MM-DD HH:mm') + ' 周' + WEEKNAMES[c.isoWeekday() - 1];
+
+      if (c.isSame(u)) {
+        return title;
+      } else {
+        return (
+          title +
+          '\r\n最后更新时间' +
+          u.format('MM-DD HH:mm') +
+          ' 周' +
+          WEEKNAMES[u.isoWeekday() - 1]
+        );
+      }
     }
   },
   watch: {
     // 周时间变化时，计算更新饱和度
     fullTime(newval, oldVal) {
-      this.data.forEach(item => {
+      this.cloneData.forEach(item => {
         item.saturation = item.saturation * oldVal / newval;
       });
     }
-  },
-  computed: {}
+  }
 };
 </script>
 
