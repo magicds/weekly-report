@@ -6,7 +6,8 @@ import Signup from '@/components/signup';
 import Main from '@/components/main';
 import Input from '@/components/input';
 // import Summary from '@/components/summary';
-import CurrWeekSummary from '@/components/currweeksummary';
+import CurrWeekSummary from '@/components/currweek-summary';
+import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
 
 Vue.use(Router);
@@ -41,6 +42,11 @@ export default new Router({
           path: 'summary',
           name: 'summary',
           component: CurrWeekSummary
+        },
+        {
+          path: 'history',
+          name: 'history',
+          component: HistorySummary
         }
       ]
     },
