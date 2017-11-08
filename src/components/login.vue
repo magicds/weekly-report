@@ -69,7 +69,11 @@ export default {
       this.$refs.form.validate(isValidated => {
         userApi.logIn(this.user.name, this.user.pwd).then(user => {
           console.log(user);
-          this.$router.push('/main');
+          if (user.attributes.groupName) {
+            this.$router.push('/main/input');
+          } else {
+            this.$router.push('/main/summary');
+          }
         });
       });
     },
