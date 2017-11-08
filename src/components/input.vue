@@ -1,9 +1,9 @@
 <template>
   <div class="person-input">
-    <div class="header-wraings">
+    <div class="alert alert-danger">
       <p>请大家每周五下班前按要求填写周报，若每月有3次未按要求填写周报，考虑月浮动奖罚，以做规范手段。</p>
       <p>周报的目的：</p>
-      <ol>
+      <ol class="weekly-aims">
         <li>
           <p>对自己本周工作进行一个如实总结。</p>
         </li>
@@ -21,11 +21,20 @@
       <fieldset>
         <legend>工作内容</legend>
 
-        <RadioGroup v-model="type">
+        <!-- <RadioGroup v-model="type">
           <i-radio v-for="item in types" :label="item.key" :key="item.key">
             <span>{{item.text}}</span>
           </i-radio>
-        </RadioGroup>
+        </RadioGroup> -->
+
+        <FormItem label="类型" style="margin-top:10px; margin-bottom:0px;">
+          <RadioGroup v-model="type">
+            <i-radio v-for="item in types" :label="item.key" :key="item.key">
+              <span>{{item.text}}</span>
+            </i-radio>
+          </RadioGroup>
+        </FormItem>
+
         <div class="type-info">
           <ul>
             <li v-for="item in types" :class="item.key == type ? 'light' : ''">{{item.text}}：{{item.info}}</li>
@@ -444,6 +453,34 @@ export default {
 .table td,
 .table th {
   vertical-align: middle;
+}
+.weekly-aims {
+  list-style: decimal;
+}
+fieldset {
+  margin-top: 20px;
+}
+legend {
+  margin-bottom: 10px;
+}
+
+.type-info {
+  background: #f8f8f9;
+  border-radius: 4px;
+  padding: 10px 20px;
+  line-height: 26px;
+  color: #464c5b;
+  margin-bottom:24px;
+}
+.type-info .light {
+  color: #000;
+  font-weight: bold;
+}
+.content-info {
+  margin-bottom: 24px;
+}
+.ivu-form .ivu-form-item-label {
+  font-size: 14px;
 }
 </style>
 
