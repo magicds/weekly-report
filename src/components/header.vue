@@ -41,6 +41,8 @@ export default {
       user: userApi.getCurrUser().attributes
     };
   },
+  mounted() {
+  },
   methods: {
     itemClick(name) {
       console.log(name);
@@ -89,7 +91,7 @@ export default {
   border-radius: 4px 4px 0 0;
 
   text-decoration: none;
-  color:#353535;
+  color: #353535;
 }
 .nav-link:hover {
   text-decoration: none;

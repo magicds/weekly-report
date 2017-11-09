@@ -1,7 +1,6 @@
 <template>
   <div class="currweeksummary">
     <my-summary :data="data" :full-time="fullTime"></my-summary>
-
   </div>
 </template>
 
