@@ -59,8 +59,11 @@ export default {
   },
 
   created() {
-    if (AV.User.current() !== null) {
-      this.$router.push('/main');
+    let user = AV.User.current();
+    if (user !== null) {
+      this.$router.push(
+        user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
+      );
     }
   },
 

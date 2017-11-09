@@ -101,6 +101,7 @@ export default {
     // getData().then(data => {
     //   console.log(data);
     // })
+    console.log('created');
   }
 };
 </script>
