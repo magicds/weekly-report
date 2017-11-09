@@ -10,9 +10,18 @@ import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
 
+
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
+  // 切换时滚动处理
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
   routes: [
     // {
     //   path: '/',
@@ -21,18 +30,14 @@ export default new Router({
     // },
     {
       path: '/',
-      name: 'Login',
+      name: 'login',
       component: Login
     },
     {
       path: '/main',
-      name: 'Main',
+      name: 'main',
       component: Main,
       children: [
-        {
-          path: '',
-          component: Input
-        },
         {
           path: 'input',
           name: 'input',
@@ -52,13 +57,24 @@ export default new Router({
     },
     {
       path: '/signup',
-      name: 'Signup',
+      name: 'signup',
       component: Signup
     },
     {
       path: '/setting',
-      name: 'UserSetting',
+      name: 'userSetting',
       component: UserSetting
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  console.log('before');
+  console.log(to, from, next);
+  next();
+});
+router.afterEach((to, from) => {
+  console.log('after');
+  console.log(to, from);
+});
+export default router;
