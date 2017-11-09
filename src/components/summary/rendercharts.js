@@ -18,7 +18,7 @@ let prepareDataForCharts = function(data) {
     person.rate.push(item.saturation);
 
     // 分离出小组
-    if(item.groupName) {
+    if (item.groupName) {
       if (!_group[item.groupName]) {
         _group[item.groupName] = [item.saturation];
       } else {
@@ -249,8 +249,8 @@ let personChart, groupChart;
 export default function(reports, personEl, groupEl) {
   let data = prepareDataForCharts(reports);
 
-  personChart = personChart || echarts.init(personEl);
-  groupChart = groupChart || echarts.init(groupEl);
+  personChart = echarts.init(personEl);
+  groupChart = echarts.init(groupEl);
   renderPerson(data.person);
   renderGroup(data.group);
 }
