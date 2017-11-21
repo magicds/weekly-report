@@ -3,15 +3,18 @@
       <div class="login-box">
           <i-form ref="form" :model="user" :rules="relues">
             <FormItem prop="name">
-              <i-input type="text" v-model="user.name" placeholder="请输入用户名" style="width: 300px"></i-input>
+              <i-input type="text" v-model="user.name" placeholder="请输入用户名"></i-input>
             </FormItem>
             <FormItem prop="pwd">
-              <i-input type="password" v-model="user.pwd" placeholder="请输入密码" style="width: 300px"></i-input>
+              <i-input type="password" v-model="user.pwd" placeholder="请输入密码"></i-input>
             </FormItem>
-            <FormItem>
-              <i-button type="primary" @click="login">登录</i-button>
+            <FormItem class="text-center">
+              <i-button type="primary" @click="login" style="width:100%">登录</i-button>
             </FormItem>
-            <i-button href="#" @click="signup">注册</i-button>
+            <FormItem class="text-center login-other">
+              <i-button type="text" @click="signup">注册</i-button>
+              <i-button type="text" @click="forgetPwd">忘记密码</i-button>
+            </FormItem>
           </i-form>
       </div>
   </div>
@@ -82,6 +85,9 @@ export default {
     },
     signup() {
       this.$router.push('/signup');
+    },
+    forgetPwd() {
+      this.$router.push('/forgetpwd');
     }
   }
 };
@@ -93,6 +99,13 @@ export default {
 }
 .login-box {
   width: 300px;
-  margin: 0 auto;
+  margin-top: calc(30% - 120px);
+  margin-left: auto;
+  margin-right: auto;
+}
+.login-other {
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+  padding-top: 10px;
 }
 </style>
