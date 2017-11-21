@@ -165,6 +165,11 @@ export default {
 
     return arr;
   },
+  // 用户设值为管理员
+  setAsAdmin(user) {
+    user.set('isAdmin', true);
+    return user.save();
+  },
   // 第一个用户注册后的后续操作
   // 先创建两个角色
   // 之后再 初始化创建小组、将角色权限加到此用户身上
@@ -173,6 +178,7 @@ export default {
       this.createRole('administrator', user),
       this.createRole('normal', user)
     ];
+    rolePromises.push(setAsAdmin(user));
     // 角色创建完成
     return Promise.all(rolePromises)
       .then(() => {
