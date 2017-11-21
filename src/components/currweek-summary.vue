@@ -1,14 +1,23 @@
 <template>
   <div class="currweeksummary">
     <my-summary :data="data" :full-time="fullTime"></my-summary>
+    <div class="summary-fixed">
+      <affix :offset-bottom="70">
+        <span class="side-affix">查看汇总</span>
+      </affix>
+      <affix :offset-bottom="20">
+        <span class="side-affix">查看表格</span>
+      </affix>
+    </div>
   </div>
 </template>
 
 <script>
 import mySummary from './summary/summary.vue';
+import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
 
-function getData() {
+function getData(fullTime) {
   return Promise.all([
     api.getData('_User'),
     api.getCurrWeekData()
@@ -17,7 +26,7 @@ function getData() {
 
     window.results = results;
 
-    let reports = dealReports(results[1], results[0]);
+    let reports = dealReports(results[1], results[0], fullTime);
     window.reports = reports;
 
     return reports;
@@ -32,7 +41,7 @@ function toMap(users) {
   return user;
 }
 
-function dealReports(data, users) {
+function dealReports(data, users, fullTime) {
   let reports = [],
     userMap = toMap(users),
     // 已经提交人人员集合
@@ -50,7 +59,7 @@ function dealReports(data, users) {
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,
           saturation:
-            (reportData.taskTime + reportData.communicationTime) / this.fullTime
+            (reportData.taskTime + reportData.communicationTime) / fullTime
         },
         userMap[attrs.userId],
         reportData
@@ -87,7 +96,8 @@ function dealReports(data, users) {
 export default {
   name: 'currweeksummary',
   components: {
-    mySummary
+    mySummary,
+    Affix
   },
   data() {
     return {
@@ -98,10 +108,26 @@ export default {
     };
   },
   created() {
-    // getData().then(data => {
+    // getData(this.fullTime).then(data => {
     //   console.log(data);
     // })
     console.log('created');
   }
 };
 </script>
+
+<style>
+/* .ivu-affix {
+  left: auto !important;
+  width:
+  right: 20px;
+} */
+.summary-fixed {
+  width: 40px;
+  float: right;
+}
+.side-affix {
+  display: inline-block;
+}
+</style>
+
