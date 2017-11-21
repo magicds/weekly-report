@@ -6,7 +6,7 @@
       <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
     </div>
     <div class="right">
-      <Dropdown :on-click="itemClick" placement="bottom-end">
+      <Dropdown @on-click="itemClick" placement="bottom-end">
         <a class href="javascript:void(0)">
           <Avatar>{{user.username}}</Avatar>
           <!-- <Icon type="arrow-down-b"></Icon> -->
@@ -41,11 +41,19 @@ export default {
       user: userApi.getCurrUser().attributes
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     itemClick(name) {
-      console.log(name);
+      switch (name) {
+        case 'userifo':
+          break;
+        case 'logout':
+          userApi.logOut();
+          this.$router.push('/');
+          break;
+        default:
+          break;
+      }
     }
   }
 };
