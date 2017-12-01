@@ -9,6 +9,7 @@ import 'iview/dist/styles/iview.css' // 使用 iview CSS
 import 'zui/dist/css/zui.min.css' // 使用 zui-css
 
 // AV初始化
+/* global require */
 require('./api/init.js')
 
 Vue.config.productionTip = false
