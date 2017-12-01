@@ -35,7 +35,7 @@
             <span v-else>无</span>
           </td>
           <td>
-            <span v-if="person.uncommitted">本周未提交</span>
+            <span v-if="person.uncommitted">未提交</span>
             <span v-else :title="getTimeTitle(person)">{{person.createdAt | formatTime}}</span>
           </td>
         </tr>
@@ -163,6 +163,7 @@ export default {
   },
   data() {
     return {
+
       columns: [
         {
           title: '姓名',
