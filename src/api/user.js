@@ -2,7 +2,7 @@ import AV from 'leancloud-storage';
 import throwError from './error.js';
 import groupInfo from '@/config/group.config.js';
 import dataApi from './data.js';
-import Promise from 'bluebird'
+import Promise from 'bluebird';
 
 window.AV = AV;
 
@@ -190,5 +190,17 @@ export default {
       .then(result => {
         console.log('创建角色和小组完成！');
       });
-  }
+  },
+  // 获取所有用户
+  getAllUser: (function() {
+    let cache;
+    let me = this;
+    return function(noCache) {
+      // 没有获取过 或者不缓存时才重新获取
+      if (!cache || !noCache) {
+        cache = me.getData('_User');
+      }
+      return cache;
+    };
+  })()
 };
