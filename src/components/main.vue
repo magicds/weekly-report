@@ -1,9 +1,9 @@
 <template>
   <div class="maim">
     <my-header></my-header>
-
-    <router-view></router-view>
-
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
