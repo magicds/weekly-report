@@ -3,6 +3,7 @@
 module.exports = {
   root: true,
   parser: 'babel-eslint',
+  extends: "eslint:recommended",
   parserOptions: {
     sourceType: 'module'
   },
@@ -16,6 +17,8 @@ module.exports = {
   // add your custom rules here
   'rules': {
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    "no-console": "warn",
+    "no-unused-vars": "warn"
   }
 }
