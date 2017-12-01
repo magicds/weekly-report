@@ -22,7 +22,7 @@ import Promise from 'bluebird'
 // 获取数据
 function getData(fullTime) {
   return Promise.all([
-    api.getData('_User'),
+    api.getAllUser(),
     api.getCurrWeekData()
   ]).then(results => {
     console.log(results);
