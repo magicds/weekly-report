@@ -82,34 +82,13 @@ var dataApi = {
     return query.find().catch(throwError);
   },
   /**
-   * 查询本周的周报
+   * 查询一段时间内的周报
+   * @param {Date} startDate 开始时间
+   * @param {Date} endDate 结束时间
    * @param {Object/Array} sorts 排序规则
    * @param {Boolean} isCurrUser 是否仅查询当前用户
    */
-  getCurrWeekData(sorts, isCurrUser) {
-    // // 根据当天 获取周一和周日
-    // let date = moment()
-    //   .hour(0)
-    //   .minute(0)
-    //   .second(0)
-    //   .millisecond(0)
-    // let day = date.isoWeekday()
-    // let startDate = date
-    //   .clone()
-    //   .subtract(day - 1, 'days')
-    //   .toDate()
-    // // 结束时间直接取到下周一凌晨
-    // let endDate = date
-    //   .clone()
-    //   .add(8 - day, 'days')
-    //   // .hour(23)
-    //   // .minute(59)
-    //   // .second(59)
-    //   // .millisecond(999)
-    //   .toDate()
-    let { startDate, endDate } = getStartEnd();
-    console.log(startDate, endDate);
-
+  getDataByRange(startDate, endDate, sorts, isCurrUser) {
     let conditions = [
       {
         action: 'greaterThanOrEqualTo',
@@ -130,6 +109,16 @@ var dataApi = {
       });
     }
     return this.getData('Logs', conditions, sorts);
+  },
+  /**
+   * 查询本周的周报
+   * @param {Object/Array} sorts 排序规则
+   * @param {Boolean} isCurrUser 是否仅查询当前用户
+   */
+  getCurrWeekData(sorts, isCurrUser) {
+    let { startDate, endDate } = getStartEnd();
+
+    return this.getDataByRange(startDate, endDate, sorts, isCurrUser);
   },
   /**
    * 新增数据
