@@ -2,7 +2,7 @@ import AV from 'leancloud-storage';
 import throwError from './error.js';
 import groupInfo from '@/config/group.config.js';
 import dataApi from './data.js';
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 
 window.AV = AV;
 
@@ -178,7 +178,7 @@ export default {
       this.createRole('administrator', user),
       this.createRole('normal', user)
     ];
-    rolePromises.push(setAsAdmin(user));
+    rolePromises.push(this.setAsAdmin(user));
     // 角色创建完成
     return Promise.all(rolePromises)
       .then(() => {
