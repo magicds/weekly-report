@@ -1,6 +1,7 @@
 <template>
   <div class="currweeksummary">
     <my-summary :data="data" :full-time="fullTime"></my-summary>
+
     <div class="summary-fixed">
       <affix :offset-bottom="70">
         <span class="side-affix">查看汇总</span>
@@ -16,7 +17,9 @@
 import mySummary from './summary/summary.vue';
 import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
+import Promise from 'bluebird'
 
+// 获取数据
 function getData(fullTime) {
   return Promise.all([
     api.getData('_User'),
@@ -33,6 +36,7 @@ function getData(fullTime) {
   });
 }
 
+// uses转化为map形式
 function toMap(users) {
   let user = {};
   users.forEach(item => {
@@ -41,6 +45,7 @@ function toMap(users) {
   return user;
 }
 
+// 处理为显示需要的数据
 function dealReports(data, users, fullTime) {
   let reports = [],
     userMap = toMap(users),
