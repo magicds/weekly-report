@@ -17,7 +17,7 @@
 import mySummary from './summary/summary.vue';
 import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
-import Promise from 'bluebird'
+import Promise from 'bluebird';
 
 // 获取数据
 function getData(fullTime) {

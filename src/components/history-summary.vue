@@ -167,7 +167,7 @@ export default {
   name: 'histroysmmmary',
   components: {
     DatePicker,
-    mySummary,
+    'my-summary':mySummary,
     'i-button': Button
   },
   data() {
@@ -242,6 +242,7 @@ export default {
     search() {
       if (!this.date[0]) return;
       getData(...this.dateRange).then(data => {
+        this.isShow = true;
         this.$set(this, 'data', data);
       });
     }
