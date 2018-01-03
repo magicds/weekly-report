@@ -194,11 +194,10 @@ export default {
   // 获取所有用户
   getAllUser: (function() {
     let cache;
-    let me = this;
     return function(noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
-        cache = me.getData('_User');
+        cache = this.getData('_User');
       }
       return cache;
     };
