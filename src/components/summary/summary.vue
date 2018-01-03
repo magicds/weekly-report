@@ -163,7 +163,6 @@ export default {
   },
   data() {
     return {
-
       columns: [
         {
           title: '姓名',
@@ -273,10 +272,14 @@ export default {
   },
   watch: {
     // 周时间变化时，计算更新饱和度
-    fullTime(newval, oldVal) {
+    fullTime(newVal, oldVal) {
       this.cloneData.forEach(item => {
-        item.saturation = item.saturation * oldVal / newval;
+        item.saturation = item.saturation * oldVal / newVal;
       });
+    },
+    // 数据变化时更新表格数据
+    data(newVal) {
+      this.$set(this, 'cloneData', getCloneData(newVal));
     }
   }
 };
