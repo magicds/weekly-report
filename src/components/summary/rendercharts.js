@@ -56,13 +56,14 @@ let comomOptions = {
   },
   grid: {
     left: 50,
-    right: 20
+    right: 20,
+    bottom: 80
   },
   toolbox: {},
   xAxis: {
     type: 'category',
     // name: '姓名',
-    nameRotate: 30,
+    nameRotate: 10,
     axisTick: {
       alignWithLabel: true //坐标轴刻度与标签对齐
     }

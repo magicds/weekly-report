@@ -154,11 +154,13 @@ export default {
   },
   created() {},
   updated() {
-    renderCharts(
-      this.cloneData,
-      this.$refs['person-charts'],
-      this.$refs['group-charts']
-    );
+    if (this.cloneData && this.cloneData.length) {
+      renderCharts(
+        this.cloneData,
+        this.$refs['person-charts'],
+        this.$refs['group-charts']
+      );
+    }
   },
   data() {
     return {

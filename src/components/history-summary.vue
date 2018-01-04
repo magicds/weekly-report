@@ -15,17 +15,24 @@ import Button from 'iview/src/components/button/';
 import Promise from 'bluebird';
 import moment from 'moment';
 
+// 获取两个日期之间的星期数目
+function getWeeks(strat,end) {
+  let s = moment(strat);
+  let e = moment(end);
+
+  return Math.ceil((e.dayOfYear() - s.dayOfYear()) / 7)
+}
 // 获取数据
 function getData(start, end) {
   return Promise.all([
     api.getAllUser(),
-    api.getDataByRange(start, end)
+    api.getDataByRange(start, end, { sort: 'asc', field: 'createdAt' })
   ]).then(results => {
     console.log(results);
 
     window.results = results;
 
-    let reports = dealReports(results[1], results[0]);
+    let reports = dealReports(results[1], results[0], getWeeks(start,end));
     window.reports = reports;
 
     return reports;
@@ -46,8 +53,7 @@ function logToMap(logs) {
   let weeks = 0;
   logs.forEach(item => {
     attrs = item.attributes;
-    attrs.reportData = JSON.parse(attrs.reportData);
-    reportData = attrs.reportData;
+    reportData = JSON.parse(attrs.report);
     id = attrs.userId;
     // 第一个时直接赋值，后面进行合并
     if (!map[id]) {
@@ -63,6 +69,7 @@ function logToMap(logs) {
       map[id].studyTime += reportData.studyTime;
       map[id].taskTime += reportData.taskTime;
       map[id].communicationTime += reportData.communicationTime;
+      map[id].saturation += reportData.saturation;
     }
   });
 
@@ -71,30 +78,33 @@ function logToMap(logs) {
 
 // 处理为显示需要的数据
 function dealReports(data, users) {
-  let reports = [],
-    userMap = toMap(users),
-    // 已经提交人人员集合
-    submitedUsers = {};
+  let reports = [];
+  let userMap = toMap(users);
+  let reportMap = logToMap(data);
+  // 已经提交人人员集合
+  let submitedUsers = {};
 
-  data.forEach(item => {
-    let attrs = item.attributes;
-    let reportData = JSON.parse(attrs.report);
 
-    if (!userMap[attrs.userId].noReport) {
-      submitedUsers[attrs.userId] = true;
-      reports.push(
-        Object.assign(
-          {
-            userId: attrs.userId,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt
-          },
-          userMap[attrs.userId],
-          reportData
-        )
-      );
-    }
-  });
+
+  // data.forEach(item => {
+  //   let attrs = item.attributes;
+  //   let reportData = JSON.parse(attrs.report);
+
+  //   if (!userMap[attrs.userId].noReport) {
+  //     submitedUsers[attrs.userId] = true;
+  //     reports.push(
+  //       Object.assign(
+  //         {
+  //           userId: attrs.userId,
+  //           createdAt: item.createdAt,
+  //           updatedAt: item.updatedAt
+  //         },
+  //         userMap[attrs.userId],
+  //         reportData
+  //       )
+  //     );
+  //   }
+  // });
 
   // 补上未提交人员的
   for (let i = 0, l = users.length; i < l; ++i) {
