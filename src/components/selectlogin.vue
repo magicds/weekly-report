@@ -1,13 +1,21 @@
 <template>
   <div class="login-wrap">
       <div class="login-box">
-          <i-form ref="form" :model="user" :rules="relues">
-            <FormItem prop="name">
-              <!-- <i-input type="text" v-model="user.name" placeholder="请输入用户名"></i-input> -->
-              <i-select>
+          <i-form ref="form" :model="user">
 
+            <Form-item >
+              <i-select v-model="groupIndex" style="margin-bottom:10px;">
+                <!-- <i-option value="-1">请选择所在小组</i-option> -->
+                <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
               </i-select>
-            </FormItem>
+            </Form-item>
+
+            <Form-item>
+              <i-select v-model="user.name" style="margin-bottom:10px;">
+                <!-- <i-option value="-1">请选择所在小组</i-option> -->
+                <i-option v-for="item in group.member" :value="item.name">{{ item.name }}</i-option>
+              </i-select>
+            </Form-item>
 
             <FormItem prop="pwd">
               <i-input type="password" v-model="user.pwd" placeholder="请输入密码"></i-input>
@@ -31,7 +39,44 @@ import Input from 'iview/src/components/input/input';
 import Button from 'iview/src/components/button/button';
 import { Select, Option } from 'iview/src/components/select';
 import AV from 'leancloud-storage';
-import userApi from '@/api/user';
+import api from '@/api/index';
+import Promise from 'bluebird';
+
+function getAllUser() {
+  return Promise.all([
+    api.getData('Group', false, {
+      sort: 'asc',
+      field: 'index'
+    }),
+    api.getAllUser()
+  ]).then(result => {
+    let groups = [];
+    let users = [];
+
+    result[0].forEach(item => {
+      groups.push({
+        id: item.id,
+        name: item.attributes.name,
+        index: item.attributes.index,
+        member: []
+      });
+    });
+
+    result[1].forEach(item => {
+      let i = users.push({
+        id: item.id,
+        name: item.attributes.username
+      });
+
+      groups[item.attributes.groupIndex].member.push(users[i - 1]);
+    });
+
+    return {
+      users,
+      groups
+    };
+  });
+}
 
 export default {
   name: 'login',
@@ -46,41 +91,51 @@ export default {
   data() {
     return {
       user: {
-        name: '',
+        name: localStorage.getItem('localUserName') || '',
         pwd: ''
       },
-      relues: {
-        name: [
-          {
-            required: true,
-            message: '请填写姓名',
-            trigger: 'blur'
-          }
-        ],
-        pwd: [
-          {
-            required: true,
-            message: '请填写密码',
-            trigger: 'blur'
-          }
-        ]
-      }
+      groups: [],
+      groupIndex: 0,
+      users: []
     };
+  },
+  computed: {
+    group() {
+      return this.groups[this.groupIndex] || {};
+    }
+  },
+  watch: {
+    groupIndex() {
+      if (this.group.member) {
+        this.user.name = this.group.member[0].name;
+      }
+    }
   },
 
   created() {
+    // 已经登录则自动登录并跳转
     let user = AV.User.current();
     if (user !== null) {
       this.$router.push(
         user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
       );
+    } else {
+      getAllUser().then(data => {
+        this.$set(this, 'groups', data.groups);
+        this.$set(this, 'users', data.users);
+        this.groupIndex =
+          parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
+        this.user.name = this.group.member[0].name;
+      });
     }
   },
 
   methods: {
     login() {
       this.$refs.form.validate(isValidated => {
-        userApi.logIn(this.user.name, this.user.pwd).then(user => {
+        localStorage.setItem('localGroupIndex', this.groupIndex);
+        localStorage.setItem('localUserName', this.user.name);
+        api.logIn(this.user.name, this.user.pwd).then(user => {
           console.log(user);
           if (user.attributes.groupName) {
             this.$router.push('/main/input');
