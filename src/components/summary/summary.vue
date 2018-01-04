@@ -42,7 +42,7 @@
       </tbody>
     </table>
     <i-button type="primary" @click="exportTable">导出</i-button>
-    <div ref="person-charts" style="width:100%;height:300px;margin-top:20px"></div>
+    <div ref="person-charts" style="width:100%;height:400px;margin-top:20px"></div>
     <div ref="group-charts" style="width:100%;height:300px;"></div>
   </div>
 </template>
