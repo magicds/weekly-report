@@ -1,5 +1,5 @@
 <template>
-  <div class="summary" :data="cloneData" :full-time="fullTime">
+  <div class="summary" :data="cloneData" >
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <thead>
         <tr>
@@ -143,8 +143,7 @@ export default {
     'i-button': Button
   },
   props: {
-    data: Array,
-    fullTime: Number
+    data: Array
   },
   mounted() {
     renderCharts(
@@ -221,7 +220,6 @@ export default {
     // 1.2~1.4 或 0.7~0.9       黄色
     // 1.4+ 0.7-                红色 加粗
     getSaturationStyle(v) {
-      // let v = (person.taskTime + person.communicationTime) / this.fullTime;
       if (v >= 1.4 || v < 0.7) {
         return 'text-danger text-bold';
       } else if (v >= 1.2) {
@@ -272,11 +270,11 @@ export default {
   },
   watch: {
     // 周时间变化时，计算更新饱和度
-    fullTime(newVal, oldVal) {
-      this.cloneData.forEach(item => {
-        item.saturation = item.saturation * oldVal / newVal;
-      });
-    },
+    // fullTime(newVal, oldVal) {
+    //   this.cloneData.forEach(item => {
+    //     item.saturation = item.saturation * oldVal / newVal;
+    //   });
+    // },
     // 数据变化时更新表格数据
     data(newVal) {
       this.$set(this, 'cloneData', getCloneData(newVal));

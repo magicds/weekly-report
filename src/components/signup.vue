@@ -34,6 +34,8 @@ import { Select, Option } from 'iview/src/components/select';
 import Modal from 'iview/src/components/Modal/index.js';
 import api from '@/api/index.js';
 
+window.api = api;
+
 console.log(api);
 
 export default {

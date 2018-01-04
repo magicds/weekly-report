@@ -3,7 +3,7 @@
     请选择要查看的时间范围
     <DatePicker type="daterange" v-model="date" :options="rangeSettings" placement="bottom-start" placeholder="请选择一个时间段" style="width: 200px"></DatePicker>
     <i-button @click="search">查询</i-button>
-    <my-summary v-if="isShow" :data="data" :full-time="fullTime"></my-summary>
+    <my-summary v-if="isShow" :data="data"></my-summary>
   </div>
 </template>
 <script>
@@ -16,7 +16,7 @@ import Promise from 'bluebird';
 import moment from 'moment';
 
 // 获取数据
-function getData(start, end, fullTime) {
+function getData(start, end) {
   return Promise.all([
     api.getAllUser(),
     api.getDataByRange(start, end)
@@ -25,7 +25,7 @@ function getData(start, end, fullTime) {
 
     window.results = results;
 
-    let reports = dealReports(results[1], results[0], fullTime);
+    let reports = dealReports(results[1], results[0]);
     window.reports = reports;
 
     return reports;
@@ -42,7 +42,7 @@ function toMap(users) {
 // logs转为map
 function logToMap(logs) {
   let map = {};
-  let attrs, id,reportData;
+  let attrs, id, reportData;
   let weeks = 0;
   logs.forEach(item => {
     attrs = item.attributes;
@@ -70,7 +70,7 @@ function logToMap(logs) {
 }
 
 // 处理为显示需要的数据
-function dealReports(data, users, fullTime) {
+function dealReports(data, users) {
   let reports = [],
     userMap = toMap(users),
     // 已经提交人人员集合
@@ -86,9 +86,7 @@ function dealReports(data, users, fullTime) {
         {
           userId: attrs.userId,
           createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-          saturation:
-            (reportData.taskTime + reportData.communicationTime) / fullTime
+          updatedAt: item.updatedAt
         },
         userMap[attrs.userId],
         reportData
@@ -167,7 +165,7 @@ export default {
   name: 'histroysmmmary',
   components: {
     DatePicker,
-    'my-summary':mySummary,
+    'my-summary': mySummary,
     'i-button': Button
   },
   data() {
@@ -218,8 +216,7 @@ export default {
       data: JSON.parse(
         '[{"userId":"5a0126e82f301e0069e964d8","createdAt":"2017-11-07T03:42:11.284Z","updatedAt":"2017-11-07T05:55:28.212Z","groupName":"Front End Support","username":"支撑人员1","emailVerified":false,"groupIndex":0,"mobilePhoneVerified":false,"workList":[{"id":"list-3","type":"task","typeText":"实际任务","content":"支撑工作1","showTime":false,"time":6.333333333333333},{"id":"list-4","type":"task","typeText":"实际任务","content":"支撑工作2","showTime":false,"time":6.333333333333333},{"id":"list-5","type":"task","typeText":"实际任务","content":"支撑工作3","showTime":false,"time":6.333333333333333},{"id":"list-6","type":"task","typeText":"实际任务","content":"维护工作1","showTime":false,"time":11.5},{"id":"list-7","type":"task","typeText":"实际任务","content":"维护工作2","showTime":false,"time":11.5},{"id":"list-8","type":"communication","typeText":"沟通管理","content":"问题讨论","showTime":true,"time":4}],"leaveList":[],"studyTime":0,"taskTime":42,"communicationTime":4,"leaveTime":0,"saturation":1.15},{"userId":"5a01277bfe88c20068352838","createdAt":"2017-11-07T06:25:48.710Z","updatedAt":"2017-11-07T06:25:48.710Z","groupName":"Front End Support","username":"支撑人员2","emailVerified":false,"groupIndex":0,"mobilePhoneVerified":false,"workList":[{"id":"list-1","type":"task","typeText":"实际任务","content":"是点击开发和接口申达股份接受多个 ","showTime":false,"time":6.666666666666667},{"id":"list-2","type":"task","typeText":"实际任务","content":"是打开返回即可申达股份","showTime":false,"time":6.666666666666667},{"id":"list-3","type":"task","typeText":"实际任务","content":"收到回复口接受多个附件库","showTime":false,"time":6.666666666666667},{"id":"list-4","type":"task","typeText":"实际任务","content":"收到回复给客户的顾客顾客的说风凉话个接口的覆盖","showTime":false,"time":6.666666666666667},{"id":"list-5","type":"task","typeText":"实际任务","content":"的返回个卡顿感客户给","showTime":false,"time":6.666666666666667},{"id":"list-6","type":"task","typeText":"实际任务","content":"后端反馈结构和","showTime":false,"time":6.666666666666667}],"leaveList":[],"studyTime":0,"taskTime":40,"communicationTime":0,"leaveTime":0,"saturation":1},{"uncommitted":true,"userId":"5a01134b1579a30045122e12","workList":[],"leaveList":[],"studyTime":0,"taskTime":0,"communicationTime":0,"leaveTime":0,"email":"516321242@qq.com","username":"管理员","emailVerified":false,"mobilePhoneVerified":false,"saturation":0}]'
       ),
-      isShow: false,
-      fullTime: 40
+      isShow: false
     };
   },
   watch: {},

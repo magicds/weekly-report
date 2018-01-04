@@ -38,22 +38,6 @@ export default {
         console.log('注册成功,当前用户为', AV.User.current());
         // 注册成功后查询是否为第一个用户 为其添加 管理员角色
         return this.getUsersCount().then(count => {
-          // let promArr = []
-
-          // if (count > 1) {
-          //   promArr.push(this.addRole('normal', user))
-          // } else {
-          //   // 第一个用户进来创建角色
-          //   promArr.push(this.createRole('administrator', user))
-          //   promArr.push(this.createRole('normal', user))
-
-          // }
-
-          // // 角色创建及相关初始化完成或添加完毕后 为用户添加角色权限控制
-          // Promise.all(promArr).then(data => {
-          //   this.afterUserSignUp(user)
-          // })
-
           if (count > 1) {
             return this.addRole('normal', user).then(data => {
               return this.afterUserSignUp(user);
@@ -192,9 +176,9 @@ export default {
       });
   },
   // 获取所有用户
-  getAllUser: (function() {
+  getAllUser: (function () {
     let cache;
-    return function(noCache) {
+    return function (noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
         cache = this.getData('_User');

@@ -1,15 +1,15 @@
 <template>
   <div class="currweeksummary">
-    <my-summary :data="data" :full-time="fullTime"></my-summary>
+    <my-summary :data="data" ></my-summary>
 
-    <div class="summary-fixed">
+    <!-- <div class="summary-fixed">
       <affix :offset-bottom="70">
         <span class="side-affix">查看汇总</span>
       </affix>
       <affix :offset-bottom="20">
         <span class="side-affix">查看表格</span>
       </affix>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -20,7 +20,7 @@ import api from '@/api/index.js';
 import Promise from 'bluebird';
 
 // 获取数据
-function getData(fullTime) {
+function getData() {
   return Promise.all([
     api.getAllUser(),
     api.getCurrWeekData()
@@ -29,7 +29,7 @@ function getData(fullTime) {
 
     window.results = results;
 
-    let reports = dealReports(results[1], results[0], fullTime);
+    let reports = dealReports(results[1], results[0]);
     window.reports = reports;
 
     return reports;
@@ -46,7 +46,7 @@ function toMap(users) {
 }
 
 // 处理为显示需要的数据
-function dealReports(data, users, fullTime) {
+function dealReports(data, users) {
   let reports = [],
     userMap = toMap(users),
     // 已经提交人人员集合
@@ -62,9 +62,7 @@ function dealReports(data, users, fullTime) {
         {
           userId: attrs.userId,
           createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-          saturation:
-            (reportData.taskTime + reportData.communicationTime) / fullTime
+          updatedAt: item.updatedAt
         },
         userMap[attrs.userId],
         reportData
@@ -108,12 +106,11 @@ export default {
     return {
       data: JSON.parse(
         '[{"userId":"5a0126e82f301e0069e964d8","createdAt":"2017-11-07T03:42:11.284Z","updatedAt":"2017-11-07T05:55:28.212Z","groupName":"Front End Support","username":"支撑人员1","emailVerified":false,"groupIndex":0,"mobilePhoneVerified":false,"workList":[{"id":"list-3","type":"task","typeText":"实际任务","content":"支撑工作1","showTime":false,"time":6.333333333333333},{"id":"list-4","type":"task","typeText":"实际任务","content":"支撑工作2","showTime":false,"time":6.333333333333333},{"id":"list-5","type":"task","typeText":"实际任务","content":"支撑工作3","showTime":false,"time":6.333333333333333},{"id":"list-6","type":"task","typeText":"实际任务","content":"维护工作1","showTime":false,"time":11.5},{"id":"list-7","type":"task","typeText":"实际任务","content":"维护工作2","showTime":false,"time":11.5},{"id":"list-8","type":"communication","typeText":"沟通管理","content":"问题讨论","showTime":true,"time":4}],"leaveList":[],"studyTime":0,"taskTime":42,"communicationTime":4,"leaveTime":0,"saturation":1.15},{"userId":"5a01277bfe88c20068352838","createdAt":"2017-11-07T06:25:48.710Z","updatedAt":"2017-11-07T06:25:48.710Z","groupName":"Front End Support","username":"支撑人员2","emailVerified":false,"groupIndex":0,"mobilePhoneVerified":false,"workList":[{"id":"list-1","type":"task","typeText":"实际任务","content":"是点击开发和接口申达股份接受多个 ","showTime":false,"time":6.666666666666667},{"id":"list-2","type":"task","typeText":"实际任务","content":"是打开返回即可申达股份","showTime":false,"time":6.666666666666667},{"id":"list-3","type":"task","typeText":"实际任务","content":"收到回复口接受多个附件库","showTime":false,"time":6.666666666666667},{"id":"list-4","type":"task","typeText":"实际任务","content":"收到回复给客户的顾客顾客的说风凉话个接口的覆盖","showTime":false,"time":6.666666666666667},{"id":"list-5","type":"task","typeText":"实际任务","content":"的返回个卡顿感客户给","showTime":false,"time":6.666666666666667},{"id":"list-6","type":"task","typeText":"实际任务","content":"后端反馈结构和","showTime":false,"time":6.666666666666667}],"leaveList":[],"studyTime":0,"taskTime":40,"communicationTime":0,"leaveTime":0,"saturation":1},{"uncommitted":true,"userId":"5a01134b1579a30045122e12","workList":[],"leaveList":[],"studyTime":0,"taskTime":0,"communicationTime":0,"leaveTime":0,"email":"516321242@qq.com","username":"管理员","emailVerified":false,"mobilePhoneVerified":false,"saturation":0}]'
-      ),
-      fullTime: 40
+      )
     };
   },
   created() {
-    // getData(this.fullTime).then(data => {
+    // getData().then(data => {
     //   console.log(data);
     // })
     console.log('created');

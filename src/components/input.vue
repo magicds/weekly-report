@@ -415,7 +415,8 @@ export default {
               studyTime: this.studyTime,
               taskTime: this.taskTime,
               communicationTime: this.communicationTime,
-              leaveTime: this.leaveTime
+              leaveTime: this.leaveTime,
+              saturation: (this.taskTime + this.communicationTime) / 40
             })
             .then(savedData => {
               console.log(savedData);
@@ -470,7 +471,7 @@ legend {
   padding: 10px 20px;
   line-height: 26px;
   color: #464c5b;
-  margin-bottom:24px;
+  margin-bottom: 24px;
 }
 .type-info .light {
   color: #000;
