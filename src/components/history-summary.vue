@@ -3,6 +3,7 @@
     请选择要查看的时间范围
     <DatePicker type="daterange" v-model="date" :options="rangeSettings" placement="bottom-start" placeholder="请选择一个时间段" style="width: 200px"></DatePicker>
     <i-button @click="search">查询</i-button>
+    <p v-show="rangeInfo" class="range-info">{{rangeInfo}}</p>
     <my-summary v-if="isShow" :data="data"></my-summary>
   </div>
 </template>
@@ -16,14 +17,15 @@ import Promise from 'bluebird';
 import moment from 'moment';
 
 // 获取两个日期之间的星期数目
-function getWeeks(strat,end) {
+function getWeeks(strat, end) {
   let s = moment(strat);
   let e = moment(end);
 
-  return Math.ceil((e.dayOfYear() - s.dayOfYear()) / 7)
+  // return Math.ceil((e.dayOfYear() - s.dayOfYear()) / 7);
+  return Math.ceil(e.diff(s, 'days', true) / 7);
 }
 // 获取数据
-function getData(start, end) {
+function getData(start, end, weeks) {
   return Promise.all([
     api.getAllUser(),
     api.getDataByRange(start, end, { sort: 'asc', field: 'createdAt' })
@@ -32,7 +34,7 @@ function getData(start, end) {
 
     window.results = results;
 
-    let reports = dealReports(results[1], results[0], getWeeks(start,end));
+    let reports = dealReports(results[1], results[0], weeks);
     window.reports = reports;
 
     return reports;
@@ -83,8 +85,6 @@ function dealReports(data, users) {
   let reportMap = logToMap(data);
   // 已经提交人人员集合
   let submitedUsers = {};
-
-
 
   // data.forEach(item => {
   //   let attrs = item.attributes;
@@ -184,6 +184,8 @@ export default {
     return {
       date: getDateRange('month', 1),
 
+      rangeInfo: '',
+
       rangeSettings: {
         // 快捷选择
         shortcuts: [
@@ -248,20 +250,36 @@ export default {
         end = end.add(7 - day + 1, 'days').toDate();
       }
       return [start, end];
+    },
+    weeks() {
+      return getWeeks(...this.dateRange);
     }
   },
   methods: {
     search() {
       if (!this.date[0]) return;
-      getData(...this.dateRange).then(data => {
-        this.isShow = true;
-        this.$set(this, 'data', data);
-      });
+
+      this.rangeInfo =
+        moment(this.dateRange[0]).format('YY年MM月DD日') +
+        ' 到 ' +
+        moment(this.dateRange[1]).format('YY年MM月DD日') +
+        '，共' +
+        this.weeks +
+        '周。';
+
+      // getData(...this.dateRange,this.weeks).then(data => {
+      //   this.isShow = true;
+      //   this.$set(this, 'data', data);
+      // });
     }
   }
 };
 </script>
 
 <style>
-
+.range-info {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+}
 </style>
