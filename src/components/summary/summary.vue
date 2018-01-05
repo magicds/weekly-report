@@ -1,5 +1,13 @@
 <template>
-  <div class="summary" :data="cloneData" >
+  <div class="summary" :data="cloneData" :isloading="isloading">
+    <div class="summary-loading" v-show="isloading">
+      <div class="ivu-spin ivu-spin-large ivu-spin-fix">
+        <div class="ivu-spin-main">
+          <span class="ivu-spin-dot"></span>
+          <div class="ivu-spin-text">加载中</div>
+        </div>
+      </div>
+    </div>
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <thead>
         <tr>
@@ -143,7 +151,11 @@ export default {
     'i-button': Button
   },
   props: {
-    data: Array
+    data: Array,
+    isloading: {
+      type: Boolean,
+      default: false
+    }
   },
   mounted() {
     renderCharts(
@@ -286,9 +298,23 @@ export default {
 </script>
 
 <style>
+.summary {
+  position: relative;
+}
 .vertical-middle td,
 .vertical-middle th {
   vertical-align: middle;
+}
+.summary-loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.summary-loading .ivu-spin-fix .ivu-spin-main {
+  position: fixed;
+}
+.summary-loading  .ivu-spin-text {
+   display: block;
 }
 /* .ivu-table-sort {
     visibility: hidden;
