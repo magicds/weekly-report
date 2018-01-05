@@ -107,7 +107,8 @@ export default {
   watch: {
     groupIndex() {
       if (this.group.member) {
-        this.user.name = this.group.member[0].name;
+        // this.user.name = this.group.member[0].name;
+        this.fillUser();
       }
     }
   },
@@ -125,7 +126,7 @@ export default {
         this.$set(this, 'users', data.users);
         this.groupIndex =
           parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
-        this.user.name = this.group.member[0].name;
+        this.fillUser();
       });
     }
   },
@@ -150,6 +151,25 @@ export default {
     },
     forgetPwd() {
       this.$router.push('/forgetpwd');
+    },
+    fillUser() {
+      var localUser = localStorage.getItem('localUserName');
+
+      if (!localUser) {
+        this.user.name = this.group.member[0].name;
+      } else {
+        let hasLocal = false;
+        this.group.member.forEach(item => {
+          if (item.name == localUser) {
+            hasLocal = true;
+          }
+        });
+        if (hasLocal) {
+          this.user.name = localUser;
+        } else {
+          this.user.name = this.group.member[0].name;
+        }
+      }
     }
   }
 };

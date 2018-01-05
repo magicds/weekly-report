@@ -65,7 +65,7 @@ export default {
     let user = AV.User.current();
     if (user !== null) {
       this.$router.push(
-        user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
+        user.attributes.isAdmin ? { name: 'summary' } : { name: 'input' }
       );
     }
   },
@@ -73,14 +73,20 @@ export default {
   methods: {
     login() {
       this.$refs.form.validate(isValidated => {
-        userApi.logIn(this.user.name, this.user.pwd).then(user => {
-          console.log(user);
-          if (user.attributes.groupName) {
-            this.$router.push('/main/input');
-          } else {
-            this.$router.push('/main/summary');
-          }
-        });
+        if (!isValidated) return;
+        return userApi
+          .logIn(this.user.name, this.user.pwd)
+          .then(user => {
+            console.log(user);
+            if (user.attributes.groupName) {
+              this.$router.push('/main/input');
+            } else {
+              this.$router.push('/main/summary');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
       });
     },
     signup() {

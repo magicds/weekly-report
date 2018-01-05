@@ -3,7 +3,7 @@
       <div class="signup-box">
           <i-form ref="form" :rules="relues">
             <FormItem prop="name">
-              <i-input type="text" v-model="username" placeholder="请输入用户名"></i-input>
+              <i-input type="text" v-model="username" placeholder="请输入您的姓名"></i-input>
             </FormItem>
             <FormItem prop="pwd">
               <i-input type="password" v-model="pwd" placeholder="请输入密码"></i-input>
@@ -17,8 +17,11 @@
                 <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
               </i-select>
             </Form-item>
-            <FormItem>
-              <i-button type="primary" @click="signup">注册并登录</i-button>
+            <FormItem style="text-align:center;">
+              <ButtonGroup>
+                <i-button type="primary" @click="signup">注册并登录</i-button>
+                <i-button type="default" @click="login">已有账号，去登录</i-button>
+              </ButtonGroup>
             </FormItem>
           </i-form>
       </div>
@@ -29,7 +32,7 @@
 import Form from 'iview/src/components/form/form';
 import FormItem from 'iview/src/components/form/form-item';
 import Input from 'iview/src/components/input/input';
-import Button from 'iview/src/components/button/button';
+import Button from 'iview/src/components/button/';
 import { Select, Option } from 'iview/src/components/select';
 import Modal from 'iview/src/components/Modal/index.js';
 import api from '@/api/index.js';
@@ -43,6 +46,7 @@ export default {
   components: {
     'i-form': Form,
     FormItem,
+    ButtonGroup :Button.Group,
     'i-input': Input,
     'i-button': Button,
     'i-select': Select,
@@ -56,7 +60,6 @@ export default {
         field: 'groupIndex'
       })
       .then(result => {
-        console.log(result);
         result.forEach(item => {
           this.groups.push(item.attributes);
         });
@@ -67,7 +70,7 @@ export default {
       username: '',
       pwd: '',
       email: '',
-      groupIndex: -1,
+      groupIndex: 0,
       groups: [],
       relues: {
         name: [
@@ -107,6 +110,8 @@ export default {
   methods: {
     signup() {
       this.$refs.form.validate(isValidated => {
+        if (!isValidated) return;
+
         let user = {
           name: this.username,
           pwd: this.pwd,
@@ -134,12 +139,21 @@ export default {
           });
         }
       });
+    },
+    login() {
+      this.$router.push('/');
     }
   }
 };
 </script>
 
 <style>
-
+.signup-box {
+  width: 300px;
+  margin-top: -webkit-calc(30% - 120px);
+  margin-top: calc(30% - 120px);
+  margin-left: auto;
+  margin-right: auto;
+}
 </style>
 
