@@ -397,7 +397,8 @@ export default {
                   studyTime: this.studyTime,
                   taskTime: this.taskTime,
                   communicationTime: this.communicationTime,
-                  leaveTime: this.leaveTime
+                  leaveTime: this.leaveTime,
+                  saturation: (this.taskTime + this.communicationTime) / 40
                 })
                 .then(savedData => {
                   console.log(savedData);
