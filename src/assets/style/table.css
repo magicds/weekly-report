@@ -271,3 +271,18 @@ table th[class*="col-"] {
         border-bottom: 0;
     }
 }
+ @media (min-width: 1400px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+@media (min-width: 1500px) {
+    .container {
+        max-width: 1380px;
+    }
+}
+@media (min-width: 1800px) {
+    .container {
+        max-width: 1580px;
+    }
+}

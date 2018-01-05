@@ -29,16 +29,16 @@
           <td>{{person.username}}</td>
           <td>
             <ul v-if="person.workList.length > 0">
-              <li v-for="item in person.workList">{{item.content}} <span v-if="item.showTime">（{{item.time}} 小时）</span><span v-else></span></li>
+              <li v-for="item in person.workList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
           </td>
-          <td>{{person.taskTime}}</td>
-          <td>{{person.communicationTime}}</td>
-          <td>{{person.studyTime}}</td>
+          <td>{{person.taskTime | toInteger}}</td>
+          <td>{{person.communicationTime | toInteger}}</td>
+          <td>{{person.studyTime | toInteger}}</td>
           <td :class="getSaturationStyle(person.saturation)">{{person.saturation | getProportion}}</td>
           <td>
             <ul v-if="person.leaveList.length > 0">
-              <li v-for="item in person.leaveList">{{item.content}} <span v-if="item.showTime">（{{item.time}} 小时）</span><span v-else></span></li>
+              <li v-for="item in person.leaveList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
             <span v-else>无</span>
           </td>
@@ -226,6 +226,9 @@ export default {
     formatTime(v) {
       let c = moment(v);
       return c.format('MM-DD HH:mm') + ' 周' + WEEKNAMES[c.isoWeekday() - 1];
+    },
+    toInteger(v) {
+      return parseInt(v.toFixed(0), 10);
     }
   },
   methods: {
@@ -297,9 +300,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .summary {
   position: relative;
+}
+.summary ul {
+  margin: 0;
+  padding: 0;
 }
 .vertical-middle td,
 .vertical-middle th {
@@ -313,8 +320,8 @@ export default {
 .summary-loading .ivu-spin-fix .ivu-spin-main {
   position: fixed;
 }
-.summary-loading  .ivu-spin-text {
-   display: block;
+.summary-loading .ivu-spin-text {
+  display: block;
 }
 /* .ivu-table-sort {
     visibility: hidden;
