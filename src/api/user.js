@@ -8,7 +8,7 @@ window.AV = AV;
 
 export default {
   logIn(name, pwd) {
-    return AV.User.logIn(name, pwd);
+    return AV.User.logIn(name, pwd).catch(throwError);
   },
   getCurrUser() {
     return AV.User.current();
@@ -176,9 +176,9 @@ export default {
       });
   },
   // 获取所有用户
-  getAllUser: (function () {
+  getAllUser: (function() {
     let cache;
-    return function (noCache) {
+    return function(noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
         cache = this.getData('_User');

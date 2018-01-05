@@ -110,5 +110,8 @@ export default {
   background: #fff;
   color: #2d8cf0;
 }
+.ivu-avatar {
+  background: #2d8cf0;
+}
 </style>
 
