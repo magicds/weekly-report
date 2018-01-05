@@ -4,9 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
-import Table from 'iview/src/components/table'
 import 'iview/dist/styles/iview.css' // 使用 iview CSS
 import 'zui/dist/css/zui.min.css' // 使用 zui-css
+import '@/assets/style/table.css'
 
 // AV初始化
 /* global require */

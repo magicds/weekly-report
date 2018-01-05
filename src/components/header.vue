@@ -59,7 +59,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .header {
   height: 38px;
   margin-bottom: 10px;

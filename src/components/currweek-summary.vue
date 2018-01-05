@@ -104,8 +104,7 @@ export default {
   name: 'currweeksummary',
   components: {
     mySummary,
-    Affix,
-    Icon
+    Affix
   },
   data() {
     return {

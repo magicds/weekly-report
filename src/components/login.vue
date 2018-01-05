@@ -27,14 +27,14 @@ import Input from 'iview/src/components/input/input';
 import Button from 'iview/src/components/button/button';
 import AV from 'leancloud-storage';
 import userApi from '@/api/user';
-
 export default {
   name: 'login',
   components: {
     'i-form': Form,
     FormItem,
     'i-input': Input,
-    'i-button': Button
+    'i-button': Button,
+    Message
   },
   data() {
     return {

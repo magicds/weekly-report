@@ -11,7 +11,7 @@
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <thead>
         <tr>
-          <th v-for="column in columns">
+          <th v-for="column in columns" style="width:;">
             <span class="column-name">{{column.title}}</span>
             <span class="ivu-table-sort" v-if="column.sortable">
               <i class="ivu-icon ivu-icon-arrow-up-b"
@@ -44,7 +44,7 @@
           </td>
           <td>
             <span v-if="person.uncommitted">未提交</span>
-            <span v-else :title="getTimeTitle(person)">{{person.createdAt | formatTime}}</span>
+            <span v-else :title="getTimeTitle(person)">{{person.updatedAt | formatTime}}</span>
           </td>
         </tr>
       </tbody>

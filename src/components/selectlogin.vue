@@ -41,6 +41,8 @@ import { Select, Option } from 'iview/src/components/select';
 import AV from 'leancloud-storage';
 import api from '@/api/index';
 import Promise from 'bluebird';
+import Message from 'iview/src/components/message';
+window.Message = Message;
 
 function getAllUser() {
   return Promise.all([
@@ -121,6 +123,11 @@ export default {
         user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
       );
     } else {
+      Message.info({
+        content: '默认密码为：123456',
+        closable: true,
+        duration: 15
+      });
       getAllUser().then(data => {
         this.$set(this, 'groups', data.groups);
         this.$set(this, 'users', data.users);
