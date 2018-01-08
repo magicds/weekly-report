@@ -1,3 +1,4 @@
 build/*.js
 config/*.js
 **/libs/*.*
+src/config/av.config.js
