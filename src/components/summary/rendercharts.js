@@ -13,6 +13,7 @@ let prepareDataForCharts = function(data) {
       rate: []
     };
   data.forEach(item => {
+    if(!item.show) return;
     // 得到个人数据
     person.name.push(item.username);
     person.rate.push(item.saturation);
@@ -248,10 +249,11 @@ function renderGroup(group) {
 let personChart, groupChart;
 
 export default function(reports, personEl, groupEl) {
+  if(!personEl || !groupEl) return;
   let data = prepareDataForCharts(reports);
 
-  personChart = echarts.init(personEl);
-  groupChart = echarts.init(groupEl);
+  personChart = echarts.getInstanceByDom(personEl) || echarts.init(personEl);
+  groupChart = echarts.getInstanceByDom(groupEl) || echarts.init(groupEl);
   renderPerson(data.person);
   renderGroup(data.group);
 }

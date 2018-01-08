@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="person in cloneData">
+        <tr v-for="person in cloneData" v-if="person.show">
           <td class="text-center">{{person.username}} <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span></td>
           <td>
             <ul v-if="person.workList.length > 0">
@@ -53,13 +53,26 @@
       </tbody>
     </table>
     <i-button type="primary" @click="exportTable">导出</i-button>
+    <i-button type="primary" @click="showFilterDialog">选择</i-button>
     <div ref="person-charts" style="width:100%;height:400px;margin-top:20px"></div>
     <div ref="group-charts" style="width:100%;height:300px;"></div>
+
+    <Modal
+        v-model="showDialog"
+        title="选择要显示的人员"
+        width="200"
+        @on-ok="saveFilterData"
+        @on-cancel="resetFilterData"
+        >
+        <Tree :data="treeData" show-checkbox ref="tree"></Tree>
+    </Modal>
   </div>
 </template>
 
 <script>
 import Button from 'iview/src/components/button/button';
+import Modal from 'iview/src/components/modal/';
+import Tree from 'iview/src/components/tree/';
 import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
 import moment from 'moment';
@@ -87,7 +100,9 @@ function getCloneData(data) {
 export default {
   name: 'summary',
   components: {
-    'i-button': Button
+    'i-button': Button,
+    Modal,
+    Tree
   },
   props: {
     data: Array,
@@ -165,7 +180,9 @@ export default {
           width: '90px'
         }
       ],
-      cloneData: getCloneData(this.data)
+      cloneData: this.filterPerson(getCloneData(this.data)),
+      showDialog: false,
+      treeData: this.getTreeData(this.data)
     };
   },
   filters: {
@@ -210,7 +227,9 @@ export default {
 
       save_link.click();
     },
-
+    showFilterDialog() {
+      this.showDialog = true;
+    },
     sort(column, type) {
       if (column._sortType != type) {
         column._sortType = type;
@@ -239,24 +258,85 @@ export default {
           WEEKNAMES[u.isoWeekday() - 1]
         );
       }
+    },
+    saveFilterData() {
+      let unchecked = {};
+
+      this.$refs.tree.data.forEach(item => {
+        if (item.children) {
+          item.children.forEach(p => {
+            if (!p.checked) {
+              unchecked[p.uid] = true;
+            }
+          });
+        }
+      });
+
+      localStorage.setItem(
+        '_weekly-report-notshow_',
+        JSON.stringify(unchecked)
+      );
+      this.filterPerson(this.cloneData);
+    },
+    resetFilterData() {
+      // this.$set(this, 'treeData', this.getTreeData(this.data));
+    },
+    filterPerson(data) {
+      if (!data) return data;
+      let notShows = JSON.parse(
+        localStorage.getItem('_weekly-report-notshow_') || '{}'
+      );
+      data.forEach(item => {
+        item.show = notShows[item.userId] ? false : true;
+      });
+      return data;
+    },
+    getTreeData(data) {
+      if (!data) return [];
+      let groups = [
+        { id: 0, expand: true },
+        { id: 1, expand: true },
+        { id: 2, expand: true }
+      ];
+
+      let unchecked = JSON.parse(
+        localStorage.getItem('_weekly-report-notshow_') || '{}'
+      );
+
+      data.forEach(item => {
+        let gid = item.groupIndex;
+        if (!groups[gid].children) {
+          groups[gid].title = item.groupName;
+          groups[gid].children = [
+            {
+              uid: item.userId,
+              title: item.username,
+              checked: unchecked[item.userId] ? false : true
+            }
+          ];
+        } else {
+          groups[gid].children.push({
+            uid: item.userId,
+            title: item.username,
+            checked:  unchecked[item.userId] ? false : true
+          });
+        }
+      });
+
+      return groups;
     }
   },
   watch: {
-    // 周时间变化时，计算更新饱和度
-    // fullTime(newVal, oldVal) {
-    //   this.cloneData.forEach(item => {
-    //     item.saturation = item.saturation * oldVal / newVal;
-    //   });
-    // },
     // 数据变化时更新表格数据
     data(newVal) {
-      this.$set(this, 'cloneData', getCloneData(newVal));
+      this.$set(this, 'cloneData', this.filterPerson(getCloneData(newVal)));
+      this.$set(this, 'treeData', this.getTreeData(newVal));
     }
   }
 };
 </script>
 
-<style scoped>
+<style>
 .summary {
   position: relative;
 }
@@ -269,6 +349,16 @@ export default {
 .summary ul {
   margin: 0;
   padding: 0;
+}
+.ivu-tree-arrow {
+  margin-right: 5px;
+}
+.ivu-checkbox-wrapper {
+  margin-right: 0;
+  margin-bottom: 0;
+}
+.ivu-tree ul li {
+  margin: 0;
 }
 .vertical-middle td,
 .vertical-middle th {
@@ -285,6 +375,7 @@ export default {
 .summary-loading .ivu-spin-text {
   display: block;
 }
+
 /* .ivu-table-sort {
     visibility: hidden;
 }
