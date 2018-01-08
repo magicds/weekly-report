@@ -1,5 +1,5 @@
 <template>
-  <div class="summary" :data="cloneData" :isloading="isloading">
+  <div class="summary" :data="cloneData" :isloading="isloading" :export-name="exportName">
     <div class="summary-loading" v-show="isloading">
       <div class="ivu-spin ivu-spin-large ivu-spin-fix">
         <div class="ivu-spin-main">
@@ -94,6 +94,10 @@ export default {
     isloading: {
       type: Boolean,
       default: false
+    },
+    exportName: {
+      type: String,
+      default: '周报'
     }
   },
   mounted() {
@@ -202,7 +206,7 @@ export default {
     exportTable() {
       let save_link = document.createElement('a');
       ExcellentExport.csv(save_link, 'person-summary');
-      save_link.download = '周报' + '.csv';
+      save_link.download = this.exportName + '.csv';
 
       save_link.click();
     },

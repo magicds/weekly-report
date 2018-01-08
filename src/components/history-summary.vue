@@ -4,7 +4,7 @@
     <DatePicker type="daterange" v-model="date" :options="rangeSettings" placement="bottom-start" placeholder="请选择一个时间段" style="width: 200px"></DatePicker>
     <i-button @click="search">查询</i-button>
     <p v-show="rangeInfo" class="range-info">{{rangeInfo}}</p>
-    <my-summary v-if="isShow" :data="data"></my-summary>
+    <my-summary v-if="isShow" :data="data" :export-name="fileName"></my-summary>
   </div>
 </template>
 <script>
@@ -168,7 +168,7 @@ function getDateRange(unit, size) {
       let end_day = end.isoWeekday();
 
       return [
-        start.add(7 - start_day + 1, 'days').toDate(),
+        start.add(start_day === 1 ? 0 : 7 - start_day + 1, 'days').toDate(),
         end.add(7 - end_day + 1, 'days').toDate()
       ];
     })();
@@ -256,6 +256,14 @@ export default {
     },
     weeks() {
       return getWeeks(...this.dateRange);
+    },
+    fileName() {
+      return (
+        moment(this.dateRange[0]).format('MM.DD') +
+        '~' +
+        moment(this.dateRange[1]).format('MM.DD') +
+        '周报'
+      );
     }
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <div class="currweeksummary">
     <legend class="curr-summary-title">本周汇总<i  class="curr-summary-refresh icon icon-refresh" @click="refresh()" /></legend>
-    <my-summary :data="data" :isloading="isloading"></my-summary>
+    <my-summary :data="data" :isloading="isloading" :export-name="fileName"></my-summary>
 
     <!-- <div class="summary-fixed">
       <affix :offset-bottom="70">
@@ -18,6 +18,7 @@
 import mySummary from './summary/summary.vue';
 import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
+import moment from 'moment';
 import Promise from 'bluebird';
 import mergeSort from '@/util/sort.js';
 
@@ -117,6 +118,20 @@ export default {
       data: [],
       isloading: true
     };
+  },
+  computed: {
+    fileName() {
+      return (
+        moment()
+          .isoWeekday(1)
+          .format('MM.DD') +
+        '~' +
+        moment()
+          .isoWeekday(7)
+          .format('MM.DD') +
+        '周报'
+      );
+    }
   },
   created() {
     this.isloading = true;
