@@ -19,6 +19,7 @@ import mySummary from './summary/summary.vue';
 import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
 import Promise from 'bluebird';
+import mergeSort from '@/util/sort.js';
 
 // 获取数据
 function getData() {
@@ -32,6 +33,13 @@ function getData() {
 
     let reports = dealReports(results[1], results[0]);
     window.reports = reports;
+
+    // 新增排序标识
+    reports.forEach(item => {
+      item._index = item.groupIndex * 100 + item.memberIndex;
+    });
+
+    reports = mergeSort(reports, '_index', 'asc');
 
     return reports;
   });
@@ -109,7 +117,7 @@ export default {
   data() {
     return {
       data: [],
-      isloading:true
+      isloading: true
     };
   },
   created() {

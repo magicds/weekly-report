@@ -9,9 +9,12 @@
       </div>
     </div>
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
+      <colgroup>
+        <col v-for="(column, index) in columns" :width="setCellWidth(column, index)">
+      </colgroup>
       <thead>
         <tr>
-          <th v-for="column in columns" style="width:;">
+          <th v-for="column in columns" class="text-center">
             <span class="column-name">{{column.title}}</span>
             <span class="ivu-table-sort" v-if="column.sortable">
               <i class="ivu-icon ivu-icon-arrow-up-b"
@@ -26,23 +29,23 @@
       </thead>
       <tbody>
         <tr v-for="person in cloneData">
-          <td>{{person.username}}</td>
+          <td class="text-center">{{person.username}} <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span></td>
           <td>
             <ul v-if="person.workList.length > 0">
               <li v-for="item in person.workList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
           </td>
-          <td>{{person.taskTime | toInteger}}</td>
-          <td>{{person.communicationTime | toInteger}}</td>
-          <td>{{person.studyTime | toInteger}}</td>
-          <td :class="getSaturationStyle(person.saturation)">{{person.saturation | getProportion}}</td>
+          <td class="text-center">{{person.taskTime | toInteger}}</td>
+          <td class="text-center">{{person.communicationTime | toInteger}}</td>
+          <td  class="text-center">{{person.studyTime | toInteger}}</td>
+          <td :class="getSaturationStyle(person.saturation)"  class="text-center">{{person.saturation | getProportion}}</td>
           <td>
             <ul v-if="person.leaveList.length > 0">
               <li v-for="item in person.leaveList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
             <span v-else>无</span>
           </td>
-          <td>
+          <td  class="text-center">
             <span v-if="person.uncommitted">未提交</span>
             <span v-else :title="getTimeTitle(person)">{{person.updatedAt | formatTime}}</span>
           </td>
@@ -61,75 +64,9 @@ import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
 import moment from 'moment';
 import renderCharts from './rendercharts.js';
+import mergeSort from '@/util/sort.js';
 
 const WEEKNAMES = ['一', '二', '三', '四', '五', '六', '日'];
-
-/**
- * [归并排序]
- * @param  {[Array]} arr   [要排序的数组]
- * @param  {[String]} prop  [排序字段，用于数组成员是对象时，按照其某个属性进行排序，简单数组直接排序忽略此参数]
- * @param  {[String]} order [排序方式]
- * @return {[Array]}       [排序后数组，新数组，并非在原数组上的修改]
- */
-let mergeSort = (function() {
-  // 合并
-  let _merge = function(left, right, prop) {
-    let result = [];
-
-    // 对数组内成员的某个属性排序
-    if (prop) {
-      while (left.length && right.length) {
-        if (left[0][prop] <= right[0][prop]) {
-          result.push(left.shift());
-        } else {
-          result.push(right.shift());
-        }
-      }
-    } else {
-      // 数组成员直接排序
-      while (left.length && right.length) {
-        if (left[0] <= right[0]) {
-          result.push(left.shift());
-        } else {
-          result.push(right.shift());
-        }
-      }
-    }
-
-    while (left.length) result.push(left.shift());
-
-    while (right.length) result.push(right.shift());
-
-    return result;
-  };
-
-  let _mergeSort = function(arr, prop) {
-    // 采用自上而下的递归方法
-    let len = arr.length;
-    if (len < 2) {
-      return arr;
-    }
-    let middle = Math.floor(len / 2),
-      left = arr.slice(0, middle),
-      right = arr.slice(middle);
-    return _merge(_mergeSort(left, prop), _mergeSort(right, prop), prop);
-  };
-
-  return function(arr, prop, order) {
-    let result = _mergeSort(arr, prop);
-    if (!order || order.toLowerCase() === 'asc') {
-      // 升序
-      return result;
-    } else {
-      // 降序
-      let _ = [];
-      result.forEach(function(item) {
-        _.unshift(item);
-      });
-      return _;
-    }
-  };
-})();
 
 /**
  * 克隆数据 并添加默认的排序标识_index
@@ -139,9 +76,11 @@ let mergeSort = (function() {
  */
 function getCloneData(data) {
   let d = JSON.parse(JSON.stringify(data));
-  d.forEach((item, i) => {
-    item._index = i;
-  });
+  if (d.length && !d[0]._index) {
+    d.forEach((item, i) => {
+      item._index = i;
+    });
+  }
   return d;
 }
 
@@ -180,7 +119,8 @@ export default {
         {
           title: '姓名',
           key: 'username',
-          sortable: true
+          sortable: true,
+          width: '80px'
         },
         {
           title: '工作内容',
@@ -189,22 +129,26 @@ export default {
         {
           title: '任务耗时',
           key: 'taskTime',
-          sortable: true
+          sortable: true,
+          width: '90px'
         },
         {
           title: '沟通耗时',
           key: 'communicationTime',
-          sortable: true
+          sortable: true,
+          width: '90px'
         },
         {
           title: '学习耗时',
           key: 'studyTime',
-          sortable: true
+          sortable: true,
+          width: '90px'
         },
         {
           title: '饱和度',
           key: 'saturation',
-          sortable: true
+          sortable: true,
+          width: '80px'
         },
         {
           title: '备注',
@@ -213,7 +157,8 @@ export default {
         {
           title: '提交时间',
           key: 'createdAt',
-          sortable: true
+          sortable: true,
+          width: '90px'
         }
       ],
       cloneData: getCloneData(this.data)
@@ -232,6 +177,13 @@ export default {
     }
   },
   methods: {
+    setCellWidth(column, index) {
+      let width = '';
+      if (column.width) {
+        width = column.width;
+      }
+      return width;
+    },
     // 设置饱和度样式
     // 0.9~1.2                  绿色
     // 1.2~1.4 或 0.7~0.9       黄色
@@ -303,6 +255,12 @@ export default {
 <style scoped>
 .summary {
   position: relative;
+}
+.summary .table {
+  table-layout: fixed;
+}
+.person-info {
+  display: block;
 }
 .summary ul {
   margin: 0;
