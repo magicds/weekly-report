@@ -39,9 +39,7 @@ function getData() {
       item._index = item.groupIndex * 100 + item.memberIndex;
     });
 
-    reports = mergeSort(reports, '_index', 'asc');
-
-    return reports;
+    return mergeSort(reports, '_index', 'asc');
   });
 }
 
