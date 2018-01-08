@@ -247,7 +247,7 @@ export default {
   },
   filters: {
     getInt(v) {
-      return parseInt(v);
+      return v.toFixed(0);
     }
   },
   computed: {
