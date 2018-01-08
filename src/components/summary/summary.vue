@@ -156,7 +156,7 @@ export default {
         },
         {
           title: '提交时间',
-          key: 'createdAt',
+          key: 'updatedAt',
           sortable: true,
           width: '90px'
         }

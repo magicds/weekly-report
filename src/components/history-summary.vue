@@ -15,6 +15,7 @@ import DatePicker from 'iview/src/components/date-picker/';
 import Button from 'iview/src/components/button/';
 import Promise from 'bluebird';
 import moment from 'moment';
+import mergeSort from '@/util/sort.js';
 
 // 获取两个日期之间的星期数目
 function getWeeks(strat, end) {
@@ -59,7 +60,13 @@ function logToMap(logs) {
     id = attrs.userId;
     // 第一个时直接赋值，后面进行合并
     if (!map[id]) {
-      map[id] = attrs;
+      map[id] = Object.assign(
+        {
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt
+        },
+        reportData
+      );
     } else {
       // 时间以新的为准
       map[id].createdAt = item.createdAt;
@@ -79,32 +86,22 @@ function logToMap(logs) {
 }
 
 // 处理为显示需要的数据
-function dealReports(data, users) {
+function dealReports(data, users, weeks) {
   let reports = [];
   let userMap = toMap(users);
   let reportMap = logToMap(data);
   // 已经提交人人员集合
   let submitedUsers = {};
 
-  // data.forEach(item => {
-  //   let attrs = item.attributes;
-  //   let reportData = JSON.parse(attrs.report);
-
-  //   if (!userMap[attrs.userId].noReport) {
-  //     submitedUsers[attrs.userId] = true;
-  //     reports.push(
-  //       Object.assign(
-  //         {
-  //           userId: attrs.userId,
-  //           createdAt: item.createdAt,
-  //           updatedAt: item.updatedAt
-  //         },
-  //         userMap[attrs.userId],
-  //         reportData
-  //       )
-  //     );
-  //   }
-  // });
+  for (let uid in reportMap) {
+    if (
+      Object.prototype.hasOwnProperty.call(reportMap, uid) &&
+      !userMap[uid].noReport
+    ) {
+      submitedUsers[uid] = true;
+      reports.push(Object.assign(userMap[uid], reportMap[uid]));
+    }
+  }
 
   // 补上未提交人员的
   for (let i = 0, l = users.length; i < l; ++i) {
@@ -114,6 +111,7 @@ function dealReports(data, users) {
           {
             // 标识此用户未提交 并补充默认数据
             uncommitted: true,
+            updatedAt: new Date(2050, 11, 11),
             userId: users[i].id,
             workList: [],
             leaveList: [],
@@ -128,8 +126,13 @@ function dealReports(data, users) {
       );
     }
   }
+  // 组合排序标识 并 调整饱和度为平均饱和度
+  reports.forEach(item => {
+    item._index = item.groupIndex * 100 + item.memberIndex;
+    item.saturation = item.saturation / weeks;
+  });
 
-  return reports;
+  return mergeSort(reports, '_index', 'asc');
 }
 /**
  * 获取日期范围
@@ -245,7 +248,7 @@ export default {
       let day = end_v.isoWeekday();
       let end = end_v.clone();
       if (day === 1 && end_v.isAfter(start_v, 'day')) {
-        end = end.subtract(day, 'days').toDate();
+        end = end.toDate();
       } else {
         end = end.add(7 - day + 1, 'days').toDate();
       }
@@ -267,10 +270,10 @@ export default {
         this.weeks +
         '周。';
 
-      // getData(...this.dateRange,this.weeks).then(data => {
-      //   this.isShow = true;
-      //   this.$set(this, 'data', data);
-      // });
+      getData(...this.dateRange, this.weeks).then(data => {
+        this.isShow = true;
+        this.$set(this, 'data', data);
+      });
     }
   }
 };
