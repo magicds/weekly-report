@@ -4,7 +4,7 @@
     <DatePicker type="daterange" v-model="date" :options="rangeSettings" placement="bottom-start" placeholder="请选择一个时间段" style="width: 200px"></DatePicker>
     <i-button @click="search">查询</i-button>
     <p v-show="rangeInfo" class="range-info">{{rangeInfo}}</p>
-    <my-summary v-if="isShow" :data="data" :export-name="fileName"></my-summary>
+    <my-summary v-if="isShow" :data="data" :export-name="fileName" :isloading="inGetData"></my-summary>
   </div>
 </template>
 <script>
@@ -187,6 +187,8 @@ export default {
     return {
       date: getDateRange('month', 1),
 
+      inGetData: true,
+
       rangeInfo: '',
 
       rangeSettings: {
@@ -270,6 +272,7 @@ export default {
     search() {
       if (!this.date[0]) return;
 
+      this.inGetData = true;
       this.rangeInfo =
         moment(this.dateRange[0]).format('YY年MM月DD日') +
         ' 到 ' +
@@ -280,6 +283,7 @@ export default {
 
       getData(...this.dateRange, this.weeks).then(data => {
         this.isShow = true;
+        this.inGetData = false;
         this.$set(this, 'data', data);
       });
     }
