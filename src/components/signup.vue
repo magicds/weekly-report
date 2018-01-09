@@ -1,18 +1,18 @@
 <template>
   <div class="signup-wrap">
       <div class="signup-box">
-          <i-form ref="form" :rules="relues">
+          <i-form ref="form" :model="user" :rules="relues">
             <FormItem prop="name">
-              <i-input type="text" v-model="username" placeholder="请输入您的姓名"></i-input>
+              <i-input type="text" v-model="user.name" placeholder="请输入您的姓名"></i-input>
             </FormItem>
             <FormItem prop="pwd">
-              <i-input type="password" v-model="pwd" placeholder="请输入密码"></i-input>
+              <i-input type="password" v-model="user.pwd" placeholder="请输入密码"></i-input>
             </FormItem>
             <FormItem prop="email">
-              <i-input type="text" v-model="email" placeholder="请输入邮箱"></i-input>
+              <i-input type="text" v-model="user.email" placeholder="请输入邮箱"></i-input>
             </FormItem>
             <Form-item v-if="groups.length">
-              <i-select v-model="groupIndex" style="margin-bottom:10px;">
+              <i-select v-model="user.groupIndex" style="margin-bottom:10px;">
                 <!-- <i-option value="-1">请选择所在小组</i-option> -->
                 <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
               </i-select>
@@ -46,7 +46,7 @@ export default {
   components: {
     'i-form': Form,
     FormItem,
-    ButtonGroup :Button.Group,
+    ButtonGroup: Button.Group,
     'i-input': Input,
     'i-button': Button,
     'i-select': Select,
@@ -67,10 +67,12 @@ export default {
   },
   data() {
     return {
-      username: '',
-      pwd: '',
-      email: '',
-      groupIndex: 0,
+      user: {
+        name: '',
+        pwd: '',
+        email: '',
+        groupIndex: 0
+      },
       groups: [],
       relues: {
         name: [
@@ -104,7 +106,7 @@ export default {
   },
   computed: {
     groupName() {
-      return this.groups.filter(item => item.groupIndex === this.groupIndex)[0];
+      return this.groups.filter(item => item.groupIndex === this.groupIndex)[0].name;
     }
   },
   methods: {
@@ -113,11 +115,11 @@ export default {
         if (!isValidated) return;
 
         let user = {
-          name: this.username,
-          pwd: this.pwd,
-          email: this.email,
+          name: this.user.name,
+          pwd: this.user.pwd,
+          email: this.user.email,
           groupName: this.groupName,
-          groupIndex: this.groupIndex
+          groupIndex: this.user.groupIndex
         };
 
         // 检查有无选择小组
