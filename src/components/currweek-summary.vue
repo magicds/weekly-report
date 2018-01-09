@@ -133,14 +133,14 @@ export default {
       );
     }
   },
-  created() {
+  created() {},
+  mounted() {
     this.isloading = true;
     getData().then(data => {
       this.isloading = false;
       console.log(data);
       this.$set(this, 'data', data);
     });
-    console.log('created');
   },
   methods: {
     refresh() {

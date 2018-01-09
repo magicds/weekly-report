@@ -92,7 +92,7 @@ export default {
     roleQuery.equalTo('name', name);
     roleQuery.equalTo('users', user);
 
-    roleQuery
+    return roleQuery
       .find()
       .then(result => {
         if (result.length) {

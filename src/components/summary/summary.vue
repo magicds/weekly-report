@@ -279,7 +279,7 @@ export default {
       this.filterPerson(this.cloneData);
     },
     resetFilterData() {
-      // this.$set(this, 'treeData', this.getTreeData(this.data));
+      this.$set(this, 'treeData', this.getTreeData(this.data));
     },
     filterPerson(data) {
       if (!data) return data;
@@ -318,7 +318,7 @@ export default {
           groups[gid].children.push({
             uid: item.userId,
             title: item.username,
-            checked:  unchecked[item.userId] ? false : true
+            checked: unchecked[item.userId] ? false : true
           });
         }
       });

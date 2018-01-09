@@ -46,6 +46,7 @@ function toMap(users) {
   let user = {};
   users.forEach(item => {
     user[item.id] = item.attributes;
+    user[item.id].userId = item.id;
   });
   return user;
 }
