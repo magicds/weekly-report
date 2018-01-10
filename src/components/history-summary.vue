@@ -186,7 +186,7 @@ export default {
   },
   data() {
     return {
-      date: getDateRange('month', 1),
+      date: getDateRange('week', 1),
 
       inGetData: true,
 
