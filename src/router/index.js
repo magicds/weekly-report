@@ -24,11 +24,6 @@ const router = new Router({
     }
   },
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'Hello',
-    //   component: Hello
-    // },
     {
       path: '/',
       name: 'login',
@@ -67,15 +62,5 @@ const router = new Router({
       component: UserSetting
     }
   ]
-});
-
-router.beforeEach((to, from, next) => {
-  console.log('before');
-  console.log(to, from, next);
-  next();
-});
-router.afterEach((to, from) => {
-  console.log('after');
-  console.log(to, from);
 });
 export default router;
