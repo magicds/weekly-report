@@ -2,21 +2,11 @@
   <div class="currweeksummary">
     <legend class="curr-summary-title">本周汇总<i  class="curr-summary-refresh icon icon-refresh" @click="refresh()" /></legend>
     <my-summary :data="data" :isloading="isloading" :export-name="fileName"></my-summary>
-
-    <!-- <div class="summary-fixed">
-      <affix :offset-bottom="70">
-        <span class="side-affix">查看汇总</span>
-      </affix>
-      <affix :offset-bottom="20">
-        <span class="side-affix">查看表格</span>
-      </affix>
-    </div> -->
   </div>
 </template>
 
 <script>
 import mySummary from './summary/summary.vue';
-import Affix from 'iview/src/components/affix/affix';
 import api from '@/api/index.js';
 import moment from 'moment';
 import Promise from 'bluebird';
@@ -110,8 +100,7 @@ function dealReports(data, users) {
 export default {
   name: 'currweeksummary',
   components: {
-    mySummary,
-    Affix
+    mySummary
   },
   data() {
     return {
@@ -155,15 +144,7 @@ export default {
 </script>
 
 <style>
-/* .ivu-affix {
-  left: auto !important;
-  width:
-  right: 20px;
-} */
-.summary-fixed {
-  width: 40px;
-  float: right;
-}
+
 .side-affix {
   display: inline-block;
 }

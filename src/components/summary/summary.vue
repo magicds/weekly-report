@@ -46,7 +46,7 @@
             <span v-else>无</span>
           </td>
           <td  class="text-center">
-            <span v-if="person.uncommitted">未提交</span>
+            <span v-if="person.uncommitted" class="text-danger">未提交</span>
             <span v-else :title="getTimeTitle(person)">{{person.updatedAt | formatTime}}</span>
           </td>
         </tr>
