@@ -13,3 +13,4 @@ yarn-error.log*
 *.sln
 .vscode/
 src/config/av.config.js
+mail/mailer.php
