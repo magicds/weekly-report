@@ -23,7 +23,7 @@ export default {
 
     user.setUsername(userInfo.name);
     user.setPassword(userInfo.pwd);
-    user.setEmail(userInfo.eamil);
+    user.setEmail(userInfo.email);
 
     if (groupIndex != undefined) {
       user.set('groupIndex', groupIndex);
