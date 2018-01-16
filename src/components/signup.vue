@@ -106,7 +106,7 @@ export default {
   },
   computed: {
     groupName() {
-      return this.groups.filter(item => item.groupIndex === this.groupIndex)[0].name;
+      return this.groups.filter(item => item.index === this.user.groupIndex)[0].name;
     }
   },
   methods: {
