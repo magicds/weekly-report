@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 import 'iview/dist/styles/iview.css' // 使用 iview CSS
 import 'zui/dist/css/zui.min.css' // 使用 zui-css
-import '@/assets/style/table.css'
+import '@/assets/style/style.css'
 
 import App from './App'
 import router from './router'
