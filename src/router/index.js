@@ -1,16 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
-// import Login from '@/components/login';
 import Login from '@/components/selectlogin';
 import Signup from '@/components/signup';
 import Main from '@/components/main';
 import Input from '@/components/input';
-// import Summary from '@/components/summary';
 import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
-
 
 Vue.use(Router);
 
@@ -48,6 +44,11 @@ const router = new Router({
           path: 'history',
           name: 'history',
           component: HistorySummary
+        },
+        {
+          path: 'usersetting',
+          name: 'usersetting',
+          component: UserSetting
         }
       ]
     },

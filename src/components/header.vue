@@ -6,7 +6,7 @@
       <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
     </div>
     <div class="right">
-      <Dropdown @on-click="itemClick" placement="bottom-end">
+      <Dropdown @on-click="itemClick" trigger="click" placement="bottom-end">
         <a class href="javascript:void(0)">
           <Avatar>{{user.username}}</Avatar>
           <!-- <Icon type="arrow-down-b"></Icon> -->
@@ -17,6 +17,12 @@
         </DropdownMenu>
       </Dropdown>
     </div>
+    <!-- <Modal
+        v-model="showDialog"
+        :title="dialogTitle"
+        width="400"
+        >
+    </Modal> -->
   </header>
 </template>
 
@@ -25,6 +31,8 @@ import AV from 'leancloud-storage';
 import Dropdown from 'iview/src/components/dropdown';
 import Icon from 'iview/src/components/icon';
 import Avatar from 'iview/src/components/avatar';
+import Modal from 'iview/src/components/modal/';
+import UserInfo from './userInfo';
 import userApi from '@/api/user';
 
 export default {
@@ -38,14 +46,17 @@ export default {
   },
   data() {
     return {
-      user: userApi.getCurrUser().attributes
+      user: userApi.getCurrUser().attributes,
+      showDialog:false,
+      dialogTitle:'个人信息'
     };
   },
   mounted() {},
   methods: {
     itemClick(name) {
       switch (name) {
-        case 'userifo':
+        case 'userinfo':
+          this.$router.push('/main/usersetting');
           break;
         case 'logout':
           userApi.logOut();

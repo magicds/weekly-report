@@ -286,3 +286,9 @@ table th[class*="col-"] {
         max-width: 1580px;
     }
 }
+
+.clearfix:after {
+  content: "";
+  clear: both;
+  display: table;
+}
