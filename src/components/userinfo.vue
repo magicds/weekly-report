@@ -15,7 +15,7 @@
 
         <div class="item">
           <Icon style="margin-right:5px;" type="person"></Icon>
-          <span>{{user.username}}</span>
+          <span>{{fullName}}</span>
           <Tag v-if="user.isAdmin" color="green">管理员</Tag>
           <Tag v-if="user.noReport" color="blue">免填周报</Tag>
         </div>
@@ -64,6 +64,13 @@ export default {
   props: {
     user: Object,
     userId: String
+  },
+  computed: {
+    fullName() {
+      if (!this.user.extInfo) return this.user.username;
+
+      return this.user.username + '(' + this.user.extInfo + ')';
+    }
   },
   mounted() {
     this.avatar = localStorage.getItem('userAvatar_' + this.userId);
