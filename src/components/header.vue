@@ -13,6 +13,7 @@
         </a>
         <DropdownMenu slot="list">
             <DropdownItem name="userinfo">个人信息</DropdownItem>
+            <DropdownItem v-if="user.isAdmin" name="admin">管理</DropdownItem>
             <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -47,8 +48,8 @@ export default {
   data() {
     return {
       user: userApi.getCurrUser().attributes,
-      showDialog:false,
-      dialogTitle:'个人信息'
+      showDialog: false,
+      dialogTitle: '个人信息'
     };
   },
   mounted() {},
@@ -61,6 +62,9 @@ export default {
         case 'logout':
           userApi.logOut();
           this.$router.push('/');
+          break;
+        case 'admin':
+          this.$router.push('main/admin');
           break;
         default:
           break;
@@ -125,4 +129,3 @@ export default {
   background: #2d8cf0;
 }
 </style>
-

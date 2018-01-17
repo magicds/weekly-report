@@ -12,42 +12,6 @@ export default {
 </script>
 
 <style>
-body {
-  padding-bottom:20px;
-}
-ul {
-  padding: 0;
-  margin:0;
-}
-.container,
-.container-fixed,
-.container-fixed-md,
-.container-fixed-sm,
-.container-fixed-xs,
-.container-fluid {
-    margin-right: auto;
-    margin-left: auto;
-    padding-right: 10px;
-    padding-left: 10px;
-}
-
-@media (min-width: 768px) {
-    .container {
-        max-width: 740px;
-    }
-}
-
-@media (min-width: 992px) {
-    .container {
-        max-width: 960px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1160px;
-    }
-}
 
 #app {
     font-family: "Avenir", Helvetica, Arial, sans-serif;

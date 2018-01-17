@@ -7,6 +7,7 @@ import Input from '@/components/input';
 import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
+import Admin from '@/components/admin';
 
 Vue.use(Router);
 
@@ -49,6 +50,11 @@ const router = new Router({
           path: 'usersetting',
           name: 'usersetting',
           component: UserSetting
+        },
+        {
+          path: 'admin',
+          name: 'admin',
+          component: Admin
         }
       ]
     },
@@ -56,11 +62,6 @@ const router = new Router({
       path: '/signup',
       name: 'signup',
       component: Signup
-    },
-    {
-      path: '/setting',
-      name: 'userSetting',
-      component: UserSetting
     }
   ]
 });

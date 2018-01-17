@@ -107,6 +107,9 @@ export default {
 </script>
 
 <style scoped>
+.user-info {
+  padding: 10px;
+}
 .left {
   position: absolute;
   top: 50%;
@@ -115,7 +118,7 @@ export default {
   text-align: center;
 }
 .right {
-  margin-left: 120px;
+  margin-left: 100px;
 }
 .hr {
   margin-top: 5px;
@@ -124,6 +127,8 @@ export default {
 .detail-title,
 .item {
   padding-left: 10px;
+  line-height: 28px;
+  height: 28px;
 }
 .edit-btn-wrap {
   /* display: block; */
