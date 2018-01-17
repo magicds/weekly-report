@@ -120,10 +120,17 @@ export default {
     let user = AV.User.current();
     if (user !== null) {
       // 利用sessionToken重新登录一次，以便拉取最新信息
-      AV.User.become(user._sessionToken);
-      this.$router.push(
-        user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
-      );
+      AV.User.become(user._sessionToken)
+        .then(() => {
+          this.$router.push(
+            user.attributes.noReport ? { name: 'summary' } : { name: 'input' }
+          );
+        })
+        .catch(() => {
+          AV.User.logOut().then(() => {
+            this.$router.push('/');
+          });
+        });
     } else {
       Message.info({
         content: '默认密码为：123456',
