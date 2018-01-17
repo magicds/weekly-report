@@ -2,8 +2,10 @@
   <div class="user-setting" >
     <UserInfo :user="user" :userId="userId" @startEdit="startEdit"></UserInfo>
 
-    <Modal v-model="showEditor" title="信息编辑" >
-      <UserEditor :user="user" :userId="userId" :groups="groups"></UserEditor>
+    <Modal v-model="showEditor" title="个人信息" :footerHide="true" :maskClosable="false" :loading="inSaveing">
+      <UserEditor :user="user" :userId="userId" :groups="groups" @save="save" @cancel="cancel"></UserEditor>
+
+      <!-- <div slot="footer"></div> -->
     </Modal>
   </div>
 </template>
@@ -12,6 +14,7 @@
 import Modal from 'iview/src/components/modal/';
 import UserInfo from './userinfo';
 import UserEditor from './usereditor';
+import Message from 'iview/src/components/message';
 // import Card from 'iview/src/components/card/';
 // import Avatar from 'iview/src/components/avatar';
 // import Icon from 'iview/src/components/icon';
@@ -37,7 +40,8 @@ export default {
       user: api.getCurrUser().attributes,
       userId: api.getCurrUser().id,
       showEditor: false,
-      groups: []
+      groups: [],
+      inSaveing: false
     };
   },
   mounted() {
@@ -61,6 +65,44 @@ export default {
     startEdit(user, id) {
       // alert('editor\n'+ JSON.stringify(user, 0, 4));
       this.showEditor = true;
+    },
+    save(data, id) {
+      let keys = Object.keys(data);
+      if (!keys.length) {
+        this.showEditor = false;
+      } else {
+        this.inSaveing = true;
+        console.log(id, data);
+        let person = AV.Object.createWithoutData('_User', id);
+        keys.forEach(k => {
+          person.set(k, data[k]);
+        });
+        person
+          .save()
+          .then(r => {
+            Message.success({
+              content: '保存成功 ',
+              closable: true,
+              duration: 3
+            });
+
+            this.inSaveing = false;
+            this.showEditor = false;
+          })
+          .catch(e => {
+            Message.error({
+              content: '保存失败<br>' + JSON.stringify(e, 0, 2),
+              closable: true,
+              duration: 3
+            });
+
+            this.inSaveing = false;
+            this.showEditor = false;
+          });
+      }
+    },
+    cancel() {
+      this.showEditor = false;
     }
   }
 };

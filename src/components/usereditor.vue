@@ -1,16 +1,16 @@
 <template>
   <div class="user-editor" :user="user" :userId="userId" :isAdmin="isAdmin" :groups="groups">
-    <i-form ref="form" v-model="curruser" label-position="right" :label-width="80">
-      <Form-item label="姓名">
+    <i-form ref="form" :model="curruser" :rules="rules" label-position="right" :label-width="80">
+      <Form-item label="姓名" prop="username">
         <i-input v-model="curruser.username" icon="person"></i-input>
       </Form-item>
       <Form-item label="备注信息">
         <i-input v-model="curruser.extInfo" icon="ios-information" :disabled="!curruser.isAdmin"></i-input>
       </Form-item>
-      <Form-item label="邮件地址">
+      <Form-item label="邮件地址" prop="email">
         <i-input v-model="curruser.email" icon="email"></i-input>
       </Form-item>
-      <Form-item label="所在小组">
+      <Form-item label="所在小组" prop="groupIndex">
         <i-select v-model="curruser.groupIndex">
           <i-option v-for="item in groups" :key="item.index" :value="item.index">{{item.name}}</i-option>
         </i-select>
@@ -20,6 +20,10 @@
       </Form-item>
       <Form-item label="重置密码" v-if="!curruser.isAdmin">
         <i-button @click="resetPwd">重置密码</i-button>
+      </Form-item>
+      <Form-item>
+        <i-button type="primary" @click="save">保存</i-button>
+        <i-button @click="cancel">取消</i-button>
       </Form-item>
     </i-form>
   </div>
@@ -58,13 +62,40 @@ export default {
   data() {
     return {
       // 克隆一份作为编辑使用
-      curruser: JSON.parse(JSON.stringify(this.user))
+      curruser: JSON.parse(JSON.stringify(this.user)),
+      rules: {
+        username: [
+          {
+            required: true,
+            message: '请填姓名',
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          {
+            required: true,
+            message: '请填写邮箱',
+            trigger: 'blur'
+          },
+          {
+            type: 'email',
+            message: '邮箱格式不正确',
+            trigger: 'blur'
+          }
+        ],
+        groupIndex: [
+          {
+            required: true,
+            message: '必须选择所在小组'
+          }
+        ]
+      }
     };
   },
   methods: {
     resetPwd() {
       if (this.user.email) {
-        AV.User.requestPasswordReset(this.user.email).then((d) => {
+        AV.User.requestPasswordReset(this.user.email).then(d => {
           Message.info({
             content: '重置密码邮件已经发送至 ' + this.user.email,
             closable: true,
@@ -72,6 +103,28 @@ export default {
           });
         });
       }
+    },
+    save() {
+      this.$refs.form.validate(isValidated => {
+        if (!isValidated) return;
+        let o = this.user;
+        let c = this.curruser;
+        let data = {};
+
+        if (o.username !== c.username) data.username = c.username;
+        if (o.email !== c.email) data.email = c.email;
+        if (o.groupIndex !== c.groupIndex) data.groupIndex = c.groupIndex;
+
+        if (this.isAdmin) {
+          if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
+          if (o.memberIndex !== c.memberIndex) data.memberIndex = c.memberIndex;
+        }
+
+        this.$emit('save', data, this.userId);
+      });
+    },
+    cancel() {
+      this.$emit('cancel');
     }
   }
 };
