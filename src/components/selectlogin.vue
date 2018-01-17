@@ -119,6 +119,8 @@ export default {
     // 已经登录则自动登录并跳转
     let user = AV.User.current();
     if (user !== null) {
+      // 利用sessionToken重新登录一次，以便拉取最新信息
+      AV.User.become(user._sessionToken);
       this.$router.push(
         user.attributes.groupName ? { name: 'input' } : { name: 'summary' }
       );
