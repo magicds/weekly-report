@@ -3,10 +3,9 @@
     <Card :dis-hover="true" class="clearfix">
       <div class="left">
         <label for="useravatar"  class="upload-avatar">
-          <Avatar size="large" class="user-avatar" :style="{background: '#64b1ca',color:'#fff'}" :src="avatar">{{user.username | getAvatarText}}</Avatar>
-        </label>
+          <Avatar size="large" class="user-avatar" :style="{background: '#64b1ca',color:'#fff'}" :src="avatar" ref="avatar">{{user.username | getAvatarText}}</Avatar>
+        </label><p v-if="avatar">{{user.username}}</p>
         <input type="file" style="position:absolute;top:100%;left:100%;opacity:0;" name="useravatar" id="useravatar" @change="savePhoto" accept=".jpg,.png">
-        <div v-if="avatar">{{user.username}}</div>
       </div>
       <div class="right">
         <div class="detail-title">详细信息<i-button @click="startEdit" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="edit"></Icon>编辑</i-button></div>
@@ -24,7 +23,7 @@
           <Icon style="margin-right:5px;" type="email"></Icon>
           <span>{{user.email}}</span>
           <Tag v-if="user.emailVerified" color="green">已验证</Tag>
-          <i-button  v-else @click="verifyEmail" type="text" style="padding:0;"><Tag color="red" >未验证</Tag></i-button>
+          <i-button v-else @click="verifyEmail" type="text" style="padding:0;"><Tag color="red" >未验证</Tag></i-button>
         </div>
 
         <div class="item">
@@ -74,6 +73,10 @@ export default {
   },
   mounted() {
     this.avatar = localStorage.getItem('userAvatar_' + this.userId);
+    let span = this.$refs.avatar.$el.getElementsByTagName('span')[0];
+    if (span && parseInt(span.style.lineHeight, 10) != 80) {
+      span.style.lineHeight = '80px';
+    }
   },
   data() {
     return {
@@ -85,6 +88,9 @@ export default {
       this.$emit('startEdit', this.user, this.userId);
     },
     verifyEmail() {
+      // 只有自己才能验证邮件
+      if(this.userId != AV.User.current().id) return;
+
       AV.User.requestEmailVerify(this.user.email).then(() => {
         Message.info({
           content: '验证邮件已经发送至 ' + this.user.email,
@@ -114,7 +120,6 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-
   text-align: center;
 }
 .right {
@@ -156,6 +161,7 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+  padding:3px 0 5px;
 
   display: block;
 
