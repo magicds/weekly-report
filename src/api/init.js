@@ -3,7 +3,6 @@ import config from '@/config/av.config.js';
 
 AV.init({
   appId: config.id,
-  appKey: config.key,
-  masterKey: config.masterKey
+  appKey: config.key
 });
 export default {};

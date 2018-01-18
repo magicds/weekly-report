@@ -1,12 +1,12 @@
 <template>
   <div class="user-admin" type="flex" align="top">
     <Row class="row" v-for="group in groups" :key="group.index">
-      <i-col :xs="{span:24}" :sm="{span:12}" :md="{span:8}" :lg="{span:8}" v-for="member in group.member" :key="member.id">
+      <i-col :xs="{span:24}" :sm="{span:12}" :md="{span:12}" :lg="{span:8}" v-for="member in group.member" :key="member.id">
         <UserInfo  :userId="member.id" :user="member.data" @startEdit="startEdit"></UserInfo>
       </i-col>
     </Row>
 
-    <Modal v-model="showEditor" title="个人信息" :footerHide="true" :maskClosable="false" :loading="inSaveing">
+    <Modal v-model="showEditor" title="信息修改" :footerHide="true" :maskClosable="false" :loading="inSaveing">
       <UserEditor :user="user" :userId="userId" :groups="groups"  :isAdmin="isAdmin" @save="save" @cancel="cancel"></UserEditor>
     </Modal>
   </div>
@@ -71,11 +71,15 @@ function update(data, id, keys) {
   return savePerson(data, id, keys);
 
   function savePerson(data, id, keys) {
-    let person = AV.Object.createWithoutData('_User', id);
-    keys.forEach(k => {
-      person.set(k, data[k]);
-    });
-    return person.save();
+    // let person = AV.Object.createWithoutData('_User', id);
+    // keys.forEach(k => {
+    //   person.set(k, data[k]);
+    // });
+    // return person.save();
+
+    // leancloud 对User表的限制 无法修改其他用户的任何信息
+    // 因此此处通过云端的超级权限来完成
+    return AV.Cloud.run('savePersonData', { id: id, data: data });
   }
 }
 export default {
@@ -132,7 +136,9 @@ export default {
         .catch(e => {
           Message.error({
             content:
-              '保存失败<br><pre style="text-align:left;">' + JSON.stringify({ code: e.code, message: e.message }, 0, 4)+'</pre>',
+              '保存失败<br><pre style="text-align:left;">' +
+              JSON.stringify({ code: e.code, message: e.message }, 0, 4) +
+              '</pre>',
             closable: true,
             duration: 10
           });

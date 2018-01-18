@@ -1,6 +1,6 @@
 <template>
   <div class="user-info" :user="user" :userId="userId" >
-    <Card :dis-hover="true" class="clearfix">
+    <Card :dis-hover="true" class="clearfix" style="min-height:160px">
       <div class="left">
         <label for="useravatar"  class="upload-avatar">
           <Avatar size="large" class="user-avatar" :style="{background: '#64b1ca',color:'#fff'}" :src="avatar" ref="avatar">{{user.username | getAvatarText}}</Avatar>

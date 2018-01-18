@@ -13,7 +13,7 @@
         </a>
         <DropdownMenu slot="list">
             <DropdownItem name="userinfo">个人信息</DropdownItem>
-            <DropdownItem v-if="user.isAdmin" name="admin">管理</DropdownItem>
+            <DropdownItem v-if="user.isAdmin" name="admin">人员管理</DropdownItem>
             <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
