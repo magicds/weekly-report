@@ -15,11 +15,17 @@
           <i-option v-for="item in groups" :key="item.index" :value="item.index">{{item.name}}</i-option>
         </i-select>
       </Form-item>
-      <Form-item label="排序值" v-if="curruser.isAdmin">
-        <i-input v-model="curruser.memberIndex" number="true" icon="sort" title="数值越小越靠前"></i-input>
+      <Form-item label="排序值" v-if="isAdmin">
+        <i-input v-model="curruser.memberIndex" :number="true" icon="sort" title="数值越小越靠前"></i-input>
       </Form-item>
-      <Form-item label="重置密码" v-if="!curruser.isAdmin">
+      <Form-item label="重置密码" v-if="isSelf">
         <i-button @click="resetPwd">重置密码</i-button>
+      </Form-item>
+      <Form-item label="管理员" v-if="isAdmin">
+        <Checkbox label="admin" v-model="curruser.isAdmin" :disabled="isSelf" @changeAdmin="changeAdmin">
+            <Icon type="settings"></Icon>
+            <span>设为管理员</span>
+        </Checkbox>
       </Form-item>
       <Form-item>
         <i-button type="primary" @click="save">保存</i-button>
@@ -35,6 +41,7 @@ import FormItem from 'iview/src/components/form/form-item';
 import Input from 'iview/src/components/input/input';
 import Button from 'iview/src/components/button/button';
 import { Select, Option } from 'iview/src/components/select';
+import Checkbox from 'iview/src/components/checkbox/';
 import Message from 'iview/src/components/message';
 import Icon from 'iview/src/components/icon';
 import AV from 'leancloud-storage';
@@ -48,7 +55,8 @@ export default {
     'i-button': Button,
     'i-input': Input,
     'i-select': Select,
-    'i-option': Option
+    'i-option': Option,
+    Checkbox
   },
   props: {
     user: Object,
@@ -61,8 +69,6 @@ export default {
   },
   data() {
     return {
-      // 克隆一份作为编辑使用
-      curruser: JSON.parse(JSON.stringify(this.user)),
       rules: {
         username: [
           {
@@ -91,6 +97,16 @@ export default {
         ]
       }
     };
+  },
+  computed: {
+    curruser() {
+      return JSON.parse(JSON.stringify(this.user));
+    },
+
+    // 是否为自己
+    isSelf() {
+      return this.userId === AV.User.current().id;
+    }
   },
   methods: {
     resetPwd() {
@@ -125,6 +141,9 @@ export default {
     },
     cancel() {
       this.$emit('cancel');
+    },
+    changeAdmin() {
+
     }
   }
 };
