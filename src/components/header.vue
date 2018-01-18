@@ -64,7 +64,7 @@ export default {
           this.$router.push('/');
           break;
         case 'admin':
-          this.$router.push('main/admin');
+          this.$router.push('/main/admin');
           break;
         default:
           break;
