@@ -113,6 +113,19 @@ export default {
       })
       .catch(throwError);
   },
+  removeRole(name, user) {
+    let query = new AV.Query(AV.Role);
+    query.equalTo('name', name);
+
+    return query.find().then(roles => {
+      let role = roles[0];
+      role.getUsers().remove(user);
+
+      return role.save().then(() => {
+        console.log(user, '已经移除' + name + '角色');
+      });
+    });
+  },
   /**
    * 用处注册成功后需要为用户这个对象调整自己的权限
    * @param {Object} user 用户
