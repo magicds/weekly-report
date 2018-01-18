@@ -22,8 +22,10 @@
         <div class="item">
           <Icon style="margin-right:5px;" type="email"></Icon>
           <span>{{user.email}}</span>
-          <Tag v-if="user.emailVerified" color="green">已验证</Tag>
-          <i-button v-else @click="verifyEmail" type="text" style="padding:0;"><Tag color="red" >未验证</Tag></i-button>
+          <span v-if="user.email">
+            <Tag v-if="user.emailVerified" color="green">已验证</Tag>
+            <i-button v-else @click="verifyEmail" type="text" style="padding:0;"><Tag color="red" >未验证</Tag></i-button>
+          </span>
         </div>
 
         <div class="item">

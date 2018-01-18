@@ -194,7 +194,10 @@ export default {
     return function(noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
-        cache = this.getData('_User');
+        cache = this.getData('_User', false, {
+          sort: 'asc',
+          field: 'memberIndex'
+        });
       }
       return cache;
     };
