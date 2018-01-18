@@ -91,9 +91,10 @@ export default {
           })
           .catch(e => {
             Message.error({
-              content: '保存失败<br>' + JSON.stringify(e, 0, 2),
+              content:
+                '保存失败<br><pre style="text-align:left;">' + JSON.stringify({ code: e.code, message: e.message }, 0, 4) + '</pre>',
               closable: true,
-              duration: 3
+              duration: 10
             });
 
             this.inSaveing = false;

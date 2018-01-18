@@ -22,6 +22,8 @@ import Promise from 'bluebird';
 import AV from 'leancloud-storage';
 import api from '@/api/';
 
+const userMap = {};
+
 function getAllUser() {
   return Promise.all([
     api.getData('Group', false, {
@@ -48,11 +50,33 @@ function getAllUser() {
         data: item.attributes
       });
 
+      userMap[item.id] = item;
+
       groups[item.attributes.groupIndex].member.push(users[i - 1]);
     });
 
     return groups;
   });
+}
+function update(data, id, keys) {
+  if (data.isAdmin != undefined) {
+    return api[data.isAdmin ? 'addRole' : 'removeRole'](
+      'administrator',
+      userMap[id]
+    ).then(r => {
+      return savePerson(data, id, keys);
+    });
+  }
+
+  return savePerson(data, id, keys);
+
+  function savePerson(data, id, keys) {
+    let person = AV.Object.createWithoutData('_User', id);
+    keys.forEach(k => {
+      person.set(k, data[k]);
+    });
+    return person.save();
+  }
 }
 export default {
   name: 'admin',
@@ -65,7 +89,7 @@ export default {
   },
   data() {
     return {
-      isAdmin:AV.User.current().attributes.isAdmin,
+      isAdmin: AV.User.current().attributes.isAdmin,
       showEditor: false,
       groups: [],
       inSaveing: false,
@@ -81,8 +105,8 @@ export default {
   methods: {
     startEdit(user, id) {
       // alert('editor\n'+ JSON.stringify(user, 0, 4));
-      console.log(user,id);
-      this.$set(this,'user',user);
+      console.log(user, id);
+      this.$set(this, 'user', user);
       this.userId = id;
       this.showEditor = true;
     },
@@ -90,36 +114,32 @@ export default {
       let keys = Object.keys(data);
       if (!keys.length) {
         this.showEditor = false;
-      } else {
-        this.inSaveing = true;
-        console.log(id, data);
-        let person = AV.Object.createWithoutData('_User', id);
-        keys.forEach(k => {
-          person.set(k, data[k]);
-        });
-        person
-          .save()
-          .then(r => {
-            Message.success({
-              content: '保存成功 ',
-              closable: true,
-              duration: 3
-            });
-
-            this.inSaveing = false;
-            this.showEditor = false;
-          })
-          .catch(e => {
-            Message.error({
-              content: '保存失败<br>' + JSON.stringify(e, 0, 2),
-              closable: true,
-              duration: 3
-            });
-
-            this.inSaveing = false;
-            this.showEditor = false;
-          });
+        return;
       }
+      this.inSaveing = true;
+      console.log(id, data);
+      update(data, id, keys)
+        .then(r => {
+          Message.success({
+            content: '保存成功 ',
+            closable: true,
+            duration: 3
+          });
+
+          this.inSaveing = false;
+          this.showEditor = false;
+        })
+        .catch(e => {
+          Message.error({
+            content:
+              '保存失败<br><pre style="text-align:left;">' + JSON.stringify({ code: e.code, message: e.message }, 0, 4)+'</pre>',
+            closable: true,
+            duration: 10
+          });
+
+          this.inSaveing = false;
+          this.showEditor = false;
+        });
     },
     cancel() {
       this.showEditor = false;

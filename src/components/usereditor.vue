@@ -5,7 +5,7 @@
         <i-input v-model="curruser.username" icon="person"></i-input>
       </Form-item>
       <Form-item label="备注信息">
-        <i-input v-model="curruser.extInfo" icon="ios-information" :disabled="!curruser.isAdmin"></i-input>
+        <i-input v-model="curruser.extInfo" icon="ios-information" :disabled="!isAdmin"></i-input>
       </Form-item>
       <Form-item label="邮件地址" prop="email">
         <i-input v-model="curruser.email" icon="email"></i-input>
@@ -22,7 +22,7 @@
         <i-button @click="resetPwd">重置密码</i-button>
       </Form-item>
       <Form-item label="管理员" v-if="isAdmin">
-        <Checkbox label="admin" v-model="curruser.isAdmin" :disabled="isSelf" @changeAdmin="changeAdmin">
+        <Checkbox label="admin" v-model="curruser.isAdmin" :disabled="isSelf">
             <Icon type="settings"></Icon>
             <span>设为管理员</span>
         </Checkbox>
@@ -134,6 +134,7 @@ export default {
         if (this.isAdmin) {
           if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
           if (o.memberIndex !== c.memberIndex) data.memberIndex = c.memberIndex;
+          if (o.isAdmin !== c.isAdmin) data.isAdmin = c.isAdmin;
         }
 
         this.$emit('save', data, this.userId);
@@ -141,9 +142,6 @@ export default {
     },
     cancel() {
       this.$emit('cancel');
-    },
-    changeAdmin() {
-
     }
   }
 };
