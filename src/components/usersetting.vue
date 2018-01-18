@@ -3,7 +3,7 @@
     <UserInfo :user="user" :userId="userId" @startEdit="startEdit"></UserInfo>
 
     <Modal v-model="showEditor" title="个人信息" :footerHide="true" :maskClosable="false" :loading="inSaveing">
-      <UserEditor :user="user" :userId="userId" :groups="groups" @save="save" @cancel="cancel"></UserEditor>
+      <UserEditor :user="user" :userId="userId" :groups="groups" :isAdmin="user.isAdmin" @save="save" @cancel="cancel"></UserEditor>
 
       <!-- <div slot="footer"></div> -->
     </Modal>
