@@ -93,7 +93,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       // 新增拷贝 mail 目录
       {
         from: path.resolve(__dirname, '../mail'),
-        to: config.build.assetsPublicPath
+        to: path.resolve(config.build.assetsRoot, 'mail')
       }
     ])
   ]
