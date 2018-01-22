@@ -8,7 +8,7 @@
 <script>
 import mySummary from './summary/summary.vue';
 import api from '@/api/index.js';
-import moment from 'moment';
+import moment from 'moment/min/moment.min.js';
 import Promise from 'bluebird';
 import mergeSort from '@/util/sort.js';
 

@@ -75,7 +75,7 @@ import Modal from 'iview/src/components/modal/';
 import Tree from 'iview/src/components/tree/';
 import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
-import moment from 'moment';
+import moment from 'moment/min/moment.min.js';
 import renderCharts from './rendercharts.js';
 import mergeSort from '@/util/sort.js';
 

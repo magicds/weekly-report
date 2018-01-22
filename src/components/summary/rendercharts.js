@@ -1,4 +1,10 @@
-import echarts from 'echarts';
+// import echarts from 'echarts';
+import echarts from 'echarts/lib/echarts';
+/* global require */
+require('echarts/lib/chart/bar');
+require('echarts/lib/component/grid');
+require('echarts/lib/component/title');
+require('echarts/lib/component/tooltip');
 // 处理为需要的数据格式
 let prepareDataForCharts = function(data) {
   // 个人数据

@@ -14,7 +14,7 @@ import api from '@/api/index.js';
 import DatePicker from 'iview/src/components/date-picker/';
 import Button from 'iview/src/components/button/';
 import Promise from 'bluebird';
-import moment from 'moment';
+import moment from 'moment/min/moment.min.js';
 import mergeSort from '@/util/sort.js';
 
 // 获取两个日期之间的星期数目

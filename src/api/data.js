@@ -1,5 +1,5 @@
 import AV from 'leancloud-storage';
-import moment from 'moment';
+import moment from 'moment/min/moment.min.js';
 import userApi from './user.js';
 
 import throwError from './error.js';
