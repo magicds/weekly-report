@@ -16,10 +16,15 @@ class Mailer
     public static $SMTP = 'ssl'; // 使用 ssl 加密方式登录
     public static $CHARSET = 'UTF-8'; // 设置发送的邮件的编码
 
+    /**
+     * 配置此处信息后将此文件重命名为mailer.php即可
+     */
     private static $USERNAME = '配置用户'; // 授权登录的账号
     private static $PASSWORD = '配置授权密码'; // 授权登录的密码
     private static $NICKNAME = '新点前端周报'; // 发件人的昵称
-
+    /**
+     * end
+     */
     /**
      * Mailer constructor.
      * @param bool $debug [调试模式]
