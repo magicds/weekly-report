@@ -398,7 +398,7 @@ export default {
                   taskTime: this.taskTime,
                   communicationTime: this.communicationTime,
                   leaveTime: this.leaveTime,
-                  saturation: (this.taskTime + this.communicationTime) / 40
+                  saturation: (this.taskTime + this.communicationTime) / config.fullTime
                 })
                 .then(savedData => {
                   console.log(savedData);
