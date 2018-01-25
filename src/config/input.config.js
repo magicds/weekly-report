@@ -1,5 +1,6 @@
 // 填写界面的相关配置
 export default {
+  // 类型分类
   types: [
     {
       key: 'task',
@@ -31,10 +32,16 @@ export default {
       explain: '请如实填写请假缘由，如：近期加班较多，目前手头任务可控，调休一天，自我调节。'
     }
   ],
+  // 默认的类型
   defaultType: 'task',
+  // 时间描述说明
   time: {
     title: '所花时间',
     info: '不要求完全精确，分秒不差，但尽可能客观，不要虚报注水。',
     explain: '请填写该事项所花费的时间，如果周末有加班时间，可以预先填报。'
-  }
+  },
+  // 每周基准工作时间
+  fullTime: 40,
+  // 计算为任务饱和度的工作类型 值为类型配置中的key
+  saturationTyps: ['task','communication']
 }
