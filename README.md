@@ -1,5 +1,12 @@
 # 使用 Vue + LeanCloud 的周报系统
 
+[![GitHub issues](https://img.shields.io/github/issues/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/pulls)
+[![GitHub forks](https://img.shields.io/github/forks/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/network)
+[![GitHub stars](https://img.shields.io/github/stars/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/stargazers)
+[![GitHub license](https://img.shields.io/github/license/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/cdswyda/weekly-report.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fcdswyda%2Fweekly-report)
+
 使用 Vue + LeanCloud 开发的一个周报系统，纯前端实现。
 
 并利用 LeanCloud 提供的云引擎服务实现在周五给全员发送邮件提醒填写周报，周六周日分别再次对未填人员发送邮件进行填写提醒。
