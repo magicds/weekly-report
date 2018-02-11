@@ -76,7 +76,7 @@ private static $NICKNAME = '新点前端周报'; // 发件人的昵称
 1. 定义云函数，以便发送邮件。实现可参考 [weeklyReportSendEmail](https://github.com/cdswyda/weeklyReportSendEmail)
 2. 在 LeanCloud 的应用中 点击 `云引擎 => 定时任务` 来创建定时任务，定时执行发送邮件。
 
-![](http://qiniu.cdswyda.com/images/201802/timing-task.png)
+![http://qiniu.cdswyda.com/images/201802/timing-task.png](http://qiniu.cdswyda.com/images/201802/timing-task.png)
 
 相关文档可参考 [LeanCloud 开发指南](https://leancloud.cn/docs/leanengine_cloudfunction_guide-node.html)
 
@@ -110,30 +110,30 @@ assetsPublicPath: '/weeklyreport/',
 
 填写
 
-![](https://qiniu.cdswyda.com/images/201802/input-show.gif)
+![填写 https://qiniu.cdswyda.com/images/201802/input-show.gif](https://qiniu.cdswyda.com/images/201802/input-show.gif)
 
 汇总展示
 
-![](https://qiniu.cdswyda.com/images/201802/summary.png)
+![汇总展示 https://qiniu.cdswyda.com/images/201802/summary.png](https://qiniu.cdswyda.com/images/201802/summary.png)
 
 只想看你关心的？这里有！
 
-![](https://qiniu.cdswyda.com/images/201802/person-select.png)
+![只想看你关心的？这里有！](https://qiniu.cdswyda.com/images/201802/person-select.png)
 
 汇总图表
 
-![](https://qiniu.cdswyda.com/images/201802/summary-echarts.png)
+![汇总图表 https://qiniu.cdswyda.com/images/201802/summary-echarts.png](https://qiniu.cdswyda.com/images/201802/summary-echarts.png)
 
 还支持任意时段的历史查看，下方表格和图标的展示同周汇总。
 
-![](https://qiniu.cdswyda.com/images/201802/summary-all.png)
+![任意时间段汇总 https://qiniu.cdswyda.com/images/201802/summary-all.png](https://qiniu.cdswyda.com/images/201802/summary-all.png)
 
 个人信息维护
 
-![](https://qiniu.cdswyda.com/images/201802/person-info.png)
+![个人信息维护 https://qiniu.cdswyda.com/images/201802/person-info.png](https://qiniu.cdswyda.com/images/201802/person-info.png)
 
 管理员对成员查看和管理
 
-![](https://qiniu.cdswyda.com/images/201802/person-manage.png)
+![管理员对成员查看和管理 https://qiniu.cdswyda.com/images/201802/person-manage.png](https://qiniu.cdswyda.com/images/201802/person-manage.png)
 
 对了，还可以导出表格为csv
