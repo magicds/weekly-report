@@ -1,0 +1,1 @@
+{"schema":{"user":{"type":"Pointer","className":"_User"},"follower":{"type":"Pointer","className":"_User"},"objectId":{"type":"String"},"ACL":{"type":"ACL"},"createdAt":{"type":"Date"},"updatedAt":{"type":"Date"}}}

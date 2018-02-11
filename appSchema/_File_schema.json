@@ -1,0 +1,1 @@
+{"schema":{"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"name":{"type":"String"},"objectId":{"type":"String"},"createdAt":{"type":"Date"},"__type":{"type":"String"},"url":{"type":"String"},"provider":{"type":"String"},"bucket":{"type":"String"}}}

@@ -1,0 +1,1 @@
+{"schema":{"valid":{"type":"Boolean"},"vendor":{"type":"String"},"timeZone":{"type":"String"},"updatedAt":{"type":"Date"},"channels":{"type":"Array"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"deviceToken":{"type":"String"},"createdAt":{"type":"Date"},"deviceType":{"type":"String"},"installationId":{"type":"String"},"badge":{"type":"Number"}}}

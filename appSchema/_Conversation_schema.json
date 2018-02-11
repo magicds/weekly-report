@@ -1,0 +1,1 @@
+{"schema":{"unique":{"type":"Boolean"},"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"m":{"type":"Array"},"tr":{"type":"Boolean"},"createdAt":{"type":"Date"},"lm":{"type":"Date"},"uniqueId":{"type":"String"},"mu":{"type":"Array"},"sys":{"type":"Boolean"}}}

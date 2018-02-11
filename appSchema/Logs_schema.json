@@ -1,0 +1,1 @@
+{"schema":{"report":{"type":"String"},"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"username":{"type":"String"},"createdAt":{"type":"Date"},"userId":{"type":"String"}}}

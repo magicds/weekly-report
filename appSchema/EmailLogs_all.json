@@ -1,0 +1,1 @@
+{"schema":{"objectId":{"type":"String"},"ACL":{"type":"ACL"},"createdAt":{"type":"Date"},"updatedAt":{"type":"Date"},"date":{"type":"Date"},"info":{"type":"String"}},"permissions":{"create":{"*":true},"find":{"*":true},"get":{"*":true},"update":{"*":true},"delete":{"*":true},"add_fields":{"*":true}},"indexes":[]}

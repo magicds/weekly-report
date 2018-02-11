@@ -1,0 +1,1 @@
+{"permissions":{"create":{"*":true},"find":{"*":false},"get":{"*":true},"update":{"*":true},"delete":{"*":false},"add_fields":{"*":true}}}

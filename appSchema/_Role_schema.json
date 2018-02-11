@@ -1,0 +1,1 @@
+{"schema":{"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"name":{"type":"String"},"objectId":{"type":"String"},"roles":{"type":"Relation","className":"_Role","v":2},"createdAt":{"type":"Date"},"users":{"type":"Relation","className":"_User","v":2}}}
