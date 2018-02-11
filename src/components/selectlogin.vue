@@ -6,14 +6,14 @@
             <Form-item >
               <i-select v-model="groupIndex" style="margin-bottom:10px;">
                 <!-- <i-option value="-1">请选择所在小组</i-option> -->
-                <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
+                <i-option v-for="item in groups" :key="item.name" :value="item.index">{{ item.name }}</i-option>
               </i-select>
             </Form-item>
 
             <Form-item>
               <i-select v-model="user.name" style="margin-bottom:10px;">
                 <!-- <i-option value="-1">请选择所在小组</i-option> -->
-                <i-option v-for="item in group.member" :value="item.name">{{ item.name }}</i-option>
+                <i-option v-for="item in group.member" :key="item.name" :value="item.name">{{ item.name }}</i-option>
               </i-select>
             </Form-item>
 
@@ -131,11 +131,16 @@ export default {
         });
     } else {
       getAllUser().then(data => {
-        this.$set(this, 'groups', data.groups);
-        this.$set(this, 'users', data.users);
-        this.groupIndex =
-          parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
-        this.fillUser();
+        // 第一次进入
+        if(!data.groups.length) {
+          this.$router.push('/signup');
+        }else {
+          this.$set(this, 'groups', data.groups);
+          this.$set(this, 'users', data.users);
+          this.groupIndex =
+            parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
+          this.fillUser();
+        }
       });
     }
   },

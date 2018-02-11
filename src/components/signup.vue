@@ -14,7 +14,7 @@
             <Form-item v-if="groups.length">
               <i-select v-model="user.groupIndex" style="margin-bottom:10px;">
                 <!-- <i-option value="-1">请选择所在小组</i-option> -->
-                <i-option v-for="item in groups" :value="item.index">{{ item.name }}</i-option>
+                <i-option v-for="item in groups" :key="item.name" :value="item.index">{{ item.name }}</i-option>
               </i-select>
             </Form-item>
             <FormItem style="text-align:center;">
