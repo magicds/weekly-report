@@ -15,6 +15,8 @@
 
 **LeanCloud 应用配置**
 
+前往 [LeanCloud](https://leancloud.cn/) 新增应用。 并导入 `/appSchema/` 下的 schema
+
 修改 `src/config/av.config-example.js` 文件，填入 LeanCloud 应用的 **App ID** 和 **App key**。
 
 此 `id` 和 `key` 可以从 [LeanCloud](https://leancloud.cn/)  `要关联的应用 => 设置 => 应用 Key` 中获取。
@@ -62,7 +64,21 @@ private static $NICKNAME = '新点前端周报'; // 发件人的昵称
 注：
 
 - 不要使用 QQ 邮箱的 SMTP ，我在使用中，团队30+人， 单独发送到10+后，之后的都失败了，提醒发送邮件过快。使用163邮箱的暂无问题。
-- why php？
+- why php?
+  - 因为目前没在服务器上装有nodejs。
+  - 虽然 LeanCloud 提供的免费云引擎，本身就支持nodejs服务，但是免费版是做测试用的，会自动休眠，不够稳定，经常挂掉。
+  - 若使用nodejs，可使用 [nodemailer](https://github.com/nodemailer/nodemailer) 来发送邮件。
+
+以上展示了配置发送邮件的功能，还需要定时查找用户或未提交的用户来发送邮件。
+
+此处使用了 LeanCloud 提供的云引擎中的定时任务来实现。
+
+1. 定义云函数，以便发送邮件。实现可参考 [weeklyReportSendEmail](https://github.com/cdswyda/weeklyReportSendEmail)
+2. 在 LeanCloud 的应用中 点击 `云引擎 => 定时任务` 来创建定时任务，定时执行发送邮件。
+
+![](http://qiniu.cdswyda.com/images/201802/timing-task.png)
+
+相关文档可参考 [LeanCloud 开发指南](https://leancloud.cn/docs/leanengine_cloudfunction_guide-node.html)
 
 ## 构建使用步骤
 
@@ -81,3 +97,43 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
+
+关于打包后的部署使用，请根据要放的目录，自行调整 `/config/index.js` 中的
+`assetsPublicPath` 路径，并将打包生成的文件（默认在 `/dist/` 下）全部拷贝到你指定目录下即可。
+
+```js
+// 例如：这里最后期望通过访问 域名/weeklyreport/ 访问此周报系统，则配置为/weeklyreport/即可
+assetsPublicPath: '/weeklyreport/',
+```
+
+## 效果展示
+
+填写
+
+![](http://qiniu.cdswyda.com/images/201802/input-show.gif)
+
+汇总展示
+
+![](http://qiniu.cdswyda.com/images/201802/summary.png)
+
+只想看你关心的？这里有！
+
+![](http://qiniu.cdswyda.com/images/201802/person-select.png)
+
+汇总图表
+
+![](http://qiniu.cdswyda.com/images/201802/summary-echarts.png)
+
+还支持任意时段的历史查看，下方表格和图标的展示同周汇总。
+
+![](http://qiniu.cdswyda.com/images/201802/summary-all.png)
+
+个人信息维护
+
+![](http://qiniu.cdswyda.com/images/201802/person-info.png)
+
+管理员对成员查看和管理
+
+![](http://qiniu.cdswyda.com/images/201802/person-manage.png)
+
+对了，还可以导出表格为csv
