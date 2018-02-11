@@ -110,30 +110,30 @@ assetsPublicPath: '/weeklyreport/',
 
 填写
 
-![](http://qiniu.cdswyda.com/images/201802/input-show.gif)
+![](https://qiniu.cdswyda.com/images/201802/input-show.gif)
 
 汇总展示
 
-![](http://qiniu.cdswyda.com/images/201802/summary.png)
+![](https://qiniu.cdswyda.com/images/201802/summary.png)
 
 只想看你关心的？这里有！
 
-![](http://qiniu.cdswyda.com/images/201802/person-select.png)
+![](https://qiniu.cdswyda.com/images/201802/person-select.png)
 
 汇总图表
 
-![](http://qiniu.cdswyda.com/images/201802/summary-echarts.png)
+![](https://qiniu.cdswyda.com/images/201802/summary-echarts.png)
 
 还支持任意时段的历史查看，下方表格和图标的展示同周汇总。
 
-![](http://qiniu.cdswyda.com/images/201802/summary-all.png)
+![](https://qiniu.cdswyda.com/images/201802/summary-all.png)
 
 个人信息维护
 
-![](http://qiniu.cdswyda.com/images/201802/person-info.png)
+![](https://qiniu.cdswyda.com/images/201802/person-info.png)
 
 管理员对成员查看和管理
 
-![](http://qiniu.cdswyda.com/images/201802/person-manage.png)
+![](https://qiniu.cdswyda.com/images/201802/person-manage.png)
 
 对了，还可以导出表格为csv
