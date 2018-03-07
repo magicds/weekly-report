@@ -11,7 +11,7 @@
         <i-input v-model="curruser.email" icon="email"></i-input>
       </Form-item>
       <Form-item label="所在小组" prop="groupIndex">
-        <i-select v-model="curruser.groupIndex">
+        <i-select v-model="curruser.groupIndex" @on-change="groupChange" :label-in-value="true">
           <i-option v-for="item in groups" :key="item.index" :value="item.index">{{item.name}}</i-option>
         </i-select>
       </Form-item>
@@ -109,6 +109,9 @@ export default {
     }
   },
   methods: {
+    groupChange(currGroup) {
+      this.curruser.groupName = currGroup.label;
+    },
     resetPwd() {
       if (this.user.email) {
         AV.User.requestPasswordReset(this.user.email).then(d => {
@@ -129,7 +132,10 @@ export default {
 
         if (o.username !== c.username) data.username = c.username;
         if (o.email !== c.email) data.email = c.email;
-        if (o.groupIndex !== c.groupIndex) data.groupIndex = c.groupIndex;
+        if (o.groupIndex !== c.groupIndex) {
+          data.groupIndex = c.groupIndex;
+          data.groupName = c.groupName;
+        }
 
         if (this.isAdmin) {
           if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
