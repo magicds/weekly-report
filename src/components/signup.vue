@@ -125,7 +125,7 @@ export default {
         };
 
         // 检查有无选择小组
-        if (this.groups.length && this.user.groupIndex !== -1) {
+        if (this.groups.length && this.user.groupIndex === -1) {
           Modal.confirm({
             title: '提醒',
             content:
