@@ -71,7 +71,7 @@ export default {
         name: '',
         pwd: '',
         email: '',
-        groupIndex: 0
+        groupIndex: -1
       },
       groups: [],
       relues: {
@@ -106,7 +106,9 @@ export default {
   },
   computed: {
     groupName() {
-      return this.groups.filter(item => item.index === this.user.groupIndex)[0].name;
+      if (!this.groups.length) return '';
+      return this.groups.filter(item => item.index === this.user.groupIndex)[0]
+        .name;
     }
   },
   methods: {
@@ -123,10 +125,11 @@ export default {
         };
 
         // 检查有无选择小组
-        if (this.groups.length && this.user.groupIndex == -1) {
+        if (this.groups.length && this.user.groupIndex !== -1) {
           Modal.confirm({
             title: '提醒',
-            content: '确认不选择所在小组？不选择所在小组将无法录入个人工作周报？',
+            content:
+              '确认不选择所在小组？不选择所在小组将无法录入个人工作周报？',
             onOk: () => {
               // 登录成功后自动跳转到登录
               api.signUp(user).then(() => {

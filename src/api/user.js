@@ -185,13 +185,16 @@ export default {
         return Promise.all(arr);
       })
       .then(result => {
+        user.set('groupName', groupInfo.groups[0].name);
+        user.set('groupIndex', groupInfo.groups[0].index);
         console.log('创建角色和小组完成！');
+        return user.save();
       });
   },
   // 获取所有用户
-  getAllUser: (function() {
+  getAllUser: (function () {
     let cache;
-    return function(noCache) {
+    return function (noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
         cache = this.getData('_User', false, {
