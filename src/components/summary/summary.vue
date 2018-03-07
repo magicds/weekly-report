@@ -245,7 +245,10 @@ export default {
       let c = moment(person.createdAt);
       let u = moment(person.updatedAt);
       let title =
-        '提交时间' + c.format('MM-DD HH:mm') + ' 周' + WEEKNAMES[c.isoWeekday() - 1];
+        '提交时间' +
+        c.format('MM-DD HH:mm') +
+        ' 周' +
+        WEEKNAMES[c.isoWeekday() - 1];
 
       if (c.isSame(u)) {
         return title;
@@ -293,11 +296,7 @@ export default {
     },
     getTreeData(data) {
       if (!data) return [];
-      let groups = [
-        { id: 0, expand: true },
-        { id: 1, expand: true },
-        { id: 2, expand: true }
-      ];
+      let groups = [];
 
       let unchecked = JSON.parse(
         localStorage.getItem('_weekly-report-notshow_') || '{}'
@@ -305,15 +304,21 @@ export default {
 
       data.forEach(item => {
         let gid = item.groupIndex;
-        if (!groups[gid].children) {
-          groups[gid].title = item.groupName;
-          groups[gid].children = [
-            {
-              uid: item.userId,
-              title: item.username,
-              checked: unchecked[item.userId] ? false : true
-            }
-          ];
+
+        if (!groups[gid]) {
+          groups[gid] = {
+            id: gid,
+            name: item.groupName,
+            title: item.groupName,
+            expand: true,
+            children: [
+              {
+                uid: item.userId,
+                title: item.username,
+                checked: unchecked[item.userId] ? false : true
+              }
+            ]
+          };
         } else {
           groups[gid].children.push({
             uid: item.userId,
