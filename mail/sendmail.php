@@ -30,7 +30,7 @@ $type = $_POST['type'];
 
 function sendOneMail($adress, $subject, $content)
 {
-    $mailer = new Mailer(true);
+    $mailer = new Mailer(false);
     if (!$mailer->send($adress, $subject, $content)) {
         echo $mailer->mailer->ErrorInfo;
     }
