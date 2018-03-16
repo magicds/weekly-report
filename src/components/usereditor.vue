@@ -21,6 +21,12 @@
       <Form-item label="重置密码" v-if="isSelf">
         <i-button @click="resetPwd">重置密码</i-button>
       </Form-item>
+      <Form-item label="免填周报" v-if="isAdmin">
+        <Checkbox label="admin" v-model="curruser.noReport">
+            <Icon type="coffee"></Icon>
+            <span>免填周报</span>
+        </Checkbox>
+      </Form-item>
       <Form-item label="管理员" v-if="isAdmin">
         <Checkbox label="admin" v-model="curruser.isAdmin" :disabled="isSelf">
             <Icon type="settings"></Icon>
@@ -141,6 +147,7 @@ export default {
           if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
           if (o.memberIndex !== c.memberIndex) data.memberIndex = c.memberIndex;
           if (o.isAdmin !== c.isAdmin) data.isAdmin = c.isAdmin;
+          if (o.noReport !== c.noReport) data.noReport = c.noReport;
         }
 
         this.$emit('save', data, this.userId);
