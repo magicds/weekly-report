@@ -6,7 +6,7 @@ require('echarts/lib/component/grid');
 require('echarts/lib/component/title');
 require('echarts/lib/component/tooltip');
 // 处理为需要的数据格式
-let prepareDataForCharts = function(data) {
+let prepareDataForCharts = function (data) {
   // 个人数据
   let person = {
       name: [],
@@ -19,9 +19,9 @@ let prepareDataForCharts = function(data) {
       rate: []
     };
   data.forEach(item => {
-    if(!item.show) return;
+    if (!item.show) return;
     // 得到个人数据
-    person.name.push(item.username);
+    person.name.push(item.username + (item.extInfo ? '(' + item.extInfo + ')' : ''));
     person.rate.push(item.saturation);
 
     // 分离出小组
@@ -39,7 +39,7 @@ let prepareDataForCharts = function(data) {
       group.name.push(key);
       // 求和并处以数组长度
       group.rate.push(
-        _group[key].reduce(function(pre, cur) {
+        _group[key].reduce(function (pre, cur) {
           return pre + cur;
         }) / _group[key].length
       );
@@ -91,7 +91,7 @@ function renderPerson(person) {
       }
     },
     tooltip: {
-      formatter: function(data) {
+      formatter: function (data) {
         let item = data instanceof Array ? data[0] : data;
         return (
           item.name +
@@ -115,52 +115,50 @@ function renderPerson(person) {
     yAxis: {
       axisLabel: {
         // formatter: '{value * 100} %'
-        formatter: function(value) {
+        formatter: function (value) {
           return (value * 100).toFixed(0) + '%';
         }
       }
     },
-    series: [
-      {
-        name: '工作饱和度',
-        type: 'bar',
-        data: person.rate,
-        barMinHeight: 10,
-        barMaxWidth: 50,
-        label: {
-          normal: {
-            show: true,
-            position: 'top',
-            formatter: function(item) {
-              return (item.data * 100).toFixed(0) + '%';
-            }
+    series: [{
+      name: '工作饱和度',
+      type: 'bar',
+      data: person.rate,
+      barMinHeight: 10,
+      barMaxWidth: 50,
+      label: {
+        normal: {
+          show: true,
+          position: 'top',
+          formatter: function (item) {
+            return (item.data * 100).toFixed(0) + '%';
           }
+        }
 
-          // emphasis: { show: true }
-        },
-        itemStyle: {
-          normal: {
-            color: function name(item) {
-              let rate = item.data * 100;
-              if (rate >= 140) {
-                return '#ea644a';
-              }
-              if (rate > 120) {
-                return '#f1a325';
-              }
-              if (rate > 90) {
-                return '#38b03f';
-              }
-              if (rate >= 70) {
-                return '#f1a325';
-              } else {
-                return '#ea644a';
-              }
+        // emphasis: { show: true }
+      },
+      itemStyle: {
+        normal: {
+          color: function name(item) {
+            let rate = item.data * 100;
+            if (rate >= 140) {
+              return '#ea644a';
+            }
+            if (rate > 120) {
+              return '#f1a325';
+            }
+            if (rate > 90) {
+              return '#38b03f';
+            }
+            if (rate >= 70) {
+              return '#f1a325';
+            } else {
+              return '#ea644a';
             }
           }
         }
       }
-    ]
+    }]
   });
 
   personChart.setOption(p_opt);
@@ -186,13 +184,13 @@ function renderGroup(group) {
     yAxis: {
       axisLabel: {
         // formatter: '{value * 100} %'
-        formatter: function(value) {
+        formatter: function (value) {
           return (value * 100).toFixed(0) + '%';
         }
       }
     },
     tooltip: {
-      formatter: function(data) {
+      formatter: function (data) {
         // console.log(item);
         let item = data instanceof Array ? data[0] : data;
         return (
@@ -207,45 +205,43 @@ function renderGroup(group) {
       }
       // formatter: '{b} <br/> {a} : {c}'
     },
-    series: [
-      {
-        name: '小组平均工作饱和度',
-        type: 'bar',
-        label: {
-          normal: {
-            show: true,
-            position: 'top',
-            formatter: function(item) {
-              return (item.data * 100).toFixed(0) + '%';
-            }
+    series: [{
+      name: '小组平均工作饱和度',
+      type: 'bar',
+      label: {
+        normal: {
+          show: true,
+          position: 'top',
+          formatter: function (item) {
+            return (item.data * 100).toFixed(0) + '%';
           }
-        },
-        data: group.rate,
-        barMinHeight: 10,
-        barMaxWidth: 50,
-        itemStyle: {
-          normal: {
-            color: function name(item) {
-              let rate = item.data * 100;
-              if (rate >= 140) {
-                return '#ea644a';
-              }
-              if (rate > 120) {
-                return '#f1a325';
-              }
-              if (rate > 90) {
-                return '#38b03f';
-              }
-              if (rate >= 70) {
-                return '#f1a325';
-              } else {
-                return '#ea644a';
-              }
+        }
+      },
+      data: group.rate,
+      barMinHeight: 10,
+      barMaxWidth: 50,
+      itemStyle: {
+        normal: {
+          color: function name(item) {
+            let rate = item.data * 100;
+            if (rate >= 140) {
+              return '#ea644a';
+            }
+            if (rate > 120) {
+              return '#f1a325';
+            }
+            if (rate > 90) {
+              return '#38b03f';
+            }
+            if (rate >= 70) {
+              return '#f1a325';
+            } else {
+              return '#ea644a';
             }
           }
         }
       }
-    ]
+    }]
   });
 
   groupChart.setOption(g_opt);
@@ -254,8 +250,8 @@ function renderGroup(group) {
 // chart
 let personChart, groupChart;
 
-export default function(reports, personEl, groupEl) {
-  if(!personEl || !groupEl) return;
+export default function (reports, personEl, groupEl) {
+  if (!personEl || !groupEl) return;
   let data = prepareDataForCharts(reports);
 
   personChart = echarts.getInstanceByDom(personEl) || echarts.init(personEl);
