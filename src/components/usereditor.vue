@@ -5,7 +5,7 @@
         <i-input v-model="curruser.username" icon="person"></i-input>
       </Form-item>
       <Form-item label="备注信息">
-        <i-input v-model="curruser.extInfo" icon="ios-information" :disabled="!isAdmin"></i-input>
+        <i-input v-model="curruser.extInfo" icon="ios-information"></i-input>
       </Form-item>
       <Form-item label="邮件地址" prop="email">
         <i-input v-model="curruser.email" icon="email"></i-input>
