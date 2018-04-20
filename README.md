@@ -16,11 +16,11 @@
 
 ## Todo
 
-- 重置密码页[#3](/issues/3)
-- 小组管理[#4](issues/4)
-- 成员删除[#6](issues/6)
-- 错误信息提示[#5](issues/5)
-- 初始化小组配置优化[#8](issues/8)
+- 重置密码页 [#3](https://github.com/cdswyda/weekly-report/issues/3)
+- 小组管理 [#4](https://github.com/cdswyda/weekly-report/issues/4)
+- 成员删除 [#6](https://github.com/cdswyda/weekly-report/issues/6)
+- 错误信息提示 [#5](https://github.com/cdswyda/weekly-report/issues/5)
+- 初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)
 
 ## 基本配置
 
