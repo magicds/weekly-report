@@ -13,6 +13,7 @@
 
 ## Changelog
 
+- 修复登录页面切换小组时，若小组内暂时没有成员，报错的问题。 [#9](https://github.com/cdswyda/weekly-report/issues/9)
 
 ## Todo
 
