@@ -106,7 +106,7 @@ export default {
   },
   watch: {
     groupIndex() {
-      if (this.group.member) {
+      if (this.group.member && this.group.member.length) {
         // this.user.name = this.group.member[0].name;
         this.fillUser();
       }
