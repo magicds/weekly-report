@@ -71,7 +71,7 @@ export default {
         name: '',
         pwd: '',
         email: '',
-        groupIndex: -1
+        groupIndex: 0
       },
       groups: [],
       relues: {

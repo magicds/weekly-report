@@ -155,8 +155,13 @@ export default {
     let arr = [];
 
     if (groupInfo.groups && groupInfo.groups.length) {
-      groupInfo.groups.forEach(item => {
-        arr.push(dataApi.addData('Group', item));
+      groupInfo.groups.forEach((name, index) => {
+        arr.push(
+          dataApi.addData('Group', {
+            index,
+            name
+          })
+        );
       });
     }
 
@@ -192,9 +197,9 @@ export default {
       });
   },
   // 获取所有用户
-  getAllUser: (function () {
+  getAllUser: (function() {
     let cache;
-    return function (noCache) {
+    return function(noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
         cache = this.getData('_User', false, {

@@ -67,8 +67,8 @@ function getAllUser() {
         id: item.id,
         name: item.attributes.username
       });
-
-      groups[item.attributes.groupIndex].member.push(users[i - 1]);
+      let aimGroup = groups[item.attributes.groupIndex];
+      aimGroup && aimGroup.member.push(users[i - 1]);
     });
 
     return {

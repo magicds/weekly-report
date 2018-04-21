@@ -13,7 +13,8 @@
 
 ## Changelog
 
-- 修复登录页面切换小组时，若小组内暂时没有成员，报错的问题。 [#9](https://github.com/cdswyda/weekly-report/issues/9)
+- **04.21** 修复登录页面切换小组时，若小组内暂时没有成员，报错的问题。 [#9](https://github.com/cdswyda/weekly-report/issues/9)
+- **04.21** 初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)
 
 ## Todo
 
@@ -21,7 +22,7 @@
 - 小组管理 [#4](https://github.com/cdswyda/weekly-report/issues/4)
 - 成员删除 [#6](https://github.com/cdswyda/weekly-report/issues/6)
 - 错误信息提示 [#5](https://github.com/cdswyda/weekly-report/issues/5)
-- 初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)
+- ~~初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)~~
 
 ## 基本配置
 
