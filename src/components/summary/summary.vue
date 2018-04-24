@@ -328,6 +328,17 @@ export default {
         }
       });
 
+      // 根据人员组织出来的小组可能存在空的，将空值移除
+      // 如没有用户在编号为0的小组
+      // 则原 groups 为 [empty, {}, ...]
+      // 树控件将报错
+      for (var i = 0; i < groups.length; i++) {
+        if (!groups[i]) {
+          groups.splice(i, 1);
+          i--;
+        }
+      }
+
       return groups;
     }
   },
