@@ -1,5 +1,5 @@
 <template>
-  <div class="summary" :data="cloneData" :isloading="isloading" :export-name="exportName">
+  <div class="summary" :data="cloneData" :isloading="isloading" :export-name="exportName" >
     <div class="summary-loading" v-show="isloading">
       <div class="ivu-spin ivu-spin-large ivu-spin-fix">
         <div class="ivu-spin-main">
@@ -76,7 +76,7 @@ import Tree from 'iview/src/components/tree/';
 import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
 import moment from 'moment/min/moment.min.js';
-import renderCharts from './rendercharts.js';
+import renderCharts, {resize as chartResize} from './rendercharts.js';
 import mergeSort from '@/util/sort.js';
 
 const WEEKNAMES = ['一', '二', '三', '四', '五', '六', '日'];

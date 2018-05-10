@@ -1,10 +1,14 @@
 // import echarts from 'echarts';
 import echarts from 'echarts/lib/echarts';
+import {
+  clearTimeout
+} from 'timers';
 /* global require */
 require('echarts/lib/chart/bar');
 require('echarts/lib/component/grid');
 require('echarts/lib/component/title');
 require('echarts/lib/component/tooltip');
+require('echarts/lib/component/markLine');
 // 处理为需要的数据格式
 let prepareDataForCharts = function (data) {
   // 个人数据
@@ -63,7 +67,7 @@ let comomOptions = {
   },
   grid: {
     left: 50,
-    right: 20,
+    right: 30,
     bottom: 80
   },
   toolbox: {},
@@ -74,11 +78,15 @@ let comomOptions = {
     axisTick: {
       alignWithLabel: true //坐标轴刻度与标签对齐
     }
+  },
+  animationEasing: 'elasticOut',
+  animationDelayUpdate: function (idx) {
+    return idx * 15;
   }
 };
 // person charts
 function renderPerson(person) {
-  let p_opt = Object.assign(JSON.parse(JSON.stringify(comomOptions)), {
+  let p_opt = Object.assign({}, comomOptions, {
     title: {
       text: '成员工作饱和度',
       show: true,
@@ -99,11 +107,10 @@ function renderPerson(person) {
           item.marker +
           item.seriesName +
           ':' +
-          (item.data * 100).toFixed(0) +
+          (item.value * 100).toFixed(0) +
           '%'
         );
       }
-      // formatter: '{b} <br/> {a} : {c}'
     },
     xAxis: {
       data: person.name,
@@ -124,6 +131,37 @@ function renderPerson(person) {
       name: '工作饱和度',
       type: 'bar',
       data: person.rate,
+      markLine: {
+        symbol: ['circle', 'circle'],
+        // symbolSize: [0, 0, 0, 0],
+        data: [{
+          name: '平均值',
+          type: 'average',
+          valueIndex: 1,
+          lineStyle: {
+            type: 'solid'
+          },
+          label: {
+            // position: 'middle',
+            formatter: function (v) {
+              return (v.value * 100).toFixed(0) + '%';
+            }
+          }
+        }, {
+          name: '最大值',
+          type: 'max',
+          valueIndex: 1,
+          lineStyle: {
+            type: 'dashed'
+          },
+          label: {
+            // position: 'middle',
+            formatter: function (v) {
+              return (v.value * 100).toFixed(0) + '%';
+            }
+          }
+        }]
+      },
       barMinHeight: 10,
       barMaxWidth: 50,
       label: {
@@ -134,8 +172,6 @@ function renderPerson(person) {
             return (item.data * 100).toFixed(0) + '%';
           }
         }
-
-        // emphasis: { show: true }
       },
       itemStyle: {
         normal: {
@@ -157,6 +193,10 @@ function renderPerson(person) {
             }
           }
         }
+      },
+      animationDelay: 3000,
+      animationDurationUpdate: function (idx) {
+        return idx * 200;
       }
     }]
   });
@@ -165,7 +205,7 @@ function renderPerson(person) {
 }
 // group charts
 function renderGroup(group) {
-  let g_opt = Object.assign(JSON.parse(JSON.stringify(comomOptions)), {
+  let g_opt = Object.assign({}, comomOptions, {
     title: {
       text: '小组平均工作饱和度',
       show: true,
@@ -199,7 +239,7 @@ function renderGroup(group) {
           item.marker +
           item.seriesName +
           ':' +
-          (item.data * 100).toFixed(0) +
+          (item.value * 100).toFixed(0) +
           '%'
         );
       }
@@ -240,6 +280,10 @@ function renderGroup(group) {
             }
           }
         }
+      },
+      animationDelay: 3000,
+      animationDurationUpdate: function (idx) {
+        return idx * 200;
       }
     }]
   });
@@ -258,4 +302,9 @@ export default function (reports, personEl, groupEl) {
   groupChart = echarts.getInstanceByDom(groupEl) || echarts.init(groupEl);
   renderPerson(data.person);
   renderGroup(data.group);
+}
+
+export function resize() {
+  personChart && personChart.resize();
+  groupChart && groupChart.resize();
 }
