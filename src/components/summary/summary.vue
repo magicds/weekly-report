@@ -76,7 +76,7 @@ import Tree from 'iview/src/components/tree/';
 import api from '@/api/index.js';
 import ExcellentExport from '@/assets/libs/excellentexport.js';
 import moment from 'moment/min/moment.min.js';
-import renderCharts, {resize as chartResize} from './rendercharts.js';
+import renderCharts, { resize as chartResize } from './rendercharts.js';
 import mergeSort from '@/util/sort.js';
 
 const WEEKNAMES = ['一', '二', '三', '四', '五', '六', '日'];
@@ -121,6 +121,10 @@ export default {
       this.$refs['person-charts'],
       this.$refs['group-charts']
     );
+    window.addEventListener('resize', this.resizeCharts);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resizeCharts);
   },
   created() {},
   updated() {
@@ -134,6 +138,7 @@ export default {
   },
   data() {
     return {
+      timer: null,
       columns: [
         {
           title: '姓名',
@@ -198,6 +203,13 @@ export default {
     }
   },
   methods: {
+    resizeCharts() {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.$nextTick(chartResize);
+        // chartResize();
+      }, 50);
+    },
     setCellWidth(column, index) {
       let width = '';
       if (column.width) {

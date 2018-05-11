@@ -67,7 +67,7 @@ let comomOptions = {
   },
   grid: {
     left: 50,
-    right: 30,
+    right: 50,
     bottom: 80
   },
   toolbox: {},
