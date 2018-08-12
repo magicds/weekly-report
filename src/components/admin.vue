@@ -68,19 +68,7 @@ function update(data, id, keys) {
     });
   }
 
-  return savePerson(data, id, keys);
-
-  function savePerson(data, id, keys) {
-    // let person = AV.Object.createWithoutData('_User', id);
-    // keys.forEach(k => {
-    //   person.set(k, data[k]);
-    // });
-    // return person.save();
-
-    // leancloud 对User表的限制 无法修改其他用户的任何信息
-    // 因此此处通过云端的超级权限来完成
-    return AV.Cloud.run('savePersonData', { id: id, data: data });
-  }
+  return api.savePerson(id, data);
 }
 export default {
   name: 'admin',
@@ -155,5 +143,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
