@@ -18,7 +18,7 @@
       <Form-item label="排序值" v-if="isAdmin">
         <i-input v-model="curruser.memberIndex" :number="true" icon="sort" title="数值越小越靠前"></i-input>
       </Form-item>
-      <Form-item label="重置密码" v-if="isSelf">
+      <Form-item label="重置密码">
         <i-button @click="resetPwd">重置密码</i-button>
       </Form-item>
       <Form-item label="免填周报" v-if="isAdmin">
