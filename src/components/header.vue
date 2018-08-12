@@ -14,6 +14,7 @@
         <DropdownMenu slot="list">
             <DropdownItem name="userinfo">个人信息</DropdownItem>
             <DropdownItem v-if="user.isAdmin" name="admin">人员管理</DropdownItem>
+            <DropdownItem v-if="user.isAdmin" name="verify">未验证用户</DropdownItem>
             <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -65,6 +66,9 @@ export default {
           break;
         case 'admin':
           this.$router.push('/main/admin');
+          break;
+        case 'verify':
+          this.$router.push('/main/verify');
           break;
         default:
           break;

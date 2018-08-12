@@ -8,6 +8,7 @@ import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
+import Verify from '@/views/Verify';
 
 import Message from 'iview/src/components/message';
 import AV from 'leancloud-storage';
@@ -82,6 +83,12 @@ const router = new Router({
           path: 'admin',
           name: 'admin',
           component: Admin,
+          beforeEnter: adminRequired
+        },
+        {
+          path: 'verify',
+          name: 'verify',
+          component: Verify,
           beforeEnter: adminRequired
         }
       ]
