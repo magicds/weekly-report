@@ -29,6 +29,10 @@
 
 ## 基本配置
 
+**相关仓库**
+
+云函数仓库：[https://github.com/cdswyda/weekly-report-avcloud](https://github.com/cdswyda/weekly-report-avcloud)
+
 **LeanCloud 应用配置**
 
 前往 [LeanCloud](https://leancloud.cn/) 新增应用。 并导入 `/appSchema/` 下的 schema
@@ -89,7 +93,7 @@ private static $NICKNAME = '新点前端周报'; // 发件人的昵称
 
 此处使用了 LeanCloud 提供的云引擎中的定时任务来实现。
 
-1. 定义云函数，以便发送邮件。实现可参考 [weeklyReportSendEmail](https://github.com/cdswyda/weeklyReportSendEmail)
+1. 定义云函数，以便发送邮件。实现可参考 [weekly-report-avcloud](https://github.com/cdswyda/weekly-report-avcloud)
 2. 在 LeanCloud 的应用中 点击 `云引擎 => 定时任务` 来创建定时任务，定时执行发送邮件。
 
 ![http://qiniu.cdswyda.com/images/201802/timing-task.png](http://qiniu.cdswyda.com/images/201802/timing-task.png)
