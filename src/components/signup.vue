@@ -35,11 +35,10 @@ import Input from 'iview/src/components/input/input';
 import Button from 'iview/src/components/button/';
 import { Select, Option } from 'iview/src/components/select';
 import Modal from 'iview/src/components/Modal/index.js';
+import Message from 'iview/src/components/message';
 import api from '@/api/index.js';
 
 window.api = api;
-
-console.log(api);
 
 export default {
   name: 'signup',
@@ -113,6 +112,7 @@ export default {
   },
   methods: {
     signup() {
+      const that = this;
       this.$refs.form.validate(isValidated => {
         if (!isValidated) return;
 
@@ -132,17 +132,44 @@ export default {
               '确认不选择所在小组？不选择所在小组将无法录入个人工作周报？',
             onOk: () => {
               // 登录成功后自动跳转到登录
-              api.signUp(user).then((u) => {
+              api.signUp(user).then(u => {
                 console.log(u);
                 this.$router.push('/');
               });
             }
           });
         } else {
-          // 登录成功后自动跳转到登录
-          api.signUp(user).then((u) => {
+          // 注册成功后自动跳转到登录
+          api.signUp(user).then(u => {
             console.log(u);
-            this.$router.push('/');
+            Modal.info({
+              title: '系统提醒',
+              loading: true,
+              content:
+                '注册成功，需要上级成员通过验证后才能正常使用系统。<br>点击确定给所有管理员发送邮件。',
+              onOk: function() {
+                api
+                  .requestVerify()
+                  .then(() => {
+                    Message.success({
+                      content:
+                        '提醒验证邮件发送成功，请等待验证通过后，重新登录',
+                      closable: true,
+                      duration: 10
+                    });
+                    Modal.remove();
+                    that.$router.push('/');
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    Message.error({
+                      content: `${err.message}`,
+                      closable: true,
+                      duration: 50
+                    });
+                  });
+              }
+            });
           });
         }
       });

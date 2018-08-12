@@ -36,6 +36,27 @@ export default {
         })
     })
   },
+  requestVerify() {
+    let i = 0;
+    let LIMIT_COUNT = 50;
+
+    function check(resolve, reject) {
+      AV.Cloud.run('userSignUp').then(function (data) {
+        resolve();
+      }).catch((err) => {
+        if (i++ < LIMIT_COUNT) {
+          setTimeout(() => {
+            check(resolve, reject);
+          }, 15000);
+        } else {
+          reject('提醒邮件发送失败');
+        }
+      })
+    }
+    return new Promise((resolve, reject) => {
+      check(resolve, reject);
+    });
+  },
   logIn(name, pwd) {
     return this.isVerify(name).then(() => {
       return AV.User.logIn(name, pwd);
