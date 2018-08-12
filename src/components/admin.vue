@@ -64,7 +64,7 @@ function update(data, id, keys) {
       'administrator',
       userMap[id]
     ).then(r => {
-      return savePerson(data, id, keys);
+      return api.savePerson(data, id, keys);
     });
   }
 
