@@ -15,6 +15,8 @@
 
 - **2018-08-12**
   - 允许管理员直接给为用户发送密码重置邮件
+  - 新增错误提醒
+  - 注册后的用户无法直接登录，需要团队管理员验证
 - **2018-04-24** 修复本周汇总页面下可能的报错现象，且人员选择打开无效 [#10](https://github.com/cdswyda/weekly-report/issues/10)
 - **2018-04-21** 初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)
 - **2018-04-21** 修复登录页面切换小组时，若小组内暂时没有成员，报错的问题。 [#9](https://github.com/cdswyda/weekly-report/issues/9)
@@ -24,7 +26,7 @@
 - 重置密码页 [#3](https://github.com/cdswyda/weekly-report/issues/3)
 - 小组管理 [#4](https://github.com/cdswyda/weekly-report/issues/4)
 - 成员删除 [#6](https://github.com/cdswyda/weekly-report/issues/6)
-- 错误信息提示 [#5](https://github.com/cdswyda/weekly-report/issues/5)
+- ~~错误信息提示 [#5](https://github.com/cdswyda/weekly-report/issues/5)~~
 - ~~初始化小组配置优化 [#8](https://github.com/cdswyda/weekly-report/issues/8)~~
 
 ## 基本配置
