@@ -7,8 +7,57 @@ import Promise from 'bluebird';
 window.AV = AV;
 
 export default {
+  /**
+   * 用户是否经过验证
+   *
+   * @param {String} uname 用户名
+   * @returns Promise<Boolean> 是否验证通过
+   */
+  isVerify(uname) {
+    return new Promise((resolve, reject) => {
+      const query = new AV.Query('_User');
+      query.equalTo('username', uname);
+      query.find()
+        .then((r) => {
+          if (r.length) {
+            console.log(r);
+            const user = r[0];
+            if (user.attributes.verify === true) {
+              resolve(true);
+            } else {
+              reject(new Error('你还未经过团队管理人员的认证，还不能登录系统'));
+            }
+          } else {
+            reject(new Error('用户不存在！'));
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        })
+    })
+  },
   logIn(name, pwd) {
-    return AV.User.logIn(name, pwd).catch(throwError);
+    return this.isVerify(name).then(() => {
+      return AV.User.logIn(name, pwd);
+    }).catch(throwError)
+  },
+  /**
+   * 利用sessionToken重新登录一次
+   *
+   * @param {String} sessionToken token
+   * @returns Promse<boolean>
+   */
+  sessionTokenLogIn(sessionToken) {
+    return new Promise((resolve, reject) => {
+      AV.User.become(sessionToken)
+        .then((user) => {
+          if (user.attributes.verify === true) {
+            resolve(user);
+          } else {
+            throw new Error('你还未经过团队管理人员的认证，还不能登录系统');
+          }
+        }).catch(throwError);
+    });
   },
   getCurrUser() {
     return AV.User.current();
@@ -197,9 +246,9 @@ export default {
       });
   },
   // 获取所有用户
-  getAllUser: (function() {
+  getAllUser: (function () {
     let cache;
-    return function(noCache) {
+    return function (noCache) {
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
         cache = this.getData('_User', false, {

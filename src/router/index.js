@@ -9,6 +9,31 @@ import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
 
+import Message from 'iview/src/components/message';
+import AV from 'leancloud-storage';
+
+// 验证通过要求
+function verifyRequired(to, from, next) {
+  const user = AV.User.current();
+  // 未登录或未验证禁止访问
+  if (!user || user.attributes.verify !== true) {
+    next('/');
+  }else{
+    next();
+  }
+}
+
+// admin require
+function adminRequired(to, from, next) {
+  const user = AV.User.current();
+  // 未登录或未验证禁止访问
+  if (!user || user.attributes.isAdmin !== true) {
+    // next('/');
+  }else{
+    next();
+  }
+}
+
 Vue.use(Router);
 
 const router = new Router({
@@ -17,11 +42,13 @@ const router = new Router({
     if (savedPosition) {
       return savedPosition;
     } else {
-      return { x: 0, y: 0 };
+      return {
+        x: 0,
+        y: 0
+      };
     }
   },
-  routes: [
-    {
+  routes: [{
       path: '/',
       name: 'login',
       component: Login
@@ -30,8 +57,8 @@ const router = new Router({
       path: '/main',
       name: 'main',
       component: Main,
-      children: [
-        {
+      beforeEnter: verifyRequired,
+      children: [{
           path: 'input',
           name: 'input',
           component: Input
@@ -54,7 +81,8 @@ const router = new Router({
         {
           path: 'admin',
           name: 'admin',
-          component: Admin
+          component: Admin,
+          beforeEnter: adminRequired
         }
       ]
     },
@@ -66,13 +94,13 @@ const router = new Router({
   ]
 });
 
-router.beforeEach((to, from, next) => {
-  console.log('before');
-  console.log(to, from, next);
-  next();
-});
-router.afterEach((to, from) => {
-  console.log('after');
-  console.log(to, from);
-});
+// router.beforeEach((to, from, next) => {
+//   console.log('before');
+//   console.log(to, from, next);
+//   next();
+// });
+// router.afterEach((to, from) => {
+//   console.log('after');
+//   console.log(to, from);
+// });
 export default router;

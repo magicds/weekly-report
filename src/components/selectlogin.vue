@@ -96,7 +96,8 @@ export default {
       },
       groups: [],
       groupIndex: 0,
-      users: []
+      users: [],
+      dataLoaded: false
     };
   },
   computed: {
@@ -112,29 +113,18 @@ export default {
       }
     }
   },
-
-  created() {
-    // 已经登录则自动登录并跳转
-    let user = AV.User.current();
-    if (user !== null) {
-      // 利用sessionToken重新登录一次，以便拉取最新信息
-      AV.User.become(user._sessionToken)
-        .then(() => {
-          this.$router.push(
-            user.attributes.noReport ? { name: 'summary' } : { name: 'input' }
-          );
-        })
-        .catch(() => {
-          AV.User.logOut().then(() => {
-            this.$router.push('/');
-          });
-        });
-    } else {
+  mounted() {
+    this.autoLogin();
+  },
+  beforeMount() {
+    if(!this.dataLoaded) {
+      // 未获取数据时获取数据
       getAllUser().then(data => {
+        this.dataLoaded = true;
         // 第一次进入
-        if(!data.groups.length) {
+        if (!data.groups.length) {
           this.$router.push('/signup');
-        }else {
+        } else {
           this.$set(this, 'groups', data.groups);
           this.$set(this, 'users', data.users);
           this.groupIndex =
@@ -146,6 +136,25 @@ export default {
   },
 
   methods: {
+    autoLogin() {
+      // 已经登录则自动登录并跳转
+      let user = AV.User.current();
+      if (user !== null) {
+        // 利用sessionToken重新登录一次，以便拉取最新信息
+        api
+          .sessionTokenLogIn(user._sessionToken)
+          .then(user => {
+            this.$router.push(
+              user.attributes.noReport ? { name: 'summary' } : { name: 'input' }
+            );
+          })
+          .catch(() => {
+            AV.User.logOut().then(() => {
+              this.$router.push('/');
+            });
+          });
+      }
+    },
     login() {
       this.$refs.form.validate(isValidated => {
         localStorage.setItem('localGroupIndex', this.groupIndex);

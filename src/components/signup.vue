@@ -132,14 +132,16 @@ export default {
               '确认不选择所在小组？不选择所在小组将无法录入个人工作周报？',
             onOk: () => {
               // 登录成功后自动跳转到登录
-              api.signUp(user).then(() => {
+              api.signUp(user).then((u) => {
+                console.log(u);
                 this.$router.push('/');
               });
             }
           });
         } else {
           // 登录成功后自动跳转到登录
-          api.signUp(user).then(() => {
+          api.signUp(user).then((u) => {
+            console.log(u);
             this.$router.push('/');
           });
         }
