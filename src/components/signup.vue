@@ -161,7 +161,6 @@ export default {
                     that.$router.push('/');
                   })
                   .catch(err => {
-                    console.log(err);
                     Message.error({
                       content: `${err.message}`,
                       closable: true,

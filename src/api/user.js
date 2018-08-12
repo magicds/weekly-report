@@ -36,6 +36,9 @@ export default {
         })
     })
   },
+  /**
+   * 请求注册后的验证
+   */
   requestVerify() {
     let i = 0;
     let LIMIT_COUNT = 50;
@@ -52,6 +55,30 @@ export default {
           reject('提醒邮件发送失败');
         }
       })
+    }
+    return new Promise((resolve, reject) => {
+      check(resolve, reject);
+    });
+  },
+  savePerson(id, data) {
+    let i = 0;
+    let LIMIT_COUNT = 50;
+
+    function check(resolve, reject) {
+      AV.Cloud.run('savePersonData', {
+        id: id,
+        data: data
+      }).then(() => {
+        resolve('保存成功');
+      }).catch((err) => {
+        if (i++ < LIMIT_COUNT) {
+          setTimeout(() => {
+            check(resolve, reject);
+          }, 15000);
+        } else {
+          reject('云函数重试50次仍超时');
+        }
+      });
     }
     return new Promise((resolve, reject) => {
       check(resolve, reject);
