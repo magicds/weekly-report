@@ -48,7 +48,7 @@ function getAllUser() {
       sort: 'asc',
       field: 'index'
     }),
-    api.getAllUser()
+    api.getAllUser(true, true)
   ]).then(result => {
     let groups = [];
     let users = [];
