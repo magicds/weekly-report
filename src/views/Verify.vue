@@ -9,7 +9,7 @@
     <div class="user-verify-logs">
       <ul v-if="logsData.length">
         <li class="verify-log-item" v-for="log in logsData" :key="log.id">
-          <Tag :color="log.type | type2color" style="vertical-align: top;">{{log.type}}</Tag>
+          <Tag :color="log.type | type2color" style="vertical-align: top; width:50px; text-align: center;">{{log.type}}</Tag>
           <span>{{log.date}}</span>
           <span>{{log.info}}</span>
         </li>
