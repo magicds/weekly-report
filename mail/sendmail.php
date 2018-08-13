@@ -26,7 +26,7 @@ $content_warning = <<< EOF
 EOF;
 
 // 用户验证提醒
-$content_verify = '<p>您好，<span style="color:#ea644a;">' . $_POST['verifyUsername'] . '</span>，已经注册进入周报系统。</p> <p><span style="color:#ea644a;">如果您确认 TA 是团队成员</span>，请即使点击下方链接通过其验证请求（验证通过的用户才能正常使用周报系统）。</p><p><a href="http://fe.epoint.com.cn:8080/weeklyreport/#/main/verify" target="_black">http://fe.epoint.com.cn:8080/weeklyreport/#/main/verify</a></p>';
+$content_verify = '<p>您好，<span style="color:#ea644a;">' . $_POST['verifyUsername'] . '</span>，已经注册进入周报系统。</p> <p><span style="color:#ea644a;">如果您确认 TA 是团队成员</span>，请及时点击下方链接通过其验证请求（验证通过的用户才能正常使用周报系统）。</p><p><a href="http://fe.epoint.com.cn:8080/weeklyreport/#/main/verify" target="_black">http://fe.epoint.com.cn:8080/weeklyreport/#/main/verify</a></p>';
 
 $users = json_decode($_POST['user']);
 $type = $_POST['type'];
