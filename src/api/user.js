@@ -41,7 +41,7 @@ export default {
    */
   requestVerify() {
     let i = 0;
-    let LIMIT_COUNT = 50;
+    let LIMIT_COUNT = 5;
 
     function check(resolve, reject) {
       AV.Cloud.run('userSignUp').then(function (data) {
@@ -52,7 +52,7 @@ export default {
             check(resolve, reject);
           }, 15000);
         } else {
-          reject('提醒邮件发送失败');
+          reject('云函数重试5次仍超时' + err.message);
         }
       })
     }
@@ -62,7 +62,7 @@ export default {
   },
   savePerson(id, data) {
     let i = 0;
-    let LIMIT_COUNT = 50;
+    let LIMIT_COUNT = 5;
 
     function check(resolve, reject) {
       AV.Cloud.run('savePersonData', {
@@ -76,7 +76,53 @@ export default {
             check(resolve, reject);
           }, 15000);
         } else {
-          reject('云函数重试50次仍超时');
+          reject('云函数重试5次仍超时' + err.message);
+        }
+      });
+    }
+    return new Promise((resolve, reject) => {
+      check(resolve, reject);
+    });
+  },
+  verifyUser(userId) {
+    let i = 0;
+    let LIMIT_COUNT = 5;
+
+    function check(resolve, reject) {
+      AV.Cloud.run('verifyUser', {
+        targetUser: userId
+      }).then(() => {
+        resolve('保存成功');
+      }).catch((err) => {
+        if (i++ < LIMIT_COUNT) {
+          setTimeout(() => {
+            check(resolve, reject);
+          }, 15000);
+        } else {
+          reject('云函数重试5次仍超时' + err.message);
+        }
+      });
+    }
+    return new Promise((resolve, reject) => {
+      check(resolve, reject);
+    });
+  },
+  deleteUser(userId) {
+    let i = 0;
+    let LIMIT_COUNT = 5;
+
+    function check(resolve, reject) {
+      AV.Cloud.run('deleteUser', {
+        targetUser: userId
+      }).then(() => {
+        resolve('保存成功');
+      }).catch((err) => {
+        if (i++ < LIMIT_COUNT) {
+          setTimeout(() => {
+            check(resolve, reject);
+          }, 15000);
+        } else {
+          reject('云函数重试5次仍超时' + err.message);
         }
       });
     }
