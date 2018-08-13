@@ -305,7 +305,7 @@ export default {
       }];
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
-        cache = this.getData('_User', false, {
+        cache = this.getData('_User', cond, {
           sort: 'asc',
           field: 'memberIndex'
         });
