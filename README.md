@@ -13,6 +13,7 @@
 
 ## Changelog
 
+- **2018-08-15** 重置密码页 [#3]
 - **2018-08-13**
   - 完成[防止其他人误注册，注册后加入管理员校验，通过后才能访问系统 #12](https://github.com/cdswyda/weekly-report/issues/12)，**需要同步更新**一些内容，详见issues。
   - 开启打包的gzip支持。
@@ -27,7 +28,7 @@
 ## Todo
 
 - ~~防止其他人误注册，注册后加入管理员校验，通过后才能访问系统 [#12](https://github.com/cdswyda/weekly-report/issues/12)~~
-- 重置密码页 [#3](https://github.com/cdswyda/weekly-report/issues/3)
+- ~~重置密码页 [#3](https://github.com/cdswyda/weekly-report/issues/3)~~
 - 小组管理 [#4](https://github.com/cdswyda/weekly-report/issues/4)
 - 成员删除 [#6](https://github.com/cdswyda/weekly-report/issues/6)
 - ~~错误信息提示 [#5](https://github.com/cdswyda/weekly-report/issues/5)~~
