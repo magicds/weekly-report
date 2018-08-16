@@ -9,6 +9,7 @@ import HistorySummary from '@/components/history-summary';
 import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
 import Verify from '@/views/Verify';
+import ForgetPwd from '@/views/ForgetPwd';
 
 import Message from 'iview/src/components/message';
 import AV from 'leancloud-storage';
@@ -19,7 +20,7 @@ function verifyRequired(to, from, next) {
   // 未登录或未验证禁止访问
   if (!user || user.attributes.verify !== true) {
     next('/');
-  }else{
+  } else {
     next();
   }
 }
@@ -30,7 +31,7 @@ function adminRequired(to, from, next) {
   // 未登录或未验证禁止访问
   if (!user || user.attributes.isAdmin !== true) {
     // next('/');
-  }else{
+  } else {
     next();
   }
 }
@@ -53,6 +54,11 @@ const router = new Router({
       path: '/',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/forgetpwd',
+      name: 'forgetpwd',
+      component: ForgetPwd
     },
     {
       path: '/main',
