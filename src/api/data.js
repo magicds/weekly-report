@@ -79,6 +79,8 @@ var dataApi = {
       });
     }
 
+    query.limit(1000);
+
     return query.find().catch(throwError);
   },
   /**
