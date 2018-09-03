@@ -2,7 +2,7 @@
   <div class="user-admin" type="flex" align="top">
     <Row class="row" v-for="group in groups" :key="group.index">
       <i-col :xs="{span:24}" :sm="{span:12}" :md="{span:12}" :lg="{span:8}" v-for="member in group.member" :key="member.id">
-        <UserInfo  :userId="member.id" :user="member.data" @startEdit="startEdit"></UserInfo>
+        <UserInfo  :userId="member.id" :user="member.data" @startEdit="startEdit" :showDelete="isAdmin"></UserInfo>
       </i-col>
     </Row>
 

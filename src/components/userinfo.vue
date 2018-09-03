@@ -1,5 +1,5 @@
 <template>
-  <div class="user-info" :user="user" :userId="userId" >
+  <div class="user-info" :user="user" :userId="userId" :showDelete="showDelete">
     <Card :dis-hover="true" class="clearfix" style="min-height:160px">
       <div class="left">
         <label for="useravatar"  class="upload-avatar">
@@ -8,7 +8,9 @@
         <input type="file" style="position:absolute;top:100%;left:100%;opacity:0;" name="useravatar" id="useravatar" @change="savePhoto" accept=".jpg,.png">
       </div>
       <div class="right">
-        <div class="detail-title">详细信息<i-button @click="startEdit" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="edit"></Icon>编辑</i-button></div>
+        <div class="detail-title">详细信息<i-button @click="startEdit" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="edit"></Icon>编辑</i-button>
+        <i-button v-if="showDelete" :loading="loading" @click="deleteUser(userId)" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="ios-trash-outline"></Icon>删除</i-button>
+        </div>
 
         <hr class="hr">
 
@@ -45,6 +47,7 @@ import Tag from 'iview/src/components/tag';
 import Icon from 'iview/src/components/icon';
 import Button from 'iview/src/components/button';
 import Message from 'iview/src/components/message';
+import Modal from 'iview/src/components/modal';
 import AV from 'leancloud-storage';
 import api from '@/api/';
 
@@ -64,7 +67,8 @@ export default {
   },
   props: {
     user: Object,
-    userId: String
+    userId: String,
+    showDelete: Boolean
   },
   computed: {
     fullName() {
@@ -82,16 +86,47 @@ export default {
   },
   data() {
     return {
-      avatar: ''
+      avatar: '',
+      loading: false
     };
   },
   methods: {
     startEdit() {
       this.$emit('startEdit', this.user, this.userId);
     },
+    deleteUser(userId) {
+      Modal.confirm({
+        title: '危险警报',
+        content: '确定要删除此用户？删除后无法恢复！',
+        loading: true,
+        onOk: () => {
+          // alert('删除' + userId);
+          this._deleteUser(userId);
+        }
+      });
+    },
+    _deleteUser(userId) {
+      this.loading = true;
+      api
+        .deleteUser(userId)
+        .then(() => {
+          Modal.remove();
+          this.loading = false;
+          Message.success({
+            content: '操作成功'
+          });
+          this.$el.remove();
+        })
+        .catch(err => {
+          this.loading = false;
+          Message.error({
+            content: '操作失败' + (err.message || err)
+          });
+        });
+    },
     verifyEmail() {
       // 只有自己才能验证邮件
-      if(this.userId != AV.User.current().id) return;
+      if (this.userId != AV.User.current().id) return;
 
       AV.User.requestEmailVerify(this.user.email).then(() => {
         Message.info({
@@ -163,7 +198,7 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
-  padding:3px 0 5px;
+  padding: 3px 0 5px;
 
   display: block;
 
