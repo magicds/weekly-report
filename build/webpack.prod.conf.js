@@ -89,11 +89,6 @@ var webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
-      },
-      // 新增拷贝 mail 目录
-      {
-        from: path.resolve(__dirname, '../mail'),
-        to: path.resolve(config.build.assetsRoot, 'mail')
       }
     ])
   ]
