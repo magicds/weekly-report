@@ -10,11 +10,11 @@
     </div>
     <table class="table-bordered table vertical-middle table-hover" id="person-summary">
       <colgroup>
-        <col v-for="(column, index) in columns" :width="setCellWidth(column, index)">
+        <col v-for="(column, index) in columns" :key="column.key" :width="setCellWidth(column, index)">
       </colgroup>
       <thead>
         <tr>
-          <th v-for="column in columns" class="text-center">
+          <th v-for="column in columns" :key="column.key" class="text-center">
             <span class="column-name">{{column.title}}</span>
             <span class="ivu-table-sort" v-if="column.sortable">
               <i class="ivu-icon ivu-icon-arrow-up-b"
@@ -28,11 +28,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="person in cloneData" v-if="person.show">
+        <tr v-for="person in cloneData" :key="person.userId" v-if="person.show">
           <td class="text-center">{{person.username}} <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span></td>
           <td>
             <ul v-if="person.workList.length > 0">
-              <li v-for="item in person.workList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+              <li v-for="item in person.workList" :key="item.id">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
           </td>
           <td class="text-center">{{person.taskTime | toInteger}}</td>
@@ -41,7 +41,7 @@
           <td :class="getSaturationStyle(person.saturation)"  class="text-center">{{person.saturation | getProportion}}</td>
           <td>
             <ul v-if="person.leaveList.length > 0">
-              <li v-for="item in person.leaveList">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+              <li v-for="item in person.leaveList" :key="item.id">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
             <span v-else>无</span>
           </td>
