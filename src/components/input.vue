@@ -37,7 +37,7 @@
 
         <div class="type-info">
           <ul>
-            <li v-for="item in types" :class="item.key == type ? 'light' : ''">{{item.text}}：{{item.info}}</li>
+            <li v-for="item in types" :key="item.key" :class="item.key == type ? 'light' : ''">{{item.text}}：{{item.info}}</li>
           </ul>
         </div>
 
@@ -81,7 +81,7 @@
               <td>{{user.username}}</td>
               <td>
                 <ul>
-                  <li v-for="item in workList">
+                  <li v-for="item in workList" :key="item.id">
                     {{item.content}} <span v-if="item.showTime">（{{item.time}}小时）</span>
                     </li>
                 </ul>
@@ -91,7 +91,7 @@
               <td>{{communicationTime | getInt}}</td>
               <td>
                 <ul v-if="leaveList.length">
-                  <li v-for="item in leaveList">
+                  <li v-for="item in leaveList" :key="item.id">
                     {{item.content}} <span v-if="item.showTime">（{{item.time}}小时）</span>
                   </li>
                 </ul>
