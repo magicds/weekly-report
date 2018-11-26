@@ -59,7 +59,7 @@
 
       <fieldset>
         <legend>事项列表</legend>
-        <i-table :columns="tableColumns" :data="workList"></i-table>
+        <i-table :columns="tableColumns" :data="reportList"></i-table>
       </fieldset>
 
       <fieldset>
