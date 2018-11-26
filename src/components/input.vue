@@ -21,12 +21,6 @@
       <fieldset>
         <legend>工作内容</legend>
 
-        <!-- <RadioGroup v-model="type">
-          <i-radio v-for="item in types" :label="item.key" :key="item.key">
-            <span>{{item.text}}</span>
-          </i-radio>
-        </RadioGroup> -->
-
         <FormItem label="类型" style="margin-top:10px; margin-bottom:0px;">
           <RadioGroup v-model="type">
             <i-radio v-for="item in types" :label="item.key" :key="item.key">
