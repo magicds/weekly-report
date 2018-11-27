@@ -32,7 +32,7 @@
           <td class="text-center">{{person.username}} <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span></td>
           <td>
             <ul v-if="person.workList.length > 0">
-              <li v-for="item in person.workList" :key="item.id">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+              <li v-for="(item, index) in person.workList" :key="index">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
           </td>
           <td class="text-center">{{person.taskTime | toInteger}}</td>
@@ -41,7 +41,7 @@
           <td :class="getSaturationStyle(person.saturation)"  class="text-center">{{person.saturation | getProportion}}</td>
           <td>
             <ul v-if="person.leaveList.length > 0">
-              <li v-for="item in person.leaveList" :key="item.id">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+              <li v-for="(item, index) in person.leaveList" :key="index">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
             </ul>
             <span v-else>无</span>
           </td>
