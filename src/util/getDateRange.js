@@ -21,7 +21,7 @@ function getPrevDateRange(unit, size) {
       .clone()
       .subtract(7 * size + day - 1, 'days')
       .toDate(),
-      t.subtract(day - 1 + 7 * (size - 1), 'days').toDate()
+      t.subtract(day, 'days').hour(23).minute(59).second(59).millisecond(999).toDate()
     ];
   }
 

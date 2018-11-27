@@ -250,8 +250,26 @@ export default {
     selectedDateRange() {
       return this.dateRangeMap[this.selectedDateName];
     },
+    weekDateRange() {
+      let start_v = moment(this.date[0]).clone();
+      let end_v = moment(this.date[1]).clone();
+      // 开始时间为所选日期所在的周一
+      let start = start_v
+        .clone()
+        .subtract(start_v.isoWeekday() - 1, 'days')
+        .toDate();
+      // 转化日期为所选日期所在的周日
+      let day = end_v.isoWeekday();
+      let end = end_v.clone();
+      if (day === 1 && end_v.isAfter(start_v, 'day')) {
+        end = end.toDate();
+      } else {
+        end = end.add(7 - day + 1, 'days').toDate();
+      }
+      return [start, end];
+    },
     targetDateRange() {
-      return this.currOption === "week" ? this.date : this.selectedDateRange;
+      return this.currOption === "week" ? this.weekDateRange : this.selectedDateRange;
     },
     fileName() {
       return (
@@ -273,15 +291,59 @@ export default {
         return s >= t1 && e <= t2;
       });
 
-      let reports = [];
-
-      // TODO 多条记录时需要按照人员进行合并
-      data.forEach(item => {
-        // const r = item.reports;
-        reports = reports.concat(item.reports);
-      });
+      let reports = this.dealReportData(data);
       this.$set(this, "weekReports", reports);
       this.isShow = true;
+    },
+    dealReportData(data) {
+      let reports = [];
+      const weeks = data.length;
+      if (weeks > 1) {
+        reports = assignByPerson(data);
+      } else {
+        reports = data[0].reports;
+      }
+
+      // 组合排序标识 并 调整饱和度为平均饱和度
+      reports.forEach(item => {
+        item._index = item.groupIndex * 100 + item.memberIndex;
+        item.saturation = item.saturation / weeks;
+        // TODO shijian
+      });
+
+      // 排序
+      reports.sort((a, b) => {
+        return a._index < b._index ? -1 : 1;
+      });
+      return reports;
+
+      function assignByPerson(allRps) {
+        const map = {};
+        const arr = [];
+        allRps.forEach(rp => {
+          rp.reports.forEach(person => {
+            const uid = person.userId;
+            if (!map[uid]) {
+              map[uid] = person;
+            } else {
+              // 列表合并
+              map[uid].workList = map[uid].workList.concat(person.workList);
+              map[uid].leaveList = map[uid].leaveList.concat(person.leaveList);
+              // 时间以及饱和度等进行累加
+              map[uid].studyTime += person.studyTime;
+              map[uid].taskTime += person.taskTime;
+              map[uid].communicationTime += person.communicationTime;
+              map[uid].leaveTime += person.leaveTime;
+              map[uid].saturation += person.saturation;
+            }
+          });
+        });
+
+        Object.keys(map).forEach(k => {
+          arr.push(map[k]);
+        });
+        return arr;
+      }
     }
   }
 };
