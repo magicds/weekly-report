@@ -6,6 +6,7 @@ import Main from '@/components/main';
 import Input from '@/components/input';
 import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
+import ReportSummary from '@/components/report-summary';
 import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
 import Verify from '@/views/Verify';
@@ -79,6 +80,11 @@ const router = new Router({
           path: 'history',
           name: 'history',
           component: HistorySummary
+        },
+        {
+          path: 'report',
+          name: 'report',
+          component: ReportSummary
         },
         {
           path: 'usersetting',

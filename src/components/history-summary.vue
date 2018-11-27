@@ -16,6 +16,7 @@ import Button from 'iview/src/components/button/';
 import Promise from 'bluebird';
 import moment from 'moment/min/moment.min.js';
 import mergeSort from '@/util/sort.js';
+import {getPrevDateRange} from '@/util/getDateRange.js';
 
 // 获取两个日期之间的星期数目
 function getWeeks(strat, end) {
@@ -135,47 +136,6 @@ function dealReports(data, users, weeks) {
 
   return mergeSort(reports, '_index', 'asc');
 }
-/**
- * 获取日期范围
- *
- * @param {String} unit 单位 可选 week / month
- * @param {Number} size 往前推算多久
- * @returns {Array} 一个数组，第一个值为开始日期，第二个为结束日期，计算失败范围一个空数组
- */
-function getDateRange(unit, size) {
-  let t = moment()
-    .hour(0)
-    .minute(0)
-    .second(0)
-    .millisecond(0);
-  let day = t.isoWeekday();
-
-  if (unit === 'week') {
-    return [
-      t
-        .clone()
-        .subtract(7 * size + day - 1, 'days')
-        .toDate(),
-      t.subtract(day - 1 + 7 * (size - 1), 'days').toDate()
-    ];
-  }
-
-  if (unit === 'month') {
-    return (function() {
-      let aim_m = moment(t.subtract(size, 'month'), 'YYYY-MM');
-      let start = aim_m.clone().startOf('month');
-      let start_day = start.isoWeekday();
-      let end = aim_m.clone().endOf('month');
-      let end_day = end.isoWeekday();
-
-      return [
-        start.add(start_day === 1 ? 0 : 7 - start_day + 1, 'days').toDate(),
-        end.add(7 - end_day + 1, 'days').toDate()
-      ];
-    })();
-  }
-  return [];
-}
 
 export default {
   name: 'histroysmmmary',
@@ -186,7 +146,7 @@ export default {
   },
   data() {
     return {
-      date: getDateRange('week', 1),
+      date: getPrevDateRange('week', 1),
 
       inGetData: true,
 
@@ -198,31 +158,31 @@ export default {
           {
             text: '前一周',
             value() {
-              return getDateRange('week', 1);
+              return getPrevDateRange('week', 1);
             }
           },
           {
             text: '前两周',
             value() {
-              return getDateRange('week', 2);
+              return getPrevDateRange('week', 2);
             }
           },
           {
             text: '前三周',
             value() {
-              return getDateRange('week', 3);
+              return getPrevDateRange('week', 3);
             }
           },
           {
             text: '本月',
             value() {
-              return getDateRange('month', 0);
+              return getPrevDateRange('month', 0);
             }
           },
           {
             text: '上月',
             value() {
-              return getDateRange('month', 1);
+              return getPrevDateRange('month', 1);
             }
           }
         ],
