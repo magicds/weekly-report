@@ -58,10 +58,10 @@ const genderOptList = () => {
 
   const yearArr = [];
 
-  let i = startYear;
-  while (i <= currYear) {
+  let i = currYear;
+  while (i >= startYear) {
     yearArr.push(i);
-    i++;
+    i--;
   }
 
   // 是否分组
@@ -93,11 +93,11 @@ const genderOptList = () => {
       if (year == currYear) {
         len = currMonth;
       }
-      while (i <= len) {
-        let t = `${year}-${(i + "").padStart(2, 0)}`;
-        dateRangeMap[t] = getDateRange(t, "month");
+      while (len >= i) {
+        let t = `${year}-${(len + "").padStart(2, 0)}`;
+        dateRangeMap[t] = getDateRange(len, "month");
         arr.push({ id: t, text: t });
-        i++;
+        len--;
       }
 
       return arr;
@@ -132,12 +132,12 @@ const genderOptList = () => {
       if (year == currYear) {
         len = endQ;
       }
-      while (i <= len) {
-        let t = `${year}年第${i}季度`;
+      while (len >= i) {
+        let t = `${year}年第${len}季度`;
         let m = ((i - 1) * 3 + 1 + "").padStart(2, 0);
         dateRangeMap[t] = getDateRange(`${year}-${m}`, "quarter");
         arr.push({ id: t, text: t });
-        i++;
+        len--;
       }
 
       return arr;
@@ -256,20 +256,22 @@ export default {
       // 开始时间为所选日期所在的周一
       let start = start_v
         .clone()
-        .subtract(start_v.isoWeekday() - 1, 'days')
+        .subtract(start_v.isoWeekday() - 1, "days")
         .toDate();
       // 转化日期为所选日期所在的周日
       let day = end_v.isoWeekday();
       let end = end_v.clone();
-      if (day === 1 && end_v.isAfter(start_v, 'day')) {
+      if (day === 1 && end_v.isAfter(start_v, "day")) {
         end = end.toDate();
       } else {
-        end = end.add(7 - day + 1, 'days').toDate();
+        end = end.add(7 - day + 1, "days").toDate();
       }
       return [start, end];
     },
     targetDateRange() {
-      return this.currOption === "week" ? this.weekDateRange : this.selectedDateRange;
+      return this.currOption === "week"
+        ? this.weekDateRange
+        : this.selectedDateRange;
     },
     fileName() {
       return (
@@ -290,10 +292,11 @@ export default {
         const e = +new Date(item.endDate);
         return s >= t1 && e <= t2;
       });
-
-      let reports = this.dealReportData(data);
-      this.$set(this, "weekReports", reports);
-      this.isShow = true;
+      if (data && data.length) {
+        let reports = this.dealReportData(data);
+        this.$set(this, "weekReports", reports);
+        this.isShow = true;
+      }
     },
     dealReportData(data) {
       let reports = [];
