@@ -20,8 +20,8 @@ import {getPrevDateRange} from '@/util/getDateRange.js';
 
 // 获取两个日期之间的星期数目
 function getWeeks(strat, end) {
-  let s = moment(strat);
-  let e = moment(end);
+  let s = moment(strat).clone().hour(0).minute(0).second(0).millisecond(0);
+  let e = moment(end).clone().hour(0).minute(0).second(0).millisecond(0);
 
   // return Math.ceil((e.dayOfYear() - s.dayOfYear()) / 7);
   return Math.ceil(e.diff(s, 'days', true) / 7);

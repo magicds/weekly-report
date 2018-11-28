@@ -1,5 +1,5 @@
 <template>
-  <div class="summary" :data="cloneData" :isloading="isloading" :export-name="exportName" >
+  <div class="summary" :isloading="isloading" :export-name="exportName">
     <div class="summary-loading" v-show="isloading">
       <div class="ivu-spin ivu-spin-large ivu-spin-fix">
         <div class="ivu-spin-main">
@@ -8,44 +8,64 @@
         </div>
       </div>
     </div>
-    <table class="table-bordered table vertical-middle table-hover" id="person-summary">
+    <table class="table-bordered table vertical-middle table-hover" id="person-summary" ref="table">
       <colgroup>
-        <col v-for="(column, index) in columns" :key="column.key" :width="setCellWidth(column, index)">
+        <col
+          v-for="(column, index) in columns"
+          :key="column.key"
+          :width="setCellWidth(column, index)"
+        >
       </colgroup>
       <thead>
         <tr>
           <th v-for="column in columns" :key="column.key" class="text-center">
             <span class="column-name">{{column.title}}</span>
             <span class="ivu-table-sort" v-if="column.sortable">
-              <i class="ivu-icon ivu-icon-arrow-up-b"
-              @click="sort(column, 'asc')"
-              :class="{on: column._sortType === 'asc'}"></i>
-              <i class="ivu-icon ivu-icon-arrow-down-b"
-              @click="sort(column, 'desc')"
-              :class="{on: column._sortType === 'desc'}"></i>
+              <i
+                class="ivu-icon ivu-icon-arrow-up-b"
+                @click="sort(column, 'asc')"
+                :class="{on: column._sortType === 'asc'}"
+              ></i>
+              <i
+                class="ivu-icon ivu-icon-arrow-down-b"
+                @click="sort(column, 'desc')"
+                :class="{on: column._sortType === 'desc'}"
+              ></i>
             </span>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="person in cloneData" :key="person.userId" v-if="person.show">
-          <td class="text-center">{{person.username}} <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span></td>
-          <td>
-            <ul v-if="person.workList.length > 0">
-              <li v-for="(item, index) in person.workList" :key="index">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+          <td class="text-center">
+            {{person.username}}
+            <span class="person-info" v-if="person.extInfo">({{person.extInfo}})</span>
+          </td>
+          <td :title="showDetail ? '' :'汇总情况下不展示周报数据详情，请导出查看'">
+            <ul v-if="person.workList.length > 0" v-show="showDetail">
+              <li v-for="(item, index) in person.workList" :key="index">
+                {{item.content}}
+                <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span>
+              </li>
             </ul>
           </td>
           <td class="text-center">{{person.taskTime | toInteger}}</td>
           <td class="text-center">{{person.communicationTime | toInteger}}</td>
-          <td  class="text-center">{{person.studyTime | toInteger}}</td>
-          <td :class="getSaturationStyle(person.saturation)"  class="text-center">{{person.saturation | getProportion}}</td>
-          <td>
-            <ul v-if="person.leaveList.length > 0">
-              <li v-for="(item, index) in person.leaveList" :key="index">{{item.content}} <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span><span v-else></span></li>
+          <td class="text-center">{{person.studyTime | toInteger}}</td>
+          <td
+            :class="getSaturationStyle(person.saturation)"
+            class="text-center"
+          >{{person.saturation | getProportion}}</td>
+          <td :title="showDetail ? '' :'汇总情况下不展示周报数据详情，请导出查看'">
+            <ul v-if="person.leaveList.length > 0" v-show="showDetail">
+              <li v-for="(item, index) in person.leaveList" :key="index">
+                {{item.content}}
+                <span v-if="item.showTime">（{{item.time | toInteger}} 小时）</span>
+              </li>
             </ul>
-            <span v-else>无</span>
+            <span v-else v-show="showDetail">无</span>
           </td>
-          <td  class="text-center">
+          <td class="text-center" v-if="showDate">
             <span v-if="person.uncommitted" class="text-danger">未提交</span>
             <span v-else :title="getTimeTitle(person)">{{person.updatedAt | formatTime}}</span>
           </td>
@@ -58,28 +78,29 @@
     <div ref="group-charts" style="width:100%;height:300px;"></div>
 
     <Modal
-        v-model="showDialog"
-        title="选择要显示的人员"
-        width="200"
-        @on-ok="saveFilterData"
-        @on-cancel="resetFilterData"
-        >
-        <Tree :data="treeData" show-checkbox ref="tree"></Tree>
+      v-model="showDialog"
+      title="选择要显示的人员"
+      width="200"
+      @on-ok="saveFilterData"
+      @on-cancel="resetFilterData"
+    >
+      <Tree :data="treeData" show-checkbox ref="tree"></Tree>
     </Modal>
   </div>
 </template>
 
 <script>
-import Button from 'iview/src/components/button/button';
-import Modal from 'iview/src/components/modal/';
-import Tree from 'iview/src/components/tree/';
-import api from '@/api/index.js';
-import ExcellentExport from '@/assets/libs/excellentexport.js';
-import moment from 'moment/min/moment.min.js';
-import renderCharts, { resize as chartResize } from './rendercharts.js';
-import mergeSort from '@/util/sort.js';
+import Button from "iview/src/components/button/button";
+import Modal from "iview/src/components/modal/";
+import Tree from "iview/src/components/tree/";
+import api from "@/api/index.js";
+import ExcellentExport from "@/assets/libs/excellentexport.js";
+import moment from "moment/min/moment.min.js";
+import renderCharts, { resize as chartResize } from "./rendercharts.js";
+import mergeSort from "@/util/sort.js";
+import exportData from "./exportData.js";
 
-const WEEKNAMES = ['一', '二', '三', '四', '五', '六', '日'];
+const WEEKNAMES = ["一", "二", "三", "四", "五", "六", "日"];
 
 /**
  * 克隆数据 并添加默认的排序标识_index
@@ -98,9 +119,9 @@ function getCloneData(data) {
 }
 
 export default {
-  name: 'summary',
+  name: "summary",
   components: {
-    'i-button': Button,
+    "i-button": Button,
     Modal,
     Tree
   },
@@ -112,91 +133,102 @@ export default {
     },
     exportName: {
       type: String,
-      default: '周报'
+      default: "周报"
+    },
+    showDetail: {
+      type: Boolean,
+      default: true
+    },
+    showDate: {
+      type: Boolean,
+      default: true
     }
   },
   mounted() {
     renderCharts(
       this.cloneData,
-      this.$refs['person-charts'],
-      this.$refs['group-charts']
+      this.$refs["person-charts"],
+      this.$refs["group-charts"]
     );
-    window.addEventListener('resize', this.resizeCharts);
+    window.addEventListener("resize", this.resizeCharts);
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.resizeCharts);
+    window.removeEventListener("resize", this.resizeCharts);
   },
   created() {},
   updated() {
     if (this.cloneData && this.cloneData.length) {
       renderCharts(
         this.cloneData,
-        this.$refs['person-charts'],
-        this.$refs['group-charts']
+        this.$refs["person-charts"],
+        this.$refs["group-charts"]
       );
     }
   },
   data() {
-    return {
+    let data = {
       timer: null,
       columns: [
         {
-          title: '姓名',
-          key: 'username',
+          title: "姓名",
+          key: "username",
           sortable: true,
-          width: '80px'
+          width: "80px"
         },
         {
-          title: '工作内容',
-          key: 'workList'
+          title: "工作内容",
+          key: "workList"
         },
         {
-          title: '任务耗时',
-          key: 'taskTime',
+          title: "任务耗时",
+          key: "taskTime",
           sortable: true,
-          width: '90px'
+          width: "90px"
         },
         {
-          title: '沟通耗时',
-          key: 'communicationTime',
+          title: "沟通耗时",
+          key: "communicationTime",
           sortable: true,
-          width: '90px'
+          width: "90px"
         },
         {
-          title: '学习耗时',
-          key: 'studyTime',
+          title: "学习耗时",
+          key: "studyTime",
           sortable: true,
-          width: '90px'
+          width: "90px"
         },
         {
-          title: '饱和度',
-          key: 'saturation',
+          title: "饱和度",
+          key: "saturation",
           sortable: true,
-          width: '80px'
+          width: "80px"
         },
         {
-          title: '备注',
-          key: 'leaveList'
-        },
-        {
-          title: '提交时间',
-          key: 'updatedAt',
-          sortable: true,
-          width: '90px'
+          title: "备注",
+          key: "leaveList"
         }
       ],
       cloneData: this.filterPerson(getCloneData(this.data)),
       showDialog: false,
       treeData: this.getTreeData(this.data)
     };
+    if (this.showDate) {
+      data.columns.push({
+        title: "提交时间",
+        key: "updatedAt",
+        sortable: true,
+        width: "90px"
+      });
+    }
+    return data;
   },
   filters: {
     getProportion(v) {
-      return (v * 100).toFixed(2) + '%';
+      return (v * 100).toFixed(2) + "%";
     },
     formatTime(v) {
       let c = moment(v);
-      return c.format('MM-DD HH:mm') + ' 周' + WEEKNAMES[c.isoWeekday() - 1];
+      return c.format("MM-DD HH:mm") + " 周" + WEEKNAMES[c.isoWeekday() - 1];
     },
     toInteger(v) {
       return parseInt(v.toFixed(0), 10);
@@ -211,7 +243,7 @@ export default {
       }, 50);
     },
     setCellWidth(column, index) {
-      let width = '';
+      let width = "";
       if (column.width) {
         width = column.width;
       }
@@ -223,21 +255,27 @@ export default {
     // 1.4+ 0.7-                红色 加粗
     getSaturationStyle(v) {
       if (v >= 1.4 || v < 0.7) {
-        return 'text-danger text-bold';
+        return "text-danger text-bold";
       } else if (v >= 1.2) {
-        return 'text-warning';
+        return "text-warning";
       } else if (v >= 0.9) {
-        return 'text-success';
+        return "text-success";
       } else {
-        return 'text-warning';
+        return "text-warning";
       }
     },
     exportTable() {
-      let save_link = document.createElement('a');
-      ExcellentExport.csv(save_link, 'person-summary');
-      save_link.download = this.exportName + '.csv';
+      let save_link = document.createElement("a");
+      // 克隆并还原隐藏内容
+      var el = this.$refs.table.cloneNode(true);
+      [].slice.call(el.querySelectorAll("ul")).forEach(ul => {
+        ul.style.display = "block";
+      });
+      ExcellentExport.csv(save_link, el);
+      save_link.download = this.exportName + ".csv";
 
       save_link.click();
+      exportData(this.$el, this.data, this.exportName);
     },
     showFilterDialog() {
       this.showDialog = true;
@@ -247,9 +285,9 @@ export default {
         column._sortType = type;
         this.cloneData = mergeSort(this.cloneData, column.key, type);
       } else {
-        column._sortType = 'normal';
+        column._sortType = "normal";
         // 恢复默认排序
-        this.cloneData = mergeSort(this.cloneData, '_index', type);
+        this.cloneData = mergeSort(this.cloneData, "_index", type);
       }
       console.log(column, column._sortType);
     },
@@ -257,9 +295,9 @@ export default {
       let c = moment(person.createdAt);
       let u = moment(person.updatedAt);
       let title =
-        '提交时间' +
-        c.format('MM-DD HH:mm') +
-        ' 周' +
+        "提交时间" +
+        c.format("MM-DD HH:mm") +
+        " 周" +
         WEEKNAMES[c.isoWeekday() - 1];
 
       if (c.isSame(u)) {
@@ -267,9 +305,9 @@ export default {
       } else {
         return (
           title +
-          '\r\n最后更新时间' +
-          u.format('MM-DD HH:mm') +
-          ' 周' +
+          "\r\n最后更新时间" +
+          u.format("MM-DD HH:mm") +
+          " 周" +
           WEEKNAMES[u.isoWeekday() - 1]
         );
       }
@@ -288,18 +326,18 @@ export default {
       });
 
       localStorage.setItem(
-        '_weekly-report-notshow_',
+        "_weekly-report-notshow_",
         JSON.stringify(unchecked)
       );
       this.filterPerson(this.cloneData);
     },
     resetFilterData() {
-      this.$set(this, 'treeData', this.getTreeData(this.data));
+      this.$set(this, "treeData", this.getTreeData(this.data));
     },
     filterPerson(data) {
       if (!data) return data;
       let notShows = JSON.parse(
-        localStorage.getItem('_weekly-report-notshow_') || '{}'
+        localStorage.getItem("_weekly-report-notshow_") || "{}"
       );
       data.forEach(item => {
         item.show = notShows[item.userId] ? false : true;
@@ -311,7 +349,7 @@ export default {
       let groups = [];
 
       let unchecked = JSON.parse(
-        localStorage.getItem('_weekly-report-notshow_') || '{}'
+        localStorage.getItem("_weekly-report-notshow_") || "{}"
       );
 
       data.forEach(item => {
@@ -357,8 +395,8 @@ export default {
   watch: {
     // 数据变化时更新表格数据
     data(newVal) {
-      this.$set(this, 'cloneData', this.filterPerson(getCloneData(newVal)));
-      this.$set(this, 'treeData', this.getTreeData(newVal));
+      this.$set(this, "cloneData", this.filterPerson(getCloneData(newVal)));
+      this.$set(this, "treeData", this.getTreeData(newVal));
     }
   }
 };
