@@ -1,8 +1,5 @@
 // import echarts from 'echarts';
 import echarts from 'echarts/lib/echarts';
-import {
-  clearTimeout
-} from 'timers';
 /* global require */
 require('echarts/lib/chart/bar');
 require('echarts/lib/component/grid');
