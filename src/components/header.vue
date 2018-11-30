@@ -3,30 +3,22 @@
     <div class="left">
       <router-link class="nav-link" :to="{ name: 'input'}" v-if="user.groupName">周报填写</router-link>
       <router-link class="nav-link" :to="{ name: 'summary'}">本周汇总</router-link>
-      <!-- <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link> -->
+      <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
       <router-link class="nav-link" :to="{ name: 'report'}">历史周报</router-link>
     </div>
     <div class="right">
       <Dropdown @on-click="itemClick" trigger="click" placement="bottom-end">
         <a class href="javascript:void(0)">
           <Avatar>{{user.username}}</Avatar>
-          <!-- <Icon type="arrow-down-b"></Icon> -->
         </a>
         <DropdownMenu slot="list">
           <DropdownItem name="userinfo">个人信息</DropdownItem>
-          <DropdownItem name="history">原始周报数据查看</DropdownItem>
           <DropdownItem v-if="user.isAdmin" name="admin">人员管理</DropdownItem>
           <DropdownItem v-if="user.isAdmin" name="verify">未验证用户</DropdownItem>
           <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </div>
-    <!-- <Modal
-        v-model="showDialog"
-        :title="dialogTitle"
-        width="400"
-        >
-    </Modal>-->
   </header>
 </template>
 
@@ -71,9 +63,6 @@ export default {
           break;
         case "verify":
           this.$router.push("/main/verify");
-          break;
-        case "history":
-          this.$router.push("/main/history");
           break;
         default:
           break;
