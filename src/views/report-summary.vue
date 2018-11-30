@@ -188,7 +188,6 @@ export default {
     return Object.assign(
       {
         currOption: "week",
-        startDate: REPORT_START_DATE,
         date: getPrevDateRange("week", 1),
         opetionList: [
           {
