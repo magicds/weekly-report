@@ -48,7 +48,7 @@
 <script>
 import moment from "moment/min/moment.min.js";
 import api from "@/api/index.js";
-import mySummary from "./summary/summary.vue";
+import mySummary from "@/components/summary/summary.vue";
 import { Select, Option, OptionGroup } from "iview/src/components/select";
 import Button from "iview/src/components/button/";
 import DatePicker from "iview/src/components/date-picker/";

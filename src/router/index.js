@@ -6,13 +6,12 @@ import Main from '@/components/main';
 import Input from '@/components/input';
 import CurrWeekSummary from '@/components/currweek-summary';
 import HistorySummary from '@/components/history-summary';
-import ReportSummary from '@/components/report-summary';
+import ReportSummary from '@/views/report-summary';
 import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
 import Verify from '@/views/Verify';
 import ForgetPwd from '@/views/ForgetPwd';
 
-import Message from 'iview/src/components/message';
 import AV from 'leancloud-storage';
 
 // 验证通过要求
