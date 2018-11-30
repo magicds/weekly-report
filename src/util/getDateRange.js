@@ -101,8 +101,24 @@ function getDateRange(dateStr, type) {
   return [];
 }
 
+function getMonday(d, asMoment) {
+  let date = moment(d).hour(0).minute(0).second(0).millisecond(0);
+  let day = date.isoWeekday();
+  date = date.clone().subtract(day - 1, 'days');
+  return asMoment ? date : date.toDate();
+}
+
+function getSunday(d, asMoment) {
+  let date = moment(d).hour(23).minute(59).second(59).millisecond(999);
+  let day = date.isoWeekday();
+  date = date.clone().subtract(7 - day, 'days');
+  return asMoment ? date : date.toDate();
+}
+
 export {
   getPrevDateRange,
-  getDateRange
+  getDateRange,
+  getMonday,
+  getSunday
 };
 export default getDateRange;

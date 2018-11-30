@@ -40,7 +40,8 @@
       :export-name="fileName"
       :isloading="isloading"
       :showDetail="showDetailList"
-      :showDate="showDate"
+      :showCommitDate="showCommitDate"
+      :showDateRange="showDateRange"
     ></my-summary>
   </div>
 </template>
@@ -52,9 +53,9 @@ import mySummary from "@/components/summary/summary.vue";
 import { Select, Option, OptionGroup } from "iview/src/components/select";
 import Button from "iview/src/components/button/";
 import DatePicker from "iview/src/components/date-picker/";
-import { getDateRange, getPrevDateRange } from "@/util/getDateRange.js";
+import { getDateRange, getPrevDateRange, getSunday, getMonday } from "@/util/getDateRange.js";
 import Message from "iview/src/components/message";
-const REPORT_START_DATE = new Date(2017,11,10);
+const REPORT_START_DATE = new Date(2017, 11, 10);
 
 const genderOptList = () => {
   const dateRangeMap = {};
@@ -255,7 +256,9 @@ export default {
         // 是否显示工作详情
         showDetailList: false,
         // 是否显示提交日期
-        showDate: false
+        showCommitDate: false,
+        // 是否显示周报的时间范围
+        showDateRange: true
       },
       genderOptList()
     );
@@ -366,7 +369,7 @@ export default {
             let reports = this.dealReportData(data);
             this.$set(this, "weekReports", reports);
             this.isShow = true;
-          }else {
+          } else {
             this.isShow = false;
             Message.error({
               content: `未查询到指定范围内的周报！`,
@@ -377,7 +380,7 @@ export default {
         })
         .catch(err => {
           Message.error({
-            content: `${err.code || ''} ${err.message}`,
+            content: `${err.code || ""} ${err.message}`,
             closable: true,
             duration: 30
           });
@@ -385,22 +388,21 @@ export default {
         });
     },
     dealReportData(data) {
-      let reports = [];
+      let reports = assignByPerson(data);
       const weeks = data.length;
       if (weeks > 1) {
-        reports = assignByPerson(data);
+        this.showDateRange = true;
         this.showDetailList = false;
       } else {
-        reports = data[0].attributes.reports;
+        this.showDateRange = false;
         this.showDetailList = true;
       }
 
       // 组合排序标识 并 调整饱和度为平均饱和度
       reports.forEach(item => {
         item._index = item.groupIndex * 100 + item.memberIndex;
-        if (item._weeks) {
-          item.saturation = item.saturation / item._weeks;
-        }
+        item.saturation = item.saturation / item._weeks;
+        weeks > 1 && (item.dateRangeText = this.getReportDateRangeText(item));
       });
 
       // 排序
@@ -415,9 +417,14 @@ export default {
         allRps.forEach(rp => {
           rp.attributes.reports.forEach(person => {
             const uid = person.userId;
+            if(person.reportDate + '' === person.reportDate) {
+              person.reportDate = new Date(person.reportDate);
+            }
             if (!map[uid]) {
               map[uid] = person;
               map[uid]._weeks = 1;
+              map[uid]._startDate = person.reportDate;
+              map[uid]._endDate = person.reportDate;
             } else {
               // 列表合并
               map[uid].workList = map[uid].workList.concat(person.workList);
@@ -429,6 +436,7 @@ export default {
               map[uid].leaveTime += person.leaveTime;
               map[uid].saturation += person.saturation;
               map[uid]._weeks++;
+              map[uid]._endDate = person.reportDate;
             }
           });
         });
@@ -438,6 +446,13 @@ export default {
         });
         return arr;
       }
+    },
+    getReportDateRangeText(rep) {
+      const s = getMonday(rep._startDate, true);
+      const e = getSunday(rep._endDate, true);
+      const format = s.isSame(e, "year") ? "MM月DD日" : "YY年MM月DD日";
+      const w = rep._weeks;
+      return `<span>${s.format(format)}~${e.format(format)}<br>(共计${w}周)</span>`;
     }
   }
 };

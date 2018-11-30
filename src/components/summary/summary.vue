@@ -65,10 +65,11 @@
             </ul>
             <span v-else v-show="showDetail">无</span>
           </td>
-          <td class="text-center" v-if="showDate">
+          <td class="text-center" v-if="showCommitDate">
             <span v-if="person.uncommitted" class="text-danger">未提交</span>
             <span v-else :title="getTimeTitle(person)">{{person.updatedAt | formatTime}}</span>
           </td>
+          <td class="text-center" v-if="showDateRange" v-html="person.dateRangeText"></td>
         </tr>
       </tbody>
     </table>
@@ -139,9 +140,13 @@ export default {
       type: Boolean,
       default: true
     },
-    showDate: {
+    showCommitDate: {
       type: Boolean,
       default: true
+    },
+    showDateRange: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -212,12 +217,20 @@ export default {
       showDialog: false,
       treeData: this.getTreeData(this.data)
     };
-    if (this.showDate) {
+    if (this.showCommitDate) {
       data.columns.push({
         title: "提交时间",
         key: "updatedAt",
         sortable: true,
         width: "90px"
+      });
+    }
+    if (this.showDateRange) {
+      data.columns.push({
+        title: "时间范围",
+        key: "dateRange",
+        sortable: false,
+        width: "180px"
       });
     }
     return data;
