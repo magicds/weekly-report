@@ -410,6 +410,23 @@ export default {
     data(newVal) {
       this.$set(this, "cloneData", this.filterPerson(getCloneData(newVal)));
       this.$set(this, "treeData", this.getTreeData(newVal));
+    },
+    // 处理列的变化
+    showDateRange(v) {
+      if (v) {
+        return this.columns.push({
+          title: "时间范围",
+          key: "dateRange",
+          sortable: false,
+          width: "180px"
+        });
+      }
+      for (let i = this.columns.length - 1; i >= 0; i--) {
+        if (this.columns[i].key == "dateRange") {
+          this.columns.splice(i, 1);
+          break;
+        }
+      }
     }
   }
 };
