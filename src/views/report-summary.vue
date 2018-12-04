@@ -284,7 +284,7 @@ export default {
       if (day === 1 && end_v.isAfter(start_v, "day")) {
         end = end.toDate();
       } else {
-        end = end.add(7 - day + 1, "days").toDate();
+        end = end.add(7 - day, "days").toDate();
       }
       return [start, end];
     },

@@ -206,14 +206,15 @@ export default {
       let start = start_v
         .clone()
         .subtract(start_v.isoWeekday() - 1, 'days')
+        .hour(0).minute(0).second(0).millisecond(0)
         .toDate();
       // 转化日期为所选日期所在的周日
       let day = end_v.isoWeekday();
-      let end = end_v.clone();
+      let end = end_v.clone().hour(23).minute(59).second(59).millisecond(59);
       if (day === 1 && end_v.isAfter(start_v, 'day')) {
         end = end.toDate();
       } else {
-        end = end.add(7 - day + 1, 'days').toDate();
+        end = end.add(7 - day, 'days').toDate();
       }
       return [start, end];
     },
