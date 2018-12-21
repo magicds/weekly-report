@@ -134,7 +134,7 @@ export default {
               username: item.attributes.username,
               email: item.attributes.email,
               groupName: item.attributes.groupName,
-              date: moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')
+              date: moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
             });
           });
 
@@ -156,7 +156,7 @@ export default {
               id: item.id,
               type: item.attributes.type,
               info: item.attributes.info,
-              date: moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')
+              date: moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
             });
           });
           this.logsData = logList;
