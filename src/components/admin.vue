@@ -1,13 +1,13 @@
 <template>
-  <div class="user-admin" type="flex" align="top">
-    <Row class="row" v-for="group in groups" :key="group.index">
-      <i-col :xs="{span:24}" :sm="{span:12}" :md="{span:12}" :lg="{span:8}" v-for="member in group.member" :key="member.id">
-        <UserInfo  :userId="member.id" :user="member.data" @startEdit="startEdit" :showDelete="isAdmin"></UserInfo>
+  <div align="top" class="user-admin" type="flex">
+    <Row :key="group.index" class="row" v-for="group in groups">
+      <i-col :key="member.id" :lg="{span:8}" :md="{span:12}" :sm="{span:12}" :xs="{span:24}" v-for="member in group.member">
+        <UserInfo :showDelete="isAdmin" :user="member.data" :userId="member.id" @startEdit="startEdit"></UserInfo>
       </i-col>
     </Row>
 
-    <Modal v-model="showEditor" title="信息修改" :footerHide="true" :maskClosable="false" :loading="inSaveing">
-      <UserEditor :user="user" :userId="userId" :groups="groups"  :isAdmin="isAdmin" @save="save" @cancel="cancel"></UserEditor>
+    <Modal :footerHide="true" :loading="inSaveing" :maskClosable="false" title="信息修改" v-model="showEditor">
+      <UserEditor :groups="groups" :isAdmin="isAdmin" :user="user" :userId="userId" @cancel="cancel" @save="save"></UserEditor>
     </Modal>
   </div>
 </template>
@@ -58,18 +58,7 @@ function getAllUser() {
     return groups;
   });
 }
-function update(data, id, keys) {
-  if (data.isAdmin != undefined) {
-    return api[data.isAdmin ? 'addRole' : 'removeRole'](
-      'administrator',
-      userMap[id]
-    ).then(r => {
-      return api.savePerson(data, id, keys);
-    });
-  }
 
-  return api.savePerson(id, data);
-}
 export default {
   name: 'admin',
   components: {
@@ -110,7 +99,7 @@ export default {
       }
       this.inSaveing = true;
       console.log(id, data);
-      update(data, id, keys)
+      this._update2Cloud(data, id, keys)
         .then(r => {
           Message.success({
             content: '保存成功 ',
@@ -125,7 +114,14 @@ export default {
           Message.error({
             content:
               '保存失败<br><pre style="text-align:left;">' +
-              JSON.stringify({ code: e.code, message: e.message }, 0, 4) +
+              JSON.stringify(
+                {
+                  code: e.code,
+                  message: e.message
+                },
+                0,
+                4
+              ) +
               '</pre>',
             closable: true,
             duration: 10
@@ -137,6 +133,19 @@ export default {
     },
     cancel() {
       this.showEditor = false;
+    },
+    _update2Cloud(data, id, keys) {
+      // 角色发生变化时 先更新角色
+      if (data.isAdmin != undefined) {
+        return api[data.isAdmin ? 'addRole' : 'removeRole'](
+          'administrator',
+          userMap[id]
+        ).then(r => {
+          return api.savePerson(data, id, keys);
+        });
+      }
+
+      return api.savePerson(id, data);
     }
   }
 };
