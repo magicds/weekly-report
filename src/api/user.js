@@ -342,16 +342,24 @@ export default {
   // 获取所有用户
   getAllUser: (function () {
     let cache;
-    return function (noCache, includeUnverify) {
-      // 是否包含为验证用户 ，默认不包含
-      const cond = includeUnverify ? false : [{
-        action: 'equalTo',
-        field: 'verify',
+    return function (noCache, includeUnVerify) {
+      // 排除已经标记删除的用户
+      const conditions = [{
+        action: 'notEqualTo',
+        field: 'isDeleted',
         value: true
       }];
+      // 是否包含未验证用户 ，默认不包含
+      if (!includeUnVerify) {
+        conditions.push({
+          action: 'equalTo',
+          field: 'verify',
+          value: true
+        });
+      }
       // 没有获取过 或者不缓存时才重新获取
       if (!cache || !noCache) {
-        cache = this.getData('_User', cond, {
+        cache = this.getData('_User', conditions, {
           sort: 'asc',
           field: 'memberIndex'
         });
