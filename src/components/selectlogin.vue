@@ -129,7 +129,9 @@ export default {
           this.$set(this, 'users', data.users);
           this.groupIndex =
             parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
-          this.fillUser();
+          this.$nextTick(()=>{
+            this.fillUser();
+          });
         }
       });
     }
