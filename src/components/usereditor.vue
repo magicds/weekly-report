@@ -1,40 +1,40 @@
 <template>
-  <div class="user-editor" :user="user" :userId="userId" :isAdmin="isAdmin" :groups="groups">
-    <i-form ref="form" :model="curruser" :rules="rules" label-position="right" :label-width="80">
+  <div :groups="groups" :isAdmin="isAdmin" :user="user" :userId="userId" class="user-editor">
+    <i-form :label-width="80" :model="curruser" :rules="rules" label-position="right" ref="form">
       <Form-item label="姓名" prop="username">
-        <i-input v-model="curruser.username" icon="person"></i-input>
+        <i-input icon="person" v-model="curruser.username"></i-input>
       </Form-item>
       <Form-item label="备注信息">
-        <i-input v-model="curruser.extInfo" icon="ios-information"></i-input>
+        <i-input icon="ios-information" v-model="curruser.extInfo"></i-input>
       </Form-item>
       <Form-item label="邮件地址" prop="email">
-        <i-input v-model="curruser.email" icon="email"></i-input>
+        <i-input icon="email" v-model="curruser.email"></i-input>
       </Form-item>
-      <Form-item label="所在小组" prop="groupIndex">
-        <i-select v-model="curruser.groupIndex" @on-change="groupChange" :label-in-value="true">
-          <i-option v-for="item in groups" :key="item.index" :value="item.index">{{item.name}}</i-option>
+      <Form-item label="所在小组">
+        <i-select :label-in-value="true" @on-change="groupChange" v-if="curruser.group.id" v-model="curruser.group.id">
+          <i-option :key="item.id" :value="item.id" v-for="item in groups">{{item.attributes.name}}</i-option>
         </i-select>
       </Form-item>
       <Form-item label="排序值" v-if="isAdmin">
-        <i-input v-model="curruser.memberIndex" :number="true" icon="sort" title="数值越小越靠前"></i-input>
+        <i-input :number="true" icon="sort" title="数值越小越靠前" v-model="curruser.memberIndex"></i-input>
       </Form-item>
       <Form-item label="重置密码">
         <i-button @click="resetPwd">重置密码</i-button>
       </Form-item>
       <Form-item label="免填周报" v-if="isAdmin">
         <Checkbox label="admin" v-model="curruser.noReport">
-            <Icon type="coffee"></Icon>
-            <span>免填周报</span>
+          <Icon type="coffee"></Icon>
+          <span>免填周报</span>
         </Checkbox>
       </Form-item>
       <Form-item label="管理员" v-if="isAdmin">
-        <Checkbox label="admin" v-model="curruser.isAdmin" :disabled="isSelf">
-            <Icon type="settings"></Icon>
-            <span>设为管理员</span>
+        <Checkbox :disabled="isSelf" label="admin" v-model="curruser.isAdmin">
+          <Icon type="settings"></Icon>
+          <span>设为管理员</span>
         </Checkbox>
       </Form-item>
       <Form-item>
-        <i-button type="primary" @click="save">保存</i-button>
+        <i-button @click="save" type="primary">保存</i-button>
         <i-button @click="cancel">取消</i-button>
       </Form-item>
     </i-form>
@@ -75,6 +75,7 @@ export default {
   },
   data() {
     return {
+      origionData: {},
       rules: {
         username: [
           {
@@ -94,19 +95,21 @@ export default {
             message: '邮箱格式不正确',
             trigger: 'blur'
           }
-        ],
-        groupIndex: [
-          {
-            required: true,
-            message: '必须选择所在小组'
-          }
         ]
       }
     };
   },
+  mounted() {
+    this.user && this.$set(this, 'origionData', JSON.parse(JSON.stringify(this.user)));
+  },
+  // watch: {
+  //   user() {
+  //     this.user && this.$set(this, 'origionData', JSON.parse this.user);
+  //   }
+  // },
   computed: {
     curruser() {
-      return JSON.parse(JSON.stringify(this.user));
+      return this.user;
     },
 
     // 是否为自己
@@ -115,8 +118,13 @@ export default {
     }
   },
   methods: {
-    groupChange(currGroup) {
-      this.curruser.groupName = currGroup.label;
+    groupChange(g) {
+      for (let group of this.groups) {
+        if (g.value == group.id) {
+          this.curruser.group = group;
+          break;
+        }
+      }
     },
     resetPwd() {
       if (this.user.email) {
@@ -132,22 +140,21 @@ export default {
     save() {
       this.$refs.form.validate(isValidated => {
         if (!isValidated) return;
-        let o = this.user;
+        let o = this.origionData;
         let c = this.curruser;
         let data = {};
 
         if (o.username !== c.username) data.username = c.username;
         if (o.email !== c.email) data.email = c.email;
-        if (o.groupIndex !== c.groupIndex) {
-          data.groupIndex = c.groupIndex;
-          data.groupName = c.groupName;
-        }
 
         if (this.isAdmin) {
           if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
           if (o.memberIndex !== c.memberIndex) data.memberIndex = c.memberIndex;
           if (o.isAdmin !== c.isAdmin) data.isAdmin = c.isAdmin;
           if (o.noReport !== c.noReport) data.noReport = c.noReport;
+        }
+        if (o.group.id != c.group.id) {
+          data.group = c.group.id;
         }
 
         this.$emit('save', data, this.userId);
@@ -161,5 +168,4 @@ export default {
 </script>
 
 <style>
-
 </style>

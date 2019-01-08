@@ -13,17 +13,17 @@
       </ol>
       <p>请大家跳出自我的角度，多从管理者的角度、团队的角度考虑问题，就能理解其中的必要性。</p>
     </div>
-    <i-form ref="form" :model="data" :rules="relues"  label-position="top">
+    <i-form :model="data" :rules="relues" label-position="top" ref="form" v-if="dataLoaded">
       <fieldset>
         <legend>基本信息</legend>
-        <div>{{user.groupName}} - {{user.username}} </div>
+        <div>{{user.group.attributes.name || ''}} - {{user.username}}</div>
       </fieldset>
       <fieldset>
         <legend>工作内容</legend>
 
         <FormItem label="类型" style="margin-top:10px; margin-bottom:0px;">
           <RadioGroup v-model="type">
-            <i-radio v-for="item in types" :label="item.key" :key="item.key">
+            <i-radio :key="item.key" :label="item.key" v-for="item in types">
               <span>{{item.text}}</span>
             </i-radio>
           </RadioGroup>
@@ -31,24 +31,22 @@
 
         <div class="type-info">
           <ul>
-            <li v-for="item in types" :key="item.key" :class="item.key == type ? 'light' : ''">{{item.text}}：{{item.info}}</li>
+            <li :class="item.key == type ? 'light' : ''" :key="item.key" v-for="item in types">{{item.text}}：{{item.info}}</li>
           </ul>
         </div>
 
         <!-- <div class="title">{{currType.text}}</div> -->
         <FormItem :label="currType.text" prop="content">
-          <i-input type="textarea" :rows="4" placeholder="请输入内容，回车将被自动分割为多条" element-id="content-input" v-model="data.content"></i-input>
+          <i-input :rows="4" element-id="content-input" placeholder="请输入内容，回车将被自动分割为多条" type="textarea" v-model="data.content"></i-input>
         </FormItem>
 
-        <div class="content-info">
-          {{currType.explain}}
-        </div>
+        <div class="content-info">{{currType.explain}}</div>
 
         <FormItem :label="timeLabel.title" prop="time">
           <InputNumber :max="100" :min="0.1" :step="1" v-model="data.time"></InputNumber>
         </FormItem>
 
-        <i-button type="primary" @click="addItem">添加并重置</i-button>
+        <i-button @click="addItem" type="primary">添加并重置</i-button>
       </fieldset>
 
       <fieldset>
@@ -75,9 +73,10 @@
               <td>{{user.username}}</td>
               <td>
                 <ul>
-                  <li v-for="item in workList" :key="item.id">
-                    {{item.content}} <span v-if="item.showTime">（{{item.time}}小时）</span>
-                    </li>
+                  <li :key="item.id" v-for="item in workList">
+                    {{item.content}}
+                    <span v-if="item.showTime">（{{item.time}}小时）</span>
+                  </li>
                 </ul>
               </td>
               <td>{{taskTime | getInt}}</td>
@@ -85,8 +84,9 @@
               <td>{{communicationTime | getInt}}</td>
               <td>
                 <ul v-if="leaveList.length">
-                  <li v-for="item in leaveList" :key="item.id">
-                    {{item.content}} <span v-if="item.showTime">（{{item.time}}小时）</span>
+                  <li :key="item.id" v-for="item in leaveList">
+                    {{item.content}}
+                    <span v-if="item.showTime">（{{item.time}}小时）</span>
                   </li>
                 </ul>
                 <span v-else>无</span>
@@ -95,7 +95,7 @@
           </tbody>
         </table>
 
-        <i-button type="primary" @click="addToCloud" :disabled="reportList.length < 1" :loading="isSaving">提交到云端</i-button>
+        <i-button :disabled="reportList.length < 1" :loading="isSaving" @click="addToCloud" type="primary">提交到云端</i-button>
       </fieldset>
     </i-form>
   </div>
@@ -145,10 +145,11 @@ export default {
   },
   data() {
     return {
+      dataLoaded: false,
       type: config.defaultType,
       types: config.types,
       timeLabel: config.time,
-      user: api.getCurrUser().attributes,
+      user: {},
       data: {
         content: '',
         time: 0
@@ -290,6 +291,10 @@ export default {
     }
   },
   mounted() {
+    api.getCurrUserAsync().then(u => {
+      this.$set(this, 'user', u.attributes);
+      this.dataLoaded = true;
+    });
     Message.config({
       top: window.innerHeight * 0.4 || 400
     });
@@ -392,7 +397,8 @@ export default {
                   taskTime: this.taskTime,
                   communicationTime: this.communicationTime,
                   leaveTime: this.leaveTime,
-                  saturation: (this.taskTime + this.communicationTime) / config.fullTime
+                  saturation:
+                    (this.taskTime + this.communicationTime) / config.fullTime
                 })
                 .then(savedData => {
                   console.log(savedData);

@@ -1,15 +1,21 @@
 <template>
-  <div class="user-info" :user="user" :userId="userId" :showDelete="showDelete">
+  <div :showDelete="showDelete" :user="user" :userId="userId" class="user-info">
     <Card :dis-hover="true" class="clearfix" style="min-height:160px">
       <div class="left">
-        <label for="useravatar"  class="upload-avatar">
-          <Avatar size="large" class="user-avatar" :style="{background: '#64b1ca',color:'#fff'}" :src="avatar" ref="avatar">{{user.username | getAvatarText}}</Avatar>
-        </label><p v-if="avatar">{{user.username}}</p>
-        <input type="file" style="position:absolute;top:100%;left:100%;opacity:0;" name="useravatar" id="useravatar" @change="savePhoto" accept=".jpg,.png">
+        <label class="upload-avatar" for="useravatar">
+          <Avatar :src="avatar" :style="{background: '#64b1ca',color:'#fff'}" class="user-avatar" ref="avatar" size="large">{{user.username | getAvatarText}}</Avatar>
+        </label>
+        <p v-if="avatar">{{user.username}}</p>
+        <input @change="savePhoto" accept=".jpg, .png" id="useravatar" name="useravatar" style="position:absolute;top:100%;left:100%;opacity:0;" type="file">
       </div>
       <div class="right">
-        <div class="detail-title">详细信息<i-button @click="startEdit" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="edit"></Icon>编辑</i-button>
-        <i-button v-if="showDelete" :loading="loading" @click="deleteUser(userId)" class="edit-btn-wrap" type="text"><Icon style="margin-right:5px;" type="ios-trash-outline"></Icon>删除</i-button>
+        <div class="detail-title">详细信息
+          <i-button @click="startEdit" class="edit-btn-wrap" type="text">
+            <Icon style="margin-right:5px;" type="edit"></Icon>编辑
+          </i-button>
+          <i-button :loading="loading" @click="deleteUser(userId)" class="edit-btn-wrap" type="text" v-if="showDelete">
+            <Icon style="margin-right:5px;" type="ios-trash-outline"></Icon>删除
+          </i-button>
         </div>
 
         <hr class="hr">
@@ -17,24 +23,25 @@
         <div class="item">
           <Icon style="margin-right:5px;" type="person"></Icon>
           <span>{{fullName}}</span>
-          <Tag v-if="user.isAdmin" color="green">管理员</Tag>
-          <Tag v-if="user.noReport" color="blue">免填周报</Tag>
+          <Tag color="green" v-if="user.isAdmin">管理员</Tag>
+          <Tag color="blue" v-if="user.noReport">免填周报</Tag>
         </div>
 
         <div class="item">
           <Icon style="margin-right:5px;" type="email"></Icon>
           <span>{{user.email}}</span>
           <span v-if="user.email">
-            <Tag v-if="user.emailVerified" color="green">已验证</Tag>
-            <i-button v-else @click="verifyEmail" type="text" style="padding:0;"><Tag color="red" >未验证</Tag></i-button>
+            <Tag color="green" v-if="user.emailVerified">已验证</Tag>
+            <i-button @click="verifyEmail" style="padding:0;" type="text" v-else>
+              <Tag color="red">未验证</Tag>
+            </i-button>
           </span>
         </div>
 
         <div class="item">
           <Icon style="margin-right:5px;" type="person-stalker"></Icon>
-          <span>{{user.groupName}}</span>
+          <span>{{user.group.attributes.name}}</span>
         </div>
-
       </div>
     </Card>
   </div>

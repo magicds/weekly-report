@@ -52,14 +52,14 @@ var dataApi = {
    * @param {Object/Array} sorts 排序规则，如 [{"sort":"asc","field":"groupId"},{"sort":"desc","field":"memberIndex"}]
    * @returns
    */
-  getData(cls, conditions, sorts) {
+  getData(cls, conditions, sorts, includes) {
     let query = new AV.Query(cls);
 
     if (conditions) {
       if (!(conditions instanceof Array)) {
         conditions = [conditions];
       }
-      conditions.forEach(function(item) {
+      conditions.forEach(function (item) {
         query[item.action](item.field, item.value);
       });
     }
@@ -69,13 +69,21 @@ var dataApi = {
         sorts = [sorts];
       }
 
-      sorts.forEach(function(item) {
+      sorts.forEach(function (item) {
         var sort = item.sort.toLowerCase();
         if (sort == 'asc') {
           item.field && query.addAscending(item.field);
         } else if (sort == 'desc') {
           item.field && query.addDescending(item.field);
         }
+      });
+    }
+    if (includes) {
+      if (!(includes instanceof Array)) {
+        includes = [includes];
+      }
+      includes.forEach(item => {
+        query.include(item);
       });
     }
 
@@ -91,8 +99,7 @@ var dataApi = {
    * @param {Boolean} isCurrUser 是否仅查询当前用户
    */
   getDataByRange(startDate, endDate, sorts, isCurrUser) {
-    let conditions = [
-      {
+    let conditions = [{
         action: 'greaterThanOrEqualTo',
         field: 'updatedAt',
         value: startDate
@@ -118,7 +125,10 @@ var dataApi = {
    * @param {Boolean} isCurrUser 是否仅查询当前用户
    */
   getCurrWeekData(sorts, isCurrUser) {
-    let { startDate, endDate } = getStartEnd();
+    let {
+      startDate,
+      endDate
+    } = getStartEnd();
 
     return this.getDataByRange(startDate, endDate, sorts, isCurrUser);
   },

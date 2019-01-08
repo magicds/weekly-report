@@ -467,6 +467,14 @@ export default {
   margin-left: 20px;
   vertical-align: middle;
 }
+@media (max-width: 1000px) {
+  .date-range-tips {
+    display: block;
+    margin-top: 10px;
+    margin-left: 0;
+    text-align: center;
+  }
+}
 .report-title {
   margin-top: 30px;
   margin-bottom: 20px;

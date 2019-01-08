@@ -9,7 +9,6 @@
 import mySummary from './summary/summary.vue';
 import api from '@/api/index.js';
 import moment from 'moment/min/moment.min.js';
-import Promise from 'bluebird';
 import mergeSort from '@/util/sort.js';
 
 // 获取数据
@@ -27,7 +26,8 @@ function getData() {
 
     // 新增排序标识
     reports.forEach(item => {
-      item._index = item.groupIndex * 100 + item.memberIndex;
+      const g = item.group.attributes;
+      item._index = (g.index || 0) * 100 + item.memberIndex;
     });
 
     return mergeSort(reports, '_index', 'asc');

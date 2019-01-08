@@ -13,7 +13,6 @@ import api from '@/api/index.js';
 // import { Select, Option } from 'iview/src/components/select';
 import DatePicker from 'iview/src/components/date-picker/';
 import Button from 'iview/src/components/button/';
-import Promise from 'bluebird';
 import moment from 'moment/min/moment.min.js';
 import mergeSort from '@/util/sort.js';
 import {getPrevDateRange} from '@/util/getDateRange.js';
@@ -130,7 +129,8 @@ function dealReports(data, users, weeks) {
   }
   // 组合排序标识 并 调整饱和度为平均饱和度
   reports.forEach(item => {
-    item._index = item.groupIndex * 100 + item.memberIndex;
+    const g = item.group.attributes;
+    item._index = (g.index || 0) * 100 + item.memberIndex;
     item.saturation = item.saturation / weeks;
   });
 

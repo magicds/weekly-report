@@ -366,13 +366,19 @@ export default {
       );
 
       data.forEach(item => {
-        let gid = item.groupIndex;
+        let g = item.group ? item.group.attributes : {
+          name: item.groupName,
+          index: item.groupIndex,
+          id:item.groupIndex
+        };
 
-        if (!groups[gid]) {
-          groups[gid] = {
-            id: gid,
-            name: item.groupName,
-            title: item.groupName,
+        let gIndex = g.index;
+
+        if (!groups[gIndex]) {
+          groups[gIndex] = {
+            id: g.id,
+            name: g.name,
+            title: g.name,
             expand: true,
             children: [
               {
@@ -383,7 +389,7 @@ export default {
             ]
           };
         } else {
-          groups[gid].children.push({
+          groups[gIndex].children.push({
             uid: item.userId,
             title: item.username,
             checked: unchecked[item.userId] ? false : true

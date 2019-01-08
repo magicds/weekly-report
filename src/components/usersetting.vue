@@ -1,9 +1,9 @@
 <template>
-  <div class="user-setting" >
+  <div class="user-setting">
     <UserInfo :user="user" :userId="userId" @startEdit="startEdit"></UserInfo>
 
-    <Modal v-model="showEditor" title="个人信息" :footerHide="true" :maskClosable="false" :loading="inSaveing">
-      <UserEditor :user="user" :userId="userId" :groups="groups" :isAdmin="user.isAdmin" @save="save" @cancel="cancel"></UserEditor>
+    <Modal :footerHide="true" :loading="inSaveing" :maskClosable="false" title="个人信息" v-model="showEditor">
+      <UserEditor :groups="groups" :isAdmin="user.isAdmin" :user="user" :userId="userId" @cancel="cancel" @save="save"></UserEditor>
 
       <!-- <div slot="footer"></div> -->
     </Modal>
@@ -48,7 +48,12 @@ export default {
     // 重新拉取信息
     AV.User.become(api.getCurrUser()._sessionToken)
       .then(r => {
-        this.$set(this, 'user', r.attributes);
+        return this.getGroup(r.attributes.group.id).then(g => {
+          if (g) {
+            r.attributes.group = g;
+          }
+          this.$set(this, 'user', r.attributes);
+        });
       })
       .catch(() => {
         AV.User.logOut().then(() => {
@@ -57,7 +62,7 @@ export default {
       });
     api.getData('Group', null, { sort: 'asc', field: 'index' }).then(r => {
       r.forEach(item => {
-        this.groups.push(item.attributes);
+        this.groups.push(item);
       });
     });
   },
@@ -72,9 +77,11 @@ export default {
         this.showEditor = false;
       } else {
         this.inSaveing = true;
-        console.log(id, data);
         let person = AV.Object.createWithoutData('_User', id);
         keys.forEach(k => {
+          if (k == 'group') {
+            data[k] = AV.Object.createWithoutData('Group', data[k]);
+          }
           person.set(k, data[k]);
         });
         person
@@ -92,7 +99,9 @@ export default {
           .catch(e => {
             Message.error({
               content:
-                '保存失败<br><pre style="text-align:left;">' + JSON.stringify({ code: e.code, message: e.message }, 0, 4) + '</pre>',
+                '保存失败<br><pre style="text-align:left;">' +
+                JSON.stringify({ code: e.code, message: e.message }, 0, 4) +
+                '</pre>',
               closable: true,
               duration: 10
             });
@@ -104,6 +113,10 @@ export default {
     },
     cancel() {
       this.showEditor = false;
+    },
+    getGroup(id) {
+      const query = new AV.Query('Group');
+      return query.get(id);
     }
   }
 };

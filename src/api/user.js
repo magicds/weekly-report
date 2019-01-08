@@ -2,7 +2,6 @@ import AV from 'leancloud-storage';
 import throwError from './error.js';
 import groupInfo from '@/config/group.config.js';
 import dataApi from './data.js';
-import Promise from 'bluebird';
 
 window.AV = AV;
 
@@ -148,13 +147,19 @@ export default {
           if (user.attributes.verify === true) {
             resolve(user);
           } else {
-            throw new Error('你还未经过团队管理人员的认证，还不能登录系统');
+            reject(new Error('你还未经过团队管理人员的认证，还不能登录系统'));
           }
         }).catch(throwError);
     });
   },
   getCurrUser() {
     return AV.User.current();
+  },
+  getCurrUserAsync() {
+    const u = AV.User.current();
+    return u.fetch({
+      include: ['group']
+    });
   },
   logOut() {
     return AV.User.logOut();
@@ -350,5 +355,31 @@ export default {
       }
       return cache;
     };
-  })()
+  })(),
+  getAllUserAsTree(promise) {
+    if (!promise) {
+      promise = this.getAllUser(true);
+    }
+    return promise.then((userList) => {
+      const groupMap = {};
+      userList.forEach(user => {
+        const group = user.attributes.group;
+        const gid = group.id;
+        if (!groupMap[group.id]) {
+          const g = group.attributes;
+          g.id = gid;
+          g.member = [];
+          groupMap[group.id] = g;
+        }
+        const u = user.attributes;
+        u.id = user.id;
+        groupMap[group.id].member.push(u);
+      });
+      const groups = [];
+      Object.keys(groupMap).forEach(k => {
+        groups.push(groupMap[k]);
+      });
+      return groups;
+    });
+  }
 };

@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="left">
-      <router-link class="nav-link" :to="{ name: 'input'}" v-if="user.groupName">周报填写</router-link>
+      <router-link class="nav-link" :to="{ name: 'input'}" v-if="user.group">周报填写</router-link>
       <router-link class="nav-link" :to="{ name: 'summary'}">本周汇总</router-link>
       <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
       <router-link class="nav-link" :to="{ name: 'report'}">历史周报</router-link>

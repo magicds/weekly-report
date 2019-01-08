@@ -4,17 +4,17 @@
       <p>如果您确认下方用户是团队成员，请点击按钮通过验证请求。否则请忽略或删除。</p>
     </div>
     <legend class="user-verify-title">未验证成员</legend>
-    <i-table :columns="tableColumns" :loading="userLoading" :data="userList" no-data-text="暂无未验证用户"></i-table>
+    <i-table :columns="tableColumns" :data="userList" :loading="userLoading" no-data-text="暂无未验证用户"></i-table>
     <legend class="user-verify-title">验证记录</legend>
     <div class="user-verify-logs">
       <ul v-if="logsData.length">
-        <li class="verify-log-item" v-for="log in logsData" :key="log.id">
+        <li :key="log.id" class="verify-log-item" v-for="log in logsData">
           <Tag :color="log.type | type2color" style="vertical-align: top; width:50px; text-align: center;">{{log.type}}</Tag>
           <span>{{log.date}}</span>
           <span>{{log.info}}</span>
         </li>
       </ul>
-      <div v-else class="no-logs"> 暂无记录 </div>
+      <div class="no-logs" v-else>暂无记录</div>
     </div>
   </div>
 </template>
@@ -125,7 +125,12 @@ export default {
     getUserData() {
       this.userLoading = true;
       api
-        .getData('_User', [{ action: 'equalTo', field: 'verify', value: false }], [{ sort: 'desc', field: 'createdAt' }])
+        .getData(
+          '_User',
+          [{ action: 'equalTo', field: 'verify', value: false }],
+          [{ sort: 'desc', field: 'createdAt' }],
+          'group'
+        )
         .then(result => {
           const users = [];
           result.forEach(item => {
@@ -133,7 +138,7 @@ export default {
               id: item.id,
               username: item.attributes.username,
               email: item.attributes.email,
-              groupName: item.attributes.groupName,
+              groupName: item.attributes.group.attributes.name,
               date: moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
             });
           });

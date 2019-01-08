@@ -3,16 +3,16 @@
     <div class="login-box">
       <i-form :model="user" ref="form">
         <Form-item>
-          <i-select style="margin-bottom:10px;" v-model="groupIndex">
+          <i-select style="margin-bottom:10px;" v-model="groupId">
             <!-- <i-option value="-1">请选择所在小组</i-option> -->
-            <i-option :key="item.name" :value="item.index" v-for="item in groups">{{ item.name }}</i-option>
+            <i-option :key="item.name" :value="item.id" v-for="item in groups">{{ item.name }}</i-option>
           </i-select>
         </Form-item>
 
         <Form-item>
           <i-select style="margin-bottom:10px;" v-model="user.name">
             <!-- <i-option value="-1">请选择所在小组</i-option> -->
-            <i-option :key="item.name" :value="item.name" v-for="item in group.member">{{ item.name }}</i-option>
+            <i-option :key="item.id" :value="item.username" v-for="item in currGroup.member">{{ item.username }}</i-option>
           </i-select>
         </Form-item>
 
@@ -39,43 +39,8 @@ import Button from 'iview/src/components/button/button';
 import { Select, Option } from 'iview/src/components/select';
 import AV from 'leancloud-storage';
 import api from '@/api/index';
-import Promise from 'bluebird';
 
-function getAllUser() {
-  return Promise.all([
-    api.getData('Group', false, {
-      sort: 'asc',
-      field: 'index'
-    }),
-    api.getAllUser(true, true)
-  ]).then(result => {
-    let groups = [];
-    let users = [];
-
-    result[0].forEach(item => {
-      groups.push({
-        id: item.id,
-        name: item.attributes.name,
-        index: item.attributes.index,
-        member: []
-      });
-    });
-
-    result[1].forEach(item => {
-      let i = users.push({
-        id: item.id,
-        name: item.attributes.username
-      });
-      let aimGroup = groups[item.attributes.groupIndex];
-      aimGroup && aimGroup.member.push(users[i - 1]);
-    });
-
-    return {
-      users,
-      groups
-    };
-  });
-}
+const LOCAL_USER_KEY = '_weekly-report_localUser';
 
 export default {
   name: 'login',
@@ -90,30 +55,27 @@ export default {
   data() {
     return {
       user: {
-        name: localStorage.getItem('localUserName') || '',
+        name: '',
         pwd: ''
       },
+      currGroup: {},
       groups: [],
-      groupIndex: 0,
-      users: [],
+      groupId: '',
       dataLoaded: false
     };
   },
-  computed: {
-    group() {
-      return this.groups[this.groupIndex] || {};
-    }
-  },
-  watch: {
-    groupIndex() {
-      if (this.group.member && this.group.member.length) {
-        // this.user.name = this.group.member[0].name;
-        this.fillUser();
-      }
-    }
-  },
   mounted() {
     this.autoLogin();
+  },
+  watch: {
+    groupId(v) {
+      for (let g of this.groups) {
+        if (g.id == v) {
+          this.currGroup = g;
+          this.user.name = g.member[0].username;
+        }
+      }
+    }
   },
   methods: {
     autoLogin() {
@@ -137,9 +99,15 @@ export default {
       this.getData();
     },
     login() {
+      const that = this;
       this.$refs.form.validate(isValidated => {
-        localStorage.setItem('localGroupIndex', this.groupIndex);
-        localStorage.setItem('localUserName', this.user.name);
+        localStorage.setItem(
+          LOCAL_USER_KEY,
+          JSON.stringify({
+            groupId: that.groupId,
+            username: this.user.name
+          })
+        );
         api.logIn(this.user.name, this.user.pwd).then(user => {
           console.log(user);
           if (user.attributes.groupName) {
@@ -159,39 +127,51 @@ export default {
     getData() {
       if (!this.dataLoaded) {
         // 未获取数据时获取数据
-        getAllUser().then(data => {
+        api.getAllUserAsTree().then(data => {
           this.dataLoaded = true;
           // 第一次进入
-          if (!data.groups.length) {
+          if (!data.length) {
             this.$router.push('/signup');
           } else {
-            this.$set(this, 'groups', data.groups);
-            this.$set(this, 'users', data.users);
-            this.groupIndex =
-              parseInt(localStorage.getItem('localGroupIndex'), 10) || 0;
-            this.$nextTick(() => {
-              this.fillUser();
-            });
+            this.$set(this, 'groups', data);
+            this.fillUser();
           }
         });
       }
     },
     fillUser() {
-      var localUser = localStorage.getItem('localUserName');
+      let localUser = localStorage.getItem(LOCAL_USER_KEY);
 
       if (!localUser) {
-        this.user.name = this.group.member[0].name;
+        this.currGroup = this.groups[0];
+        this.groupId = this.currGroup.id;
+        this.user.name = this.currGroup.member[0].username;
       } else {
-        let hasLocal = false;
-        this.group.member.forEach(item => {
-          if (item.name == localUser) {
-            hasLocal = true;
+        localUser = JSON.parse(localUser);
+        let hasGroup = false;
+        let hasUser = false;
+        for (let g of this.groups) {
+          if (g.id == localUser.groupId) {
+            this.currGroup = g;
+            this.groupId = g.id;
+            hasGroup = true;
+
+            for (let u in g.member) {
+              if ((localUser.username = u.username)) {
+                this.user.name = u.username;
+                hasUser = true;
+                break;
+              }
+            }
+
+            if (!hasUser) {
+              this.user.name = g.member[0].username;
+            }
+            break;
           }
-        });
-        if (hasLocal) {
-          this.user.name = localUser;
-        } else {
-          this.user.name = this.group.member[0].name;
+        }
+        if (!hasGroup || !hasUser) {
+          localStorage.removeItem(LOCAL_USER_KEY);
         }
       }
     }

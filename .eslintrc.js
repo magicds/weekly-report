@@ -7,6 +7,9 @@ module.exports = {
   parserOptions: {
     sourceType: 'module'
   },
+  globals: {
+    Promise: true
+  },
   env: {
     browser: true,
   },
