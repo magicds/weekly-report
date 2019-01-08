@@ -160,19 +160,14 @@ export default {
     return AV.User.logOut();
   },
   signUp(userInfo) {
-    let user = new AV.User(),
-      groupIndex = userInfo.groupIndex,
-      groupName = userInfo.groupName;
+    let user = new AV.User();
 
     user.setUsername(userInfo.name);
     user.setPassword(userInfo.pwd);
     user.setEmail(userInfo.email);
 
-    if (groupIndex != undefined) {
-      user.set('groupIndex', groupIndex);
-    }
-    if (groupName) {
-      user.set('groupName', groupName);
+    if (userInfo.group) {
+      user.set('group', userInfo.group);
     }
 
     return user
@@ -343,26 +338,15 @@ export default {
   getAllUser: (function () {
     let cache;
     return function (noCache, includeUnVerify) {
-      // 排除已经标记删除的用户
-      const conditions = [{
-        action: 'notEqualTo',
-        field: 'isDeleted',
-        value: true
-      }];
-      // 是否包含未验证用户 ，默认不包含
+      const query = new AV.Query('_User');
+      query.notEqualTo('isDeleted', true);
       if (!includeUnVerify) {
-        conditions.push({
-          action: 'equalTo',
-          field: 'verify',
-          value: true
-        });
+        query.equalTo('verify', true);
       }
-      // 没有获取过 或者不缓存时才重新获取
+      query.include('group');
+      query.ascending('memberIndex');
       if (!cache || !noCache) {
-        cache = this.getData('_User', conditions, {
-          sort: 'asc',
-          field: 'memberIndex'
-        });
+        return query.find();
       }
       return cache;
     };
