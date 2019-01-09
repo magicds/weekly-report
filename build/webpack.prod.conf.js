@@ -90,6 +90,13 @@ var webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
+    ]),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../node_modules/bluebird/js/browser/bluebird.min.js'),
+        to: config.build.assetsSubDirectory,
+        ignore: ['.*']
+      }
     ])
   ]
 });
