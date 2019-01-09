@@ -121,5 +121,8 @@ export default {
   min-width: 200px;
   max-width: 360px;
 }
+.nexttasktable td {
+  vertical-align: middle;
+}
 </style>
 

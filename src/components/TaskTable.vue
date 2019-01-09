@@ -60,5 +60,8 @@ export default {
   min-width: 200px;
   max-width: 300px;
 }
+.tasktable td {
+  vertical-align: middle;
+}
 </style>
 
