@@ -26,11 +26,12 @@ let prepareDataForCharts = function (data) {
     person.rate.push(item.saturation);
 
     // 分离出小组
-    if (item.groupName) {
-      if (!_group[item.groupName]) {
-        _group[item.groupName] = [item.saturation];
+    const g = item.group;
+    if (g && g.name) {
+      if (!_group[g.name]) {
+        _group[g.name] = [item.saturation];
       } else {
-        _group[item.groupName].push(item.saturation);
+        _group[g.name].push(item.saturation);
       }
     }
   });
