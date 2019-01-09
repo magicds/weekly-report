@@ -1,20 +1,22 @@
 <template>
   <header class="header">
     <div class="left">
-      <router-link class="nav-link" :to="{ name: 'input'}" v-if="!user.noReport">周报填写</router-link>
-      <router-link class="nav-link" :to="{ name: 'summary'}">本周汇总</router-link>
-      <router-link class="nav-link" :to="{ name: 'history'}">历史查看</router-link>
-      <router-link class="nav-link" :to="{ name: 'report'}">历史周报</router-link>
+      <router-link :to="{ name: 'input'}" class="nav-link" v-if="!user.noReport">周报填写</router-link>
+      <router-link :to="{ name: 'summary'}" class="nav-link">本周汇总</router-link>
+      <router-link :to="{ name: 'history'}" class="nav-link">历史查看</router-link>
+      <router-link :to="{ name: 'report'}" class="nav-link">历史周报</router-link>
+      <router-link :to="{ name: 'groupWeekReport'}" class="nav-link" v-if="isGroupLeader">小组周报</router-link>
     </div>
-    <div class="right">
-      <Dropdown @on-click="itemClick" trigger="click" placement="bottom-end">
+    <div class="right" v-if="user.username">
+      <Dropdown @on-click="itemClick" placement="bottom-end" trigger="click">
         <a class href="javascript:void(0)">
           <Avatar>{{user.username}}</Avatar>
         </a>
         <DropdownMenu slot="list">
           <DropdownItem name="userinfo">个人信息</DropdownItem>
-          <DropdownItem v-if="user.isAdmin" name="admin">人员管理</DropdownItem>
-          <DropdownItem v-if="user.isAdmin" name="verify">未验证用户</DropdownItem>
+          <DropdownItem name="admin" v-if="user.isAdmin">人员管理</DropdownItem>
+          <DropdownItem name="groupAdmin" v-if="user.isAdmin">小组管理</DropdownItem>
+          <DropdownItem name="verify" v-if="user.isAdmin">未验证用户</DropdownItem>
           <DropdownItem divided name="logout">注销登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -23,16 +25,16 @@
 </template>
 
 <script>
-import AV from "leancloud-storage";
-import Dropdown from "iview/src/components/dropdown";
-import Icon from "iview/src/components/icon";
-import Avatar from "iview/src/components/avatar";
-import Modal from "iview/src/components/modal/";
-import UserInfo from "./userInfo";
-import userApi from "@/api/user";
+import AV from 'leancloud-storage';
+import Dropdown from 'iview/src/components/dropdown';
+import Icon from 'iview/src/components/icon';
+import Avatar from 'iview/src/components/avatar';
+import Modal from 'iview/src/components/modal/';
+import UserInfo from './userInfo';
+import userApi from '@/api/user';
 
 export default {
-  name: "header",
+  name: 'header',
   components: {
     Dropdown,
     Icon,
@@ -42,27 +44,42 @@ export default {
   },
   data() {
     return {
-      user: userApi.getCurrUser().attributes,
+      user: {},
       showDialog: false,
-      dialogTitle: "个人信息"
+      dialogTitle: '个人信息',
+      isGroupLeader: false
     };
   },
-  mounted() {},
+  mounted() {
+    this.getUser();
+  },
   methods: {
+    getUser() {
+      userApi.getCurrUserAsync().then(u => {
+        const user = JSON.parse(JSON.stringify(u));
+        this.$set(this, 'user', user);
+        if (this.user.objectId == this.user.group.leader.objectId) {
+          this.isGroupLeader = true;
+        }
+      });
+    },
     itemClick(name) {
       switch (name) {
-        case "userinfo":
-          this.$router.push("/main/usersetting");
+        case 'userinfo':
+          this.$router.push('/main/usersetting');
           break;
-        case "logout":
+        case 'logout':
           userApi.logOut();
-          this.$router.push("/");
+          this.$router.push('/');
           break;
-        case "admin":
-          this.$router.push("/main/admin");
+        case 'admin':
+          this.$router.push('/main/admin');
           break;
-        case "verify":
-          this.$router.push("/main/verify");
+        case 'groupAdmin':
+          this.$router.push('/main/groupAdmin');
+          break;
+        case 'verify':
+          this.$router.push('/main/verify');
           break;
         default:
           break;
@@ -85,7 +102,7 @@ export default {
   display: table;
   clear: both;
 
-  content: "";
+  content: '';
 }
 
 .left {

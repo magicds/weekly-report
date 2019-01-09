@@ -45,11 +45,11 @@ export default {
     };
   },
   mounted() {
-    this.hasChatrs = this.$route.name == 'input' ? false : true;
+    this.hasChatrs = this.$route.hasChart;
   },
   watch: {
     $route(v) {
-      this.hasChatrs = v.name == 'input' ? false : true;
+      this.hasChatrs = v.hasChart;
     }
   },
   methods: {

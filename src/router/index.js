@@ -11,29 +11,33 @@ import UserSetting from '@/components/usersetting';
 import Admin from '@/components/admin';
 import Verify from '@/views/Verify';
 import ForgetPwd from '@/views/ForgetPwd';
+import GroupWeekReport from '@/views/GroupWeekReport';
+import GroupAdmin from '@/views/GroupAdmin';
 
-import AV from 'leancloud-storage';
+import api from '@/api';
 
 // 验证通过要求
 function verifyRequired(to, from, next) {
-  const user = AV.User.current();
-  // 未登录或未验证禁止访问
-  if (!user || user.attributes.verify !== true) {
-    next('/');
-  } else {
-    next();
-  }
+  api.getCurrUserAsync().then(user => {
+    // 未登录或未验证禁止访问
+    if (!user || user.attributes.verify !== true) {
+      next('/');
+    } else {
+      next();
+    }
+  });
 }
 
 // admin require
 function adminRequired(to, from, next) {
-  const user = AV.User.current();
-  // 未登录或未验证禁止访问
-  if (!user || user.attributes.isAdmin !== true) {
-    // next('/');
-  } else {
-    next();
-  }
+  api.getCurrUserAsync().then(user => {
+    // 未登录或未验证禁止访问
+    if (!user || user.attributes.isAdmin !== true) {
+      // next('/');
+    } else {
+      next();
+    }
+  });
 }
 
 Vue.use(Router);
@@ -73,16 +77,19 @@ const router = new Router({
         {
           path: 'summary',
           name: 'summary',
+          hasChart: true,
           component: CurrWeekSummary
         },
         {
           path: 'history',
           name: 'history',
+          hasChart: true,
           component: HistorySummary
         },
         {
           path: 'report',
           name: 'report',
+          hasChart: true,
           component: ReportSummary
         },
         {
@@ -101,7 +108,18 @@ const router = new Router({
           name: 'verify',
           component: Verify,
           beforeEnter: adminRequired
-        }
+        },
+        {
+          path: 'groupAdmin',
+          name: 'groupAdmin',
+          component: GroupAdmin,
+          beforeEnter: adminRequired
+        },
+        {
+          path: 'GroupWeekReport',
+          name: 'groupWeekReport',
+          component: GroupWeekReport
+        },
       ]
     },
     {
