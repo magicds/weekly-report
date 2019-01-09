@@ -1,5 +1,5 @@
 <template>
-  <div class="group-report">
+  <div class="group-week-report">
     <div class v-if="personDataLoaded">
       <legend>小组信息</legend>
       <p>
@@ -9,6 +9,7 @@
             <i-option :key="item.id" :value="item.id" v-for="item in weekList">{{ item.text }}</i-option>
           </i-select>
         </span>
+        <span class="text-muted daterange-tips">{{selectedWeek}}</span>
       </p>
     </div>
     <i-form :model="data" :rules="rules" label-position="top" ref="form">
@@ -130,6 +131,7 @@ export default {
             this.$set(this, 'data', data.report);
           } else {
             // 不存在 则表示还未填 获取上周填写的作为本周计划
+            this.selectedWeekObjectId = '';
             return this._getData(this.prevWeekText).then(r => {
               if (r.length) {
                 const data = JSON.parse(JSON.stringify(r[0]));
@@ -225,7 +227,8 @@ export default {
 </script>
 
 <style scoped>
-.group-report-select {
+.group-report-select,
+.daterange-tips {
   display: inline-block;
   vertical-align: middle;
   margin-left: 10px;
