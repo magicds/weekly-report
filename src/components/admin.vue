@@ -1,7 +1,7 @@
 <template>
   <div align="top" class="user-admin" type="flex">
     <Row :key="group.index" class="row" v-for="group in groups">
-      <i-col :key="member.id" :lg="{span:8}" :md="{span:12}" :sm="{span:12}" :xs="{span:24}" v-for="member in group.member">
+      <i-col :key="member.id" :lg="{span:8}" :md="{span:12}" :sm="{span:24}" :xs="{span:24}" v-for="member in group.member">
         <UserInfo :showDelete="isAdmin" :user="member" :userId="member.id" @startEdit="startEdit"></UserInfo>
       </i-col>
     </Row>
