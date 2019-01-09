@@ -155,12 +155,20 @@ export default {
   getCurrUser() {
     return AV.User.current();
   },
-  getCurrUserAsync() {
-    const u = AV.User.current();
-    return u.fetch({
-      include: ['group']
-    });
-  },
+  getCurrUserAsync: (() => {
+    let cache;
+
+    return function (noCache) {
+      if (cache && !noCache) {
+        return cache;
+      }
+      const u = AV.User.current();
+      cache = u.fetch({
+        include: ['group', 'group.leader']
+      });
+      return cache;
+    }
+  })(),
   logOut() {
     return AV.User.logOut();
   },
@@ -333,8 +341,6 @@ export default {
         return Promise.all(arr);
       })
       .then(result => {
-        user.set('groupName', groupInfo.groups[0].name);
-        user.set('groupIndex', groupInfo.groups[0].index);
         console.log('创建角色和小组完成！');
         return user.save();
       });
@@ -348,7 +354,8 @@ export default {
       if (!includeUnVerify) {
         query.equalTo('verify', true);
       }
-      query.include('group');
+      // query.include(['group']);
+      query.include(['group', 'group.leader']);
       query.ascending('memberIndex');
       if (!cache || !noCache) {
         return query.find();
