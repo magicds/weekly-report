@@ -12,20 +12,20 @@
         <tr :key="index" v-for="(task, index) in taskList">
           <td>
             {{task.name}}
-            <i-button @click="hanldeEdit(index, task)" v-if="task.type == 'new'">修改</i-button>
-            <i-button @click="hanldeDelete(index, task)" v-if="task.type == 'new'">删除</i-button>
+            <i-button @click="hanldeEdit(index, task)" v-if="task.type == 'new'"><Icon type="edit"></Icon></i-button>
+            <i-button @click="hanldeDelete(index, task)" v-if="task.type == 'new'"><Icon type="ios-trash"></Icon></i-button>
           </td>
           <td class="text-center progress-td">
             <Slider show-input v-model="task.progress"></Slider>
           </td>
           <td class="text-center" width="190px">
             <i-button :disabled="task.progress==100" @click="handleEdit(index, task)">修改进度延期</i-button>
-            <i-button @click="handleDone(task)">完成</i-button>
+            <i-button :disabled="task.progress==100" @click="handleDone(task)">完成</i-button>
           </td>
         </tr>
         <tr>
           <td class="text-center" colspan="3">
-            <i-button @click="hanldeAdd">新增</i-button>
+            <i-button @click="hanldeAdd" icon="plus">新增</i-button>
           </td>
         </tr>
       </tbody>
@@ -54,6 +54,7 @@ import Input from 'iview/src/components/input/input';
 import InputNumber from 'iview/src/components/input-number/';
 import Progress from 'iview/src/components/progress';
 import Modal from 'iview/src/components/modal/';
+import Icon from 'iview/src/components/icon';
 export default {
   name: 'taskTable',
   components: {
@@ -63,7 +64,8 @@ export default {
     FormItem: Form.Item,
     'i-input': Input,
     Slider,
-    Modal
+    Modal,
+    Icon
   },
   data() {
     return {

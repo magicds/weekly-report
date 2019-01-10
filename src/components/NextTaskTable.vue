@@ -11,8 +11,8 @@
         <tr :key="index" v-for="(task, index) in taskList">
           <td>
             {{task.name}}
-            <i-button @click="hanldeEdit(index, task)" v-if="task.type == 'new'">修改</i-button>
-            <i-button @click="hanldeDelete(index, task)" v-if="task.type == 'new'">删除</i-button>
+            <i-button @click="hanldeEdit(index, task)" v-if="task.type == 'new'"><Icon type="edit"></Icon></i-button>
+            <i-button @click="hanldeDelete(index, task)" v-if="task.type == 'new'"><Icon type="ios-trash"></Icon></i-button>
           </td>
           <td class="text-center progress-td">
             <i-progress :percent="task.progress" status="active"></i-progress>
@@ -20,7 +20,7 @@
         </tr>
         <tr>
           <td class="text-center" colspan="2">
-            <i-button @click="hanldeAdd">新增</i-button>
+            <i-button @click="hanldeAdd" icon="plus">新增</i-button>
           </td>
         </tr>
       </tbody>
@@ -49,6 +49,7 @@ import InputNumber from 'iview/src/components/input-number/';
 import Progress from 'iview/src/components/progress';
 import Slider from 'iview/src/components/slider';
 import Modal from 'iview/src/components/modal/';
+import Icon from 'iview/src/components/icon';
 export default {
   name: 'nextTaskTable',
   components: {
@@ -58,7 +59,8 @@ export default {
     FormItem: Form.Item,
     'i-input': Input,
     Slider,
-    Modal
+    Modal,
+    Icon
   },
   data() {
     return {
