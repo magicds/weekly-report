@@ -98,7 +98,7 @@ export default {
 .task-progress {
   display: inline-block;
   vertical-align: top;
-  width: 100px;
+  width: 200px;
   margin-left: 10px;
 }
 .group-report,
