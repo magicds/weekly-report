@@ -5,8 +5,8 @@
       <p>
         <span>【小组】{{group.name}} - 【组长】 {{group.leader.username}}</span>
         <span class="group-report-select">
-          <i-select @on-change="hanleWeekChange" v-model="selectedMonth">
-            <i-option :key="item.id" :value="item.id" v-for="item in weekList">{{ item.text }}</i-option>
+          <i-select @on-change="hanleMonthChange" v-model="selectedMonth">
+            <i-option :key="item.id" :value="item.id" v-for="item in monthList">{{ item.text }}</i-option>
           </i-select>
         </span>
         <span class="text-muted daterange-tips">{{selectedMonth}}</span>
@@ -62,16 +62,17 @@ export default {
   },
   data() {
     const d = new Date();
+    d.setDate(1);
     const currMonthText = this.getMonthText(d);
     const m = d.getMonth() - 1;
-    d.setDate(m);
+    d.setMonth(m);
     const prevMonthText = this.getMonthText(d);
     return {
       personDataLoaded: false,
       group: {},
       selectedMonth: currMonthText,
       selectedMonthObjectId: '',
-      weekList: [
+      monthList: [
         {
           id: currMonthText,
           text: '本月'
@@ -157,7 +158,7 @@ export default {
       query.equalTo('group', groupObj);
       return query.find();
     },
-    hanleWeekChange() {
+    hanleMonthChange() {
       this.$set(this, 'data', {
         management: '',
         taskList: [],
