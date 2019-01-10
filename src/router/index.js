@@ -14,6 +14,7 @@ import ForgetPwd from '@/views/ForgetPwd';
 import GroupWeekReport from '@/views/GroupWeekReport';
 import GroupMonthReport from '@/views/GroupMonthReport';
 import GroupAdmin from '@/views/GroupAdmin';
+import GroupReport from '@/views/GroupReport';
 
 import api from '@/api';
 
@@ -125,6 +126,11 @@ const router = new Router({
           path: 'GroupMonthReport',
           name: 'groupMonthReport',
           component: GroupMonthReport
+        },
+        {
+          path: 'GroupSummary',
+          name: 'GroupSummary',
+          component: GroupReport
         }
       ]
     },

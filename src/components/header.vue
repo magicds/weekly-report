@@ -7,6 +7,7 @@
       <router-link :to="{ name: 'report'}" class="nav-link">历史周报</router-link>
       <router-link :to="{ name: 'groupWeekReport'}" class="nav-link" v-if="isGroupLeader">小组周报</router-link>
       <router-link :to="{ name: 'groupMonthReport'}" class="nav-link" v-if="isGroupLeader">小组月报</router-link>
+      <router-link :to="{ name: 'GroupSummary'}" class="nav-link" v-if="user.isAdmin">小组汇总</router-link>
     </div>
     <div class="right" v-if="user.username">
       <Dropdown @on-click="itemClick" placement="bottom-end" trigger="click">
