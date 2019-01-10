@@ -22,7 +22,7 @@
 
       <fieldset>
         <legend>本周工作完成情况</legend>
-        <TaskTable :taskList="data.taskList" @done="handleTaskDone" @edit="handleTaskEdit"></TaskTable>
+        <TaskTable :taskList="data.taskList" @done="handleTaskDone" @postpone="handleTaskPostpone" @addTask="handleAddTask" @editTask="handleEditTask" @deleteTask="handleDeleteTask"></TaskTable>
       </fieldset>
 
       <fieldset>
@@ -135,6 +135,9 @@ export default {
                 const data = JSON.parse(JSON.stringify(r[0]));
                 data.report.nextTasks.map(t => {
                   if (t.progress != 100) {
+                    if (t.type == 'new') {
+                      t.type = 'plan';
+                    }
                     this.data.taskList.push(t);
                   }
                 });
@@ -165,10 +168,24 @@ export default {
     handleTaskDone(task) {
       task.progress = 100;
     },
-    handleTaskEdit(index, task) {
+    handleTaskPostpone(index, task) {
       // console.log(task);
       this.data.taskList.splice(index, 1);
+      task.type = 'postpone';
       this.data.nextTasks.push(task);
+    },
+    handleAddTask(task) {
+      this.data.taskList.push(JSON.parse(JSON.stringify(task)));
+    },
+    handleEditTask(index, task) {
+      const t = this.data.taskList[index];
+      if (t) {
+        t.name = task.name;
+        t.progress = task.progress;
+      }
+    },
+    handleDeleteTask(index) {
+      this.data.taskList.splice(index, 1);
     },
     handleAddNextTask(task) {
       this.data.nextTasks.push(JSON.parse(JSON.stringify(task)));
