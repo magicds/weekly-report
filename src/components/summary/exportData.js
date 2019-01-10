@@ -44,5 +44,6 @@ function download(data, filename, isBase64) {
   a.click();
   document.body.removeChild(a);
 }
+export {download};
+export default exportData;
 
-export default exportData
