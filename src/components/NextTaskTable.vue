@@ -11,7 +11,8 @@
         <tr :key="index" v-for="(task, index) in taskList">
           <td>
             {{task.name}}
-            <i-button @click="hanldeEdit(index, task)" v-if="task.editable">修改</i-button>
+            <i-button @click="hanldeEdit(index, task)" v-if="task.type == 'new'">修改</i-button>
+            <i-button @click="hanldeDelete(index, task)" v-if="task.type == 'new'">删除</i-button>
           </td>
           <td class="text-center progress-td">
             <i-progress :percent="task.progress" status="active"></i-progress>
@@ -87,9 +88,10 @@ export default {
     hanldeAdd() {
       this.isAdd = true;
       this.$set(this, 'taskData', {
+        type: 'new',
         name: '',
-        progress: 0,
-        editable: true
+        progress: 0
+
       });
       this.showEditor = true;
     },
@@ -107,6 +109,9 @@ export default {
       this.$set(this, 'taskData', JSON.parse(JSON.stringify(task)));
       this.isAdd = false;
       this.showEditor = true;
+    },
+    hanldeDelete(index, task) {
+      this.$emit('deleteTask', index, task);
     },
     cancel() {
       this.showEditor = false;

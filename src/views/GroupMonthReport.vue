@@ -27,7 +27,7 @@
 
       <fieldset>
         <legend>下周任务安排</legend>
-        <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @editTask="handleEditNextTask"></NextTaskTable>
+        <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @editTask="handleEditNextTask" @deleteTask="handleDeleteNextTask"></NextTaskTable>
       </fieldset>
       <i-button :disabled="disabledSave" :loading="isSaving" @click="addToCloud" type="primary">提交</i-button>
     </i-form>
@@ -180,12 +180,15 @@ export default {
         t.progress = task.progress;
       }
     },
+    handleDeleteNextTask(index) {
+      this.data.nextTasks.splice(index, 1);
+    },
     dealSaveData(data) {
       // 未完成的自动归档到下月
       for (let i = 0; i < data.taskList.length; i++) {
         const t = data.taskList[i];
         if (t.progress != 100) {
-          t.type = 'auto';
+          t.type = 'postpone';
           data.taskList.splice(i--, 1);
           data.nextTasks.push(t);
         }
