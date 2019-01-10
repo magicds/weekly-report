@@ -210,6 +210,7 @@ export default {
         .save()
         .then(r => {
           console.log(r);
+          this.selectedMonthObjectId = r.id;
           this.isSaving = false;
           Message.success({
             content: '提交成功'
