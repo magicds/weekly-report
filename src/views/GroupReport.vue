@@ -41,9 +41,10 @@ export default {
   data() {
     return {
       weekList: (() => {
-        const d = new Date();
+        let d;
         const arr = [];
         for (let i = 0; i < 6; i++) {
+          d = new Date();
           const date = d.getDate();
           d.setDate(date - 7 * i);
           const text = dateUtil.getWeekText(d);
@@ -62,10 +63,11 @@ export default {
         function getMonthText(date) {
           return `${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, 0)}`;
         }
-        const d = new Date();
-        d.setDate(1);
+        let d;
         const arr = [];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 12; i++) {
+          d = new Date();
+          d.setDate(1);
           const m = d.getMonth();
           d.setMonth(m - 1 * i);
           const text = getMonthText(d);

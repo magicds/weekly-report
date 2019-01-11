@@ -18,7 +18,7 @@
             </span>
           </div>
           <div class="item">
-            <i-button :disabled="originLeader[group.id] === group.leader" :loading="inSaving" @click="save(group)" type="primary">保存</i-button>
+            <i-button :disabled="originLeader[group.id] === group.leader" :loading="inSavingMap[group.id]" @click="save(group)" type="primary">保存</i-button>
           </div>
         </Card>
       </i-col>
@@ -35,6 +35,7 @@ import Input from 'iview/src/components/input/input';
 import Button from 'iview/src/components/button/button';
 import AV from 'leancloud-storage';
 import api from '@/api/';
+import Message from 'iview/src/components/message';
 export default {
   components: {
     Row,
@@ -50,7 +51,7 @@ export default {
   data() {
     return {
       groups: [],
-      inSaving: false,
+      inSavingMap: {},
       originLeader: {}
     };
   },
@@ -69,6 +70,7 @@ export default {
             g.leader = g.leader.objectId;
           }
           originLeader[g.id] = g.leader;
+          this.inSavingMap[g.id] = false;
         });
 
         this.$set(this, 'originLeader', originLeader);
@@ -79,13 +81,17 @@ export default {
       if (group.leader === this.originLeader[group.id]) {
         return;
       }
-      this.inSaving = true;
+      this.inSavingMap[group.id] = true;
       const groupObj = AV.Object.createWithoutData('Group', group.id);
       const leaderObj = AV.Object.createWithoutData('_User', group.leader);
       groupObj.set('leader', leaderObj);
       return groupObj.save().then(g => {
         console.log(g);
-        this.inSaving = false;
+        this.originLeader[group.id] = group.leader;
+        this.inSavingMap[group.id] = false;
+        Message.success({
+          content: '保存成功'
+        });
       });
     }
   }
