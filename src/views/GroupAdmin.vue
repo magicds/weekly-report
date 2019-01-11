@@ -16,6 +16,7 @@
                 <i-option :key="user.id" :value="user.id" v-for="user in group.member">{{user.username}}</i-option>
               </i-select>
             </span>
+            <i-button :disabled="!group.leader" type="text" icon="close" @click="hanldeEmpty(group)"></i-button>
           </div>
           <div class="item">
             <i-button :disabled="originLeader[group.id] === group.leader" :loading="inSavingMap[group.id]" @click="save(group)" type="primary">保存</i-button>
@@ -77,16 +78,22 @@ export default {
         this.$set(this, 'groups', res);
       });
     },
+    hanldeEmpty(group) {
+      group.leader = '';
+    },
     save(group) {
       if (group.leader === this.originLeader[group.id]) {
         return;
       }
       this.inSavingMap[group.id] = true;
       const groupObj = AV.Object.createWithoutData('Group', group.id);
-      const leaderObj = AV.Object.createWithoutData('_User', group.leader);
-      groupObj.set('leader', leaderObj);
+      if(group.leader) {
+        const leaderObj = AV.Object.createWithoutData('_User', group.leader);
+        groupObj.set('leader', leaderObj);
+      }else {
+        groupObj.set('leader', null);
+      }
       return groupObj.save().then(g => {
-        console.log(g);
         this.originLeader[group.id] = group.leader;
         this.inSavingMap[group.id] = false;
         Message.success({
