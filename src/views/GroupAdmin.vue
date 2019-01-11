@@ -4,12 +4,10 @@
       <i-col :key="group.id" :lg="{span:8}" :md="{span:12}" :sm="{span:12}" :xs="{span:24}" style="padding:10px" v-for="group in groups">
         <Card :dis-hover="true">
           <div class="item">
-            <!-- <Icon style="margin-right:5px;" type="person-stalker"></Icon> -->
             <span>组名：</span>
             <span>{{group.name}}</span>
           </div>
           <div class="item">
-            <!-- <Icon style="margin-right:5px;" type="person-stalker"></Icon> -->
             <span>组长：</span>
             <span class="group-leader-select">
               <i-select v-model="group.leader">
