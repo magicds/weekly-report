@@ -124,7 +124,7 @@ export default {
 
 <style scoped>
 .user-setting {
-  max-width: 400px;
+  max-width: 460px;
   margin: 0 auto;
 }
 </style>

@@ -6,7 +6,7 @@
           <Avatar :src="avatar" :style="{background: '#64b1ca',color:'#fff'}" class="user-avatar" ref="avatar" size="large">{{user.username | getAvatarText}}</Avatar>
         </label>
         <p v-if="avatar">{{user.username}}</p>
-        <input @change="savePhoto" accept=".jpg, .png" id="useravatar" name="useravatar" style="position:absolute;top:100%;left:100%;opacity:0;" type="file">
+        <input @change="savePhoto" accept=".jpg, .png" id="useravatar" name="useravatar" style="position:absolute;top:-100%;left:-100%;opacity:0;" type="file">
       </div>
       <div class="right">
         <div class="detail-title">详细信息
