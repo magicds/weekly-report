@@ -45,28 +45,22 @@ export default {
     };
   },
   mounted() {
-    // 重新拉取信息
-    AV.User.become(api.getCurrUser()._sessionToken)
-      .then(r => {
-        return this.getGroup(r.attributes.group.id).then(g => {
-          if (g) {
-            r.attributes.group = g;
-          }
-          this.$set(this, 'user', r.attributes);
-        });
+    api.getData('Group', null, { sort: 'asc', field: 'index' }).then(r => {
+      this.$set(this, 'groups', JSON.parse(JSON.stringify(r)));
+    });
+    this.getPerson();
+  },
+  methods: {
+    getPerson() {
+      return api.getCurrUserAsync(true).then(u=>{
+        this.$set(this, 'user', JSON.parse(JSON.stringify(u)));
       })
       .catch(() => {
         AV.User.logOut().then(() => {
           this.$router.push('/');
         });
       });
-    api.getData('Group', null, { sort: 'asc', field: 'index' }).then(r => {
-      r.forEach(item => {
-        this.groups.push(item);
-      });
-    });
-  },
-  methods: {
+    },
     startEdit(user, id) {
       // alert('editor\n'+ JSON.stringify(user, 0, 4));
       this.showEditor = true;
@@ -95,6 +89,7 @@ export default {
 
             this.inSaveing = false;
             this.showEditor = false;
+            this.getPerson();
           })
           .catch(e => {
             Message.error({

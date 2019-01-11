@@ -44,18 +44,21 @@ export default {
     };
   },
   mounted() {
-    api.getAllUserAsTree().then(g => {
-      this.$set(this, 'groups', g);
-    });
+    this.loadPerson();
   },
   methods: {
+    loadPerson() {
+      api.getAllUserAsTree().then(g => {
+        this.$set(this, 'groups', JSON.parse(JSON.stringify(g)));
+      });
+    },
     startEdit(user, id) {
       this.$set(this, 'user', user);
       this.userId = id;
       if (!this.groupData.length) {
         this.getGroups().then(r => {
           if (r && r.length) {
-            this.$set(this, 'groupData', r);
+            this.$set(this, 'groupData', JSON.parse(JSON.stringify(r)));
             this.showEditor = true;
           }
         });
@@ -81,20 +84,11 @@ export default {
 
           this.inSaveing = false;
           this.showEditor = false;
+          this.loadPerson();
         })
         .catch(e => {
           Message.error({
-            content:
-              '保存失败<br><pre style="text-align:left;">' +
-              JSON.stringify(
-                {
-                  code: e.code,
-                  message: e.message
-                },
-                0,
-                4
-              ) +
-              '</pre>',
+            content: '保存失败<br><pre style="text-align:left;">' + JSON.stringify({ code: e.code, message: e.message }, 0, 4) + '</pre>',
             closable: true,
             duration: 10
           });
@@ -109,11 +103,8 @@ export default {
     _update2Cloud(data, id, keys) {
       // 角色发生变化时 先更新角色
       if (data.isAdmin != undefined) {
-        return api[data.isAdmin ? 'addRole' : 'removeRole'](
-          'administrator',
-          userMap[id]
-        ).then(r => {
-          return api.savePerson(data, id, keys);
+        return api[data.isAdmin ? 'addRole' : 'removeRole']('administrator', AV.Object.createWithoutData('_User', id)).then(r => {
+          return api.savePerson(id, data);
         });
       }
 

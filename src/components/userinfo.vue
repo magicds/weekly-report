@@ -40,7 +40,7 @@
 
         <div class="item">
           <Icon style="margin-right:5px;" type="person-stalker"></Icon>
-          <span>{{user.group.attributes.name}}</span>
+          <span>{{user.group.name}}</span>
         </div>
       </div>
     </Card>

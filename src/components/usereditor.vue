@@ -11,8 +11,8 @@
         <i-input icon="email" v-model="curruser.email"></i-input>
       </Form-item>
       <Form-item label="所在小组">
-        <i-select :label-in-value="true" @on-change="groupChange" v-if="curruser.group.id" v-model="curruser.group.id">
-          <i-option :key="item.id" :value="item.id" v-for="item in groups">{{item.attributes.name}}</i-option>
+        <i-select :label-in-value="true" @on-change="groupChange" v-if="curruser.group.objectId" v-model="curruser.group.objectId">
+          <i-option :key="item.objectId" :value="item.objectId" v-for="item in groups">{{item.name}}</i-option>
         </i-select>
       </Form-item>
       <Form-item label="排序值" v-if="isAdmin">
@@ -75,7 +75,6 @@ export default {
   },
   data() {
     return {
-      origionData: {},
       rules: {
         username: [
           {
@@ -99,17 +98,9 @@ export default {
       }
     };
   },
-  mounted() {
-    this.user && this.$set(this, 'origionData', JSON.parse(JSON.stringify(this.user)));
-  },
-  // watch: {
-  //   user() {
-  //     this.user && this.$set(this, 'origionData', JSON.parse this.user);
-  //   }
-  // },
   computed: {
     curruser() {
-      return this.user;
+      return JSON.parse(JSON.stringify(this.user));
     },
 
     // 是否为自己
@@ -140,8 +131,9 @@ export default {
     save() {
       this.$refs.form.validate(isValidated => {
         if (!isValidated) return;
-        let o = this.origionData;
+        let o = this.user;
         let c = this.curruser;
+
         let data = {};
 
         if (o.username !== c.username) data.username = c.username;
@@ -153,8 +145,8 @@ export default {
           if (o.isAdmin !== c.isAdmin) data.isAdmin = c.isAdmin;
           if (o.noReport !== c.noReport) data.noReport = c.noReport;
         }
-        if (o.group.id != c.group.id) {
-          data.group = c.group.id;
+        if (o.group.objectId != c.group.objectId) {
+          data.group = c.group.objectId;
         }
 
         this.$emit('save', data, this.userId);
