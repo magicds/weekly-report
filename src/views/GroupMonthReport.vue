@@ -21,12 +21,12 @@
       </fieldset>
 
       <fieldset>
-        <legend>本周工作完成情况</legend>
+        <legend>本月工作完成情况</legend>
         <TaskTable :taskList="data.taskList" @done="handleTaskDone" @postpone="handleTaskPostpone" @addTask="handleAddTask" @editTask="handleEditTask" @deleteTask="handleDeleteTask"></TaskTable>
       </fieldset>
 
       <fieldset>
-        <legend>下周任务安排</legend>
+        <legend>下月任务安排</legend>
         <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @editTask="handleEditNextTask" @deleteTask="handleDeleteNextTask"></NextTaskTable>
       </fieldset>
       <i-button :disabled="disabledSave" :loading="isSaving" @click="addToCloud" type="primary">提交</i-button>
@@ -135,12 +135,10 @@ export default {
               if (r.length) {
                 const data = JSON.parse(JSON.stringify(r[0]));
                 data.report.nextTasks.map(t => {
-                  if (t.progress != 100) {
-                    if (t.type == 'new') {
-                      t.type = 'plan';
-                    }
-                    this.data.taskList.push(t);
+                  if (t.type == 'new') {
+                    t.type = 'plan';
                   }
+                  this.data.taskList.push(t);
                 });
               }
             });

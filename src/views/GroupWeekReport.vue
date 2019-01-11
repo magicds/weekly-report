@@ -136,12 +136,10 @@ export default {
               if (r.length) {
                 const data = JSON.parse(JSON.stringify(r[0]));
                 data.report.nextTasks.map(t => {
-                  if (t.progress != 100) {
-                    if (t.type == 'new') {
-                      t.type = 'plan';
-                    }
-                    this.data.taskList.push(t);
+                  if (t.type == 'new') {
+                    t.type = 'plan';
                   }
+                  this.data.taskList.push(t);
                 });
               }
             });
