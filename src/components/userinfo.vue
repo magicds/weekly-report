@@ -165,6 +165,7 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   text-align: center;
+  overflow: hidden;
 }
 .right {
   margin-left: 100px;
