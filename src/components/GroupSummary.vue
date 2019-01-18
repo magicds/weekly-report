@@ -39,7 +39,7 @@ export default {
   props: {
     timeScope: {
       type: String,
-      default: '周'
+      default: '本周'
     },
     reports: {
       type: Array,
@@ -79,7 +79,7 @@ export default {
           if (t.progress === 100) {
             t.state = '完成';
           } else {
-            t.state = `${100 - t.progress}% 延至下${this.timeScope}`;
+            t.state = `${100 - t.progress}% 延至下${this.timeScope.substr(1)}`;
           }
           return t;
         });
