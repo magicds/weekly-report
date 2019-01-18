@@ -26,7 +26,7 @@
       </fieldset>
 
       <fieldset>
-        <legend>下月任务安排</legend>
+        <legend>下月计划内容</legend>
         <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @editTask="handleEditNextTask" @deleteTask="handleDeleteNextTask"></NextTaskTable>
       </fieldset>
       <i-button :disabled="disabledSave" :loading="isSaving" @click="addToCloud" type="primary">提交</i-button>
