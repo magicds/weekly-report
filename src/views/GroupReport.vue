@@ -4,11 +4,14 @@
       <span>按周汇总：</span>
       <span class="range-select">
         <i-select @on-change="hanleWeekChange" v-model="selectedWeek">
-          <i-option :key="item.id" :value="item.id" v-for="item in weekList">{{ item.text }}</i-option>
+          <OptionGroup :key="month.id" :label="month.text" v-for="month in weekList">
+            <i-option :key="item.id" :value="item.id" v-for="item in month.list">{{item.text}}</i-option>
+          </OptionGroup>
         </i-select>
       </span>
+      <span class="week-range-tips text-muted">{{selectedWeek}}</span>
     </div>
-    <GroupSummary unitScope="周" :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" v-if="weekReports.length"></GroupSummary>
+    <GroupSummary :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" unitScope="周" v-if="weekReports.length"></GroupSummary>
     <div style="margin-top: 30px;">
       <span>按月汇总：</span>
       <span class="range-select">
@@ -17,22 +20,24 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary unitScope="月" :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" v-if="monthReports.length || monthWeekReports.length"></GroupSummary>
+    <GroupSummary :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月" v-if="monthReports.length || monthWeekReports.length"></GroupSummary>
     <i-button :disabled="!!(!monthReports.length && !(weekReports.length || !monthWeekReports.length))" @click="exportHtml" type="primary">导出</i-button>
   </div>
 </template>
 <script>
 import echarts from 'echarts/lib/echarts';
 import Button from 'iview/src/components/button/button';
-import { Select, Option } from 'iview/src/components/select';
+import { Select, Option, OptionGroup } from 'iview/src/components/select';
 import GroupSummary from '../components/GroupSummary/GroupSummary';
 import dateUtil from '@/util/date';
 import throwError from '@/api/error.js';
 import AV from 'leancloud-storage';
 import { download } from '../components/summary/exportData.js';
+
 export default {
   components: {
     GroupSummary,
+    OptionGroup,
     'i-button': Button,
     'i-select': Select,
     'i-option': Option
@@ -40,20 +45,69 @@ export default {
   data() {
     return {
       weekList: (() => {
-        let d;
-        const arr = [];
-        for (let i = 0; i < 6; i++) {
-          d = new Date();
-          const date = d.getDate();
-          d.setDate(date - 7 * i);
-          const text = dateUtil.getWeekText(d);
+        const getMonthIdText = date => {
+          const year = date.getFullYear();
+          const month = date.getMonth();
+          return {
+            id: `${year}-${(month + 1 + '').padStart(2, 0)}`,
+            text: `${year}年${month + 1 + '月'}`
+          };
+        };
+        const getMonthArray = () => {
+          let i = 0;
+          let arr = [];
+          for (; i < 12; i++) {
+            let date = new Date();
+            date.setDate(1);
+            date.setMonth(date.getMonth() - i);
+            arr.push(getMonthIdText(date));
+          }
+          return arr;
+        };
+        const getMonthWeekList = month => {
+          return dateUtil.getMonthWeekRange(month.id).map((item, index) => {
+            return {
+              text: `${month.text}第${index + 1}周`,
+              id: item
+            };
+          });
+        };
+
+        const arr = getMonthArray().map(month => {
+          return {
+            id: month.id,
+            text: month.text,
+            list: getMonthWeekList(month)
+          };
+        });
+
+        // 过滤掉超过当前日期的
+        const currWeekText = dateUtil.getWeekText(new Date());
+        let finded = false;
+        for (let i = 0, len = arr[0].list.length; i < len; i++) {
+          let week = arr[0].list[i];
+          if (week.id === currWeekText) {
+            arr[0].list.splice(i + 1, len);
+            finded = true;
+            break;
+          }
+        }
+
+        // 如果当前日期不在最新月份的列表中 则表示当前日期是计算在上一周的
+        // 当前月无须保留 最后再补上一月
+        if (!finded) {
+          arr.shift();
+          const date = new Date();
+          date.setDate(1);
+          date.setMonth(date.getMonth() - 12);
+          const addMonth = getMonthIdText(date);
           arr.push({
-            id: text,
-            text: text
+            id: addMonth.id,
+            text: addMonth.text,
+            list: getMonthWeekList(addMonth)
           });
         }
-        arr[0].text = '本周';
-        arr[1].text = '上周';
+
         return arr;
       })(),
       selectedWeek: '',
@@ -88,10 +142,12 @@ export default {
     };
   },
   mounted() {
-    this.selectedWeek = this.weekList[0].id;
+    const len = this.weekList[0].list.length;
+    this.selectedWeek = this.weekList[0].list[len - 1].id;
     this.selectedMonth = this.monthList[0].id;
     this.selectedWeekText = this.weekList[0].text;
-    this.selectedMonthText = this.monthList[0].text;
+    // this.selectedMonthText = this.monthList[0].text;
+    this.updateSelectedWeekText();
     this.monthWeekRange = dateUtil.getMonthWeekRange(this.selectedMonth);
 
     this.chartResizeHandle = this.dealChartResize();
@@ -104,13 +160,17 @@ export default {
   },
   methods: {
     hanleWeekChange() {
-      for (let o of this.weekList) {
-        if (o.id == this.selectedWeek) {
-          this.selectedWeekText = o.text;
-          break;
+      this.updateSelectedWeekText();
+      this.getWeekData();
+    },
+    updateSelectedWeekText() {
+      for (let m of this.weekList) {
+        for (let o of m.list) {
+          if (o.id == this.selectedWeek) {
+            this.selectedWeekText = o.text;
+          }
         }
       }
-      this.getWeekData();
     },
     hanleMonthChange() {
       for (let o of this.monthList) {
@@ -249,6 +309,10 @@ export default {
 .range-select {
   display: inline-block;
   width: 180px;
+}
+.week-range-tips {
+  vertical-align: middle;
+  margin: 10px;;
 }
 </style>
 
