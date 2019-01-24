@@ -95,6 +95,7 @@ export default {
     hanldeAdd() {
       this.isAdd = true;
       this.$set(this, 'taskData', {
+        isExtra: true,
         type: 'new',
         name: '',
         progress: 0

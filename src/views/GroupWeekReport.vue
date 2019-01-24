@@ -22,12 +22,12 @@
 
       <fieldset>
         <legend>本周工作完成情况</legend>
-        <TaskTable :taskList="data.taskList" @done="handleTaskDone" @postpone="handleTaskPostpone" @addTask="handleAddTask" @editTask="handleEditTask" @deleteTask="handleDeleteTask"></TaskTable>
+        <TaskTable :taskList="data.taskList" @addTask="handleAddTask" @deleteTask="handleDeleteTask" @done="handleTaskDone" @editTask="handleEditTask" @postpone="handleTaskPostpone"></TaskTable>
       </fieldset>
 
       <fieldset>
         <legend>下周计划内容</legend>
-        <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @editTask="handleEditNextTask" @deleteTask="handleDeleteNextTask"></NextTaskTable>
+        <NextTaskTable :taskList="data.nextTasks" @addTask="handleAddNextTask" @deleteTask="handleDeleteNextTask" @editTask="handleEditNextTask"></NextTaskTable>
       </fieldset>
       <i-button :disabled="disabledSave" :loading="isSaving" @click="addToCloud" type="primary">提交</i-button>
     </i-form>
@@ -138,6 +138,9 @@ export default {
                 data.report.nextTasks.map(t => {
                   if (t.type == 'new') {
                     t.type = 'plan';
+                  }
+                  if (t.isExtra) {
+                    delete t.isExtra;
                   }
                   this.data.taskList.push(t);
                 });

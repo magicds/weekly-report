@@ -39,6 +39,41 @@ const dateUtil = {
     e.setDate(endDate);
     e.setHours(23, 59, 59, 999);
     return e;
+  },
+
+  getMonthWeekRange(y, m) {
+    let year, month;
+    if (m === undefined) {
+      const arr = y.split('-');
+      year = parseInt(arr[0]);
+      month = parseInt(arr[1]) - 1;
+    } else {
+      year = y;
+      month = m;
+    }
+
+    let startDate = new Date(year, month, 1);
+    // 下一月的一号往前一天即为当月的最后一天
+    let endDate = new Date(year, month + 1, 0);
+    const firstDay = startDate.getDay();
+
+    // 当月的第一个星期一才是真正的开始 因此不是周一则需要往后7天
+    if (firstDay !== 1) {
+      startDate.setDate(startDate.getDate() + 7);
+    }
+
+    let s = dateUtil.getWeekStart(startDate);
+    let e = dateUtil.getWeekEnd(endDate);
+
+    let arr = [];
+
+    while (s.getTime() < e.getTime()) {
+      arr.push(dateUtil.getWeekText(s));
+      s.setDate(s.getDate() + 7);
+      s.setHours(23, 59, 59, 999);
+    }
+
+    return arr;
   }
 }
 

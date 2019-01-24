@@ -8,7 +8,8 @@ module.exports = {
     sourceType: 'module'
   },
   globals: {
-    Promise: true
+    Promise: true,
+    Map: false
   },
   env: {
     browser: true,

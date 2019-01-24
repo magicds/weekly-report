@@ -8,8 +8,7 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" v-if="weekReports.length"></GroupSummary>
-    <div class="empty-tips" v-else>暂无数据</div>
+    <GroupSummary unitScope="周" :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" v-if="weekReports.length"></GroupSummary>
     <div style="margin-top: 30px;">
       <span>按月汇总：</span>
       <span class="range-select">
@@ -18,15 +17,15 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" v-if="monthReports.length"></GroupSummary>
-    <div class="empty-tips" v-else>暂无数据</div>
-    <i-button @click="exportHtml" type="primary" :disabled="!!(!monthReports.length && !weekReports.length)">导出</i-button>
+    <GroupSummary unitScope="月" :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" v-if="monthReports.length || monthWeekReports.length"></GroupSummary>
+    <i-button :disabled="!!(!monthReports.length && !(weekReports.length || !monthWeekReports.length))" @click="exportHtml" type="primary">导出</i-button>
   </div>
 </template>
 <script>
+import echarts from 'echarts/lib/echarts';
 import Button from 'iview/src/components/button/button';
 import { Select, Option } from 'iview/src/components/select';
-import GroupSummary from '../components/GroupSummary';
+import GroupSummary from '../components/GroupSummary/GroupSummary';
 import dateUtil from '@/util/date';
 import throwError from '@/api/error.js';
 import AV from 'leancloud-storage';
@@ -83,7 +82,9 @@ export default {
       selectedMonth: '',
       selectedMonthText: '',
       weekReports: [],
-      monthReports: []
+      monthReports: [],
+      monthWeekRange: [],
+      monthWeekReports: []
     };
   },
   mounted() {
@@ -91,6 +92,15 @@ export default {
     this.selectedMonth = this.monthList[0].id;
     this.selectedWeekText = this.weekList[0].text;
     this.selectedMonthText = this.monthList[0].text;
+    this.monthWeekRange = dateUtil.getMonthWeekRange(this.selectedMonth);
+
+    this.chartResizeHandle = this.dealChartResize();
+    window.addEventListener('resize', this.chartResizeHandle, false);
+  },
+  beforeDestroy() {
+    if (this.chartResizeHandle) {
+      window.removeEventListener('resize', this.chartResizeHandle);
+    }
   },
   methods: {
     hanleWeekChange() {
@@ -110,6 +120,7 @@ export default {
         }
       }
       this.getMonthData();
+      this.getMonthChartData();
     },
     getWeekData() {
       const query = new AV.Query('GroupWeekLog');
@@ -141,21 +152,94 @@ export default {
         })
         .catch(throwError);
     },
+    // 月度的统计数字是按照周计算的需要单独获取
+    getMonthChartData() {
+      const querys = this.monthWeekRange.map(week => {
+        const query = new AV.Query('GroupWeekLog');
+        query.equalTo('title', week);
+        return query;
+      });
+      const query = AV.Query.or(...querys);
+      query.include('group');
+      return query
+        .find()
+        .then(r => {
+          const data = JSON.parse(JSON.stringify(r));
+          let reportsMap = new Map();
+          let reports = [];
+          data.forEach(item => {
+            const gName = item.group.name;
+            const d = reportsMap.get(gName);
+            if (!d) {
+              reportsMap.set(gName, item);
+            } else {
+              d.report.taskList = d.report.taskList.concat(item.report.taskList);
+              d.report.nextTasks = d.report.nextTasks.concat(item.report.nextTasks);
+            }
+          });
+
+          reportsMap.forEach(item => {
+            reports.push(item);
+          });
+          reportsMap = null;
+
+          this.$set(this, 'monthWeekReports', reports);
+        })
+        .catch(err => {
+          this.$set(this, 'monthWeekReports', []);
+          throwError(err);
+        });
+    },
     exportHtml() {
       const styleText = '';
       if (this.weekReports.length) {
         const weekTitle = `【${this.selectedWeek}】周汇总.html`;
-        let weekData = this.$refs.weekSummary.$el.outerHTML;
+        let weekData = this.getHtmlContent(this.$refs.weekSummary.$el);
         download(this.wrapAsHtml(weekData, weekTitle), weekTitle, false);
       }
-      if (this.monthReports.length) {
-        let monthData = this.$refs.monthSummary.$el.outerHTML;
+      if (this.monthReports.length || this.monthWeekReports.length) {
+        let monthData = this.getHtmlContent(this.$refs.monthSummary.$el);
         let monthTitle = `【${this.selectedMonth}】月汇总.html`;
         download(this.wrapAsHtml(monthData, monthTitle), monthTitle, false);
       }
     },
+    getHtmlContent(el) {
+      const div = el.cloneNode(true);
+
+      // 图表替换为图片
+      let imgArr = [];
+      [].slice.call(el.querySelectorAll('[_echarts_instance_]')).forEach(chart => {
+        const base64 = chart.getElementsByTagName('canvas')[0].toDataURL('image/png');
+        imgArr.push(base64);
+      });
+      [].slice.call(div.querySelectorAll('[_echarts_instance_]')).forEach((chart, i) => {
+        const img = document.createElement('img');
+        img.src = imgArr[i];
+        const div = document.createElement('div');
+        div.style.textAlign = 'center';
+        div.style.margin = '20px 0';
+        div.appendChild(img);
+        chart.replaceWith(div);
+      });
+      imgArr = null;
+
+      return div.outerHTML;
+    },
     wrapAsHtml(content, title) {
       return `<!DOCTYPE html><html><head><style>.ivu-progress {display:inline-block;}</style><title>${title}</title></head><body>${content}</body></html>`;
+    },
+    dealChartResize() {
+      let timer;
+
+      return () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          [].slice.call(this.$el.querySelectorAll('[_echarts_instance_]')).forEach(el => {
+            const chart = echarts.getInstanceByDom(el);
+            chart && chart.resize();
+          });
+        }, 50);
+      };
     }
   }
 };
@@ -165,12 +249,6 @@ export default {
 .range-select {
   display: inline-block;
   width: 180px;
-}
-.empty-tips {
-  color: #666;
-  font-size: 14px;
-  line-height: 40px;
-  text-align: center;
 }
 </style>
 
