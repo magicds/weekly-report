@@ -20,7 +20,7 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月" v-if="monthReports.length || monthWeekReports.length"></GroupSummary>
+    <GroupSummary :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月" ></GroupSummary>
     <i-button :disabled="!!(!monthReports.length && !(weekReports.length || !monthWeekReports.length))" @click="exportHtml" type="primary">导出</i-button>
   </div>
 </template>
@@ -179,6 +179,7 @@ export default {
           break;
         }
       }
+      this.monthWeekRange = dateUtil.getMonthWeekRange(this.selectedMonth);
       this.getMonthData();
       this.getMonthChartData();
     },
@@ -253,13 +254,13 @@ export default {
     exportHtml() {
       const styleText = '';
       if (this.weekReports.length) {
-        const weekTitle = `【${this.selectedWeek}】周汇总.html`;
+        const weekTitle = `【${this.selectedWeekText}】汇总.html`;
         let weekData = this.getHtmlContent(this.$refs.weekSummary.$el);
         download(this.wrapAsHtml(weekData, weekTitle), weekTitle, false);
       }
       if (this.monthReports.length || this.monthWeekReports.length) {
         let monthData = this.getHtmlContent(this.$refs.monthSummary.$el);
-        let monthTitle = `【${this.selectedMonth}】月汇总.html`;
+        let monthTitle = `【${this.selectedMonthText}】汇总.html`;
         download(this.wrapAsHtml(monthData, monthTitle), monthTitle, false);
       }
     },

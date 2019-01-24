@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="report-charts" ref="chart" style="height:300px;" v-if="chartReports.length"></div>
-    <div class="empty-tips" v-if="!reports.length && chartReports.length">暂无数据</div>
+    <div class="empty-tips" v-if="!hasDate">暂无数据</div>
   </div>
 </template>
 
@@ -64,6 +64,7 @@ export default {
   },
   data() {
     return {
+      hasDate: this.reports.length || this.chartReports.length,
       cloneData: this.dealData(this.reports),
       chartData: this.dealChartData(this.chartReports)
     };
