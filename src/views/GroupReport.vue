@@ -20,7 +20,48 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月" ></GroupSummary>
+    <GroupSummary :chartReports="monthWeekReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月">
+      <div v-if="monthReports.length">
+        <div :key="item.objectId" class="group-report-item" v-for="item in monthReports">
+          <h3>{{item.group.name}}</h3>
+          <div class="summary-area">
+            <fieldset>
+              <legend>管理情况</legend>
+              <div>
+                <ul>
+                  <li :key="index" v-for="(item,index)  in item.managementArr">{{item}}</li>
+                </ul>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>月计划</legend>
+              <ul v-if="item.plans && item.plans.length">
+                <li :key="index" class="task-item" v-for="(item,index)  in item.plans">
+                  <span class="name">{{item.name}}</span>
+                  <span class="task-progress">
+                    <i-progress :percent="item.progress" status="active"></i-progress>
+                  </span>
+                </li>
+              </ul>
+              <div v-else>无相关数据</div>
+            </fieldset>
+            <fieldset>
+              <legend>月完成情况</legend>
+              <ul v-if="item.taskList.length">
+                <li :key="index" class="task-item" v-for="(item,index)  in item.taskList">
+                  <span class="state">【{{item.state}}】</span>
+                  <span class="name">{{item.name}}</span>
+                  <span class="task-progress">
+                    <i-progress :percent="item.progress" status="active"></i-progress>
+                  </span>
+                </li>
+              </ul>
+              <div v-else>无相关数据</div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </GroupSummary>
     <i-button :disabled="!!(!monthReports.length && !(weekReports.length || !monthWeekReports.length))" @click="exportHtml" type="primary">导出</i-button>
   </div>
 </template>
@@ -28,11 +69,16 @@
 import echarts from 'echarts/lib/echarts';
 import Button from 'iview/src/components/button/button';
 import { Select, Option, OptionGroup } from 'iview/src/components/select';
+import Progress from 'iview/src/components/progress';
 import GroupSummary from '../components/GroupSummary/GroupSummary';
 import dateUtil from '@/util/date';
 import throwError from '@/api/error.js';
 import AV from 'leancloud-storage';
 import { download } from '../components/summary/exportData.js';
+
+function getMonthText(date) {
+  return `${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, 0)}`;
+}
 
 export default {
   components: {
@@ -40,7 +86,8 @@ export default {
     OptionGroup,
     'i-button': Button,
     'i-select': Select,
-    'i-option': Option
+    'i-option': Option,
+    'i-progress': Progress
   },
   data() {
     return {
@@ -113,9 +160,6 @@ export default {
       selectedWeek: '',
       selectedWeekText: '',
       monthList: (() => {
-        function getMonthText(date) {
-          return `${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, 0)}`;
-        }
         let d;
         const arr = [];
         for (let i = 0; i < 12; i++) {
@@ -199,19 +243,84 @@ export default {
         .catch(throwError);
     },
     getMonthData() {
-      const query = new AV.Query('GroupMonthLog');
-      query.equalTo('title', this.selectedMonth);
+      // 本月
+      const currMonthQuery = new AV.Query('GroupMonthLog');
+      currMonthQuery.equalTo('title', this.selectedMonth);
+      // 上月
+      const dateArr = this.selectedMonth.split('-');
+      const prevDate = new Date(dateArr[0], parseInt(dateArr[1] - 1, 10), 1);
+      prevDate.setMonth(prevDate.getMonth() - 1);
+      const prevMonthQuery = new AV.Query('GroupMonthLog');
+      prevMonthQuery.equalTo('title', getMonthText(prevDate));
+      // console.log(prevMonthQuery);
+
+      // 构建查询
+      const query = AV.Query.or(currMonthQuery, prevMonthQuery);
       query.include('group');
       return query
         .find()
         .then(r => {
           if (r.length) {
-            this.$set(this, 'monthReports', JSON.parse(JSON.stringify(r)));
+            this.$set(this, 'monthReports', this.dealMonthReoprts(JSON.parse(JSON.stringify(r))));
           } else {
             this.$set(this, 'monthReports', []);
           }
         })
         .catch(throwError);
+    },
+    // 汇总月报的数据
+    dealMonthReoprts(data) {
+      const currMonth = [];
+      const prevMonth = [];
+      // 分离当月和上月
+      data.forEach(item => {
+        if (item.title == this.selectedMonth) {
+          currMonth.push(item);
+        } else {
+          prevMonth.push(item);
+        }
+      });
+      if (!currMonth.length) {
+        return [];
+      }
+
+      // 按组归档
+      const groupMap = new Map();
+      currMonth.forEach(r => {
+        groupMap.set(r.group.objectId, r);
+        r.managementArr = r.report.management.split(/(?:\n|\r\n|\r)/).map(managementItem => {
+          managementItem = managementItem.trim();
+          if (managementItem) {
+            return managementItem;
+          }
+        });
+
+        r.report.taskList.forEach(t => {
+          if (t.progress === 100) {
+            t.state = '完成';
+          }
+        });
+        const unDoneArr = r.report.nextTasks.map(t => {
+          if (t.progress === 100) {
+            t.state = '完成';
+          } else {
+            t.state = `${100 - t.progress}% 延至下一月`;
+          }
+          return t;
+        });
+        r.taskList = r.report.taskList.concat(unDoneArr);
+      });
+
+      // 遍历上月获取当月计划
+      prevMonth.forEach(item => {
+        const g = groupMap.get(item.group.objectId);
+        if (g) {
+          g.plans = item.report.nextTasks || [];
+        }
+      });
+
+      groupMap.clear();
+      return currMonth;
     },
     // 月度的统计数字是按照周计算的需要单独获取
     getMonthChartData() {
@@ -287,7 +396,7 @@ export default {
       return div.outerHTML;
     },
     wrapAsHtml(content, title) {
-      return `<!DOCTYPE html><html><head><style>.ivu-progress {display:inline-block;}</style><title>${title}</title></head><body>${content}</body></html>`;
+      return `<!DOCTYPE html><html><head><style>*{box-sizing:border-box;}.ivu-icon-ios-checkmark:before {content: '100%';}.ivu-progress{display:inline-block;width:200px;font-size:12px;position:relative}.ivu-progress-vertical{height:100%;width:auto}.ivu-progress-outer{display:inline-block;width:100%;margin-right:0;padding-right:0}.ivu-progress-show-info .ivu-progress-outer{padding-right:55px;margin-right:-55px}.ivu-progress-vertical .ivu-progress-outer{height:100%;width:auto}.ivu-progress-inner{display:inline-block;width:100%;background-color:#f3f3f3;border-radius:100px;vertical-align:middle}.ivu-progress-vertical .ivu-progress-inner{height:100%;width:auto}.ivu-progress-vertical .ivu-progress-inner:after,.ivu-progress-vertical .ivu-progress-inner>*{display:inline-block;vertical-align:bottom}.ivu-progress-vertical .ivu-progress-inner:after{content:'';height:100%}.ivu-progress-bg{border-radius:100px;background-color:#2db7f5;transition:all .2s linear;position:relative}.ivu-progress-text{display:inline-block;margin-left:5px;text-align:left;font-size:1em;vertical-align:middle}.ivu-progress-active .ivu-progress-bg:before{content:'';opacity:0;position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;border-radius:10px;animation:ivu-progress-active 2s ease-in-out infinite}.ivu-progress-wrong .ivu-progress-bg{background-color:#ed3f14}.ivu-progress-wrong .ivu-progress-text{color:#ed3f14}.ivu-progress-success .ivu-progress-bg{background-color:#19be6b}.ivu-progress-success .ivu-progress-text{color:#19be6b}@keyframes ivu-progress-active{0%{opacity:.3;width:0}100%{opacity:0;width:100%}}</style><title>${title}</title></head><body>${content}</body></html>`;
     },
     dealChartResize() {
       let timer;
@@ -313,7 +422,7 @@ export default {
 }
 .week-range-tips {
   vertical-align: middle;
-  margin: 10px;;
+  margin: 10px;
 }
 </style>
 

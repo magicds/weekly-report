@@ -1,33 +1,35 @@
 <template>
   <div class="group-report">
     <h2>{{this.getTitle()}}</h2>
-    <div :key="report.objectId" class="group-report-item" v-for="report in cloneData">
-      <h3>{{report.group.name}}</h3>
-      <div class="summary-area">
-        <fieldset>
-          <legend>管理情况</legend>
-          <div>
-            <ul>
-              <li :key="index" v-for="(item,index)  in report.managementArr">{{item}}</li>
-            </ul>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>工作情况</legend>
-          <div>
-            <ul>
-              <li :key="index" class="task-item" v-for="(item,index)  in report.taskSummary">
-                <span class="state">【{{item.state}}】</span>
-                <span class="name">{{item.name}}</span>
-                <span class="task-progress">
-                  <i-progress :percent="item.progress" status="active"></i-progress>
-                </span>
-              </li>
-            </ul>
-          </div>
-        </fieldset>
+    <slot v-bind:cloneData="cloneData">
+      <div :key="report.objectId" class="group-report-item" v-for="report in cloneData">
+        <h3>{{report.group.name}}</h3>
+        <div class="summary-area">
+          <fieldset>
+            <legend>管理情况</legend>
+            <div>
+              <ul>
+                <li :key="index" v-for="(item,index)  in report.managementArr">{{item}}</li>
+              </ul>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>工作情况</legend>
+            <div>
+              <ul>
+                <li :key="index" class="task-item" v-for="(item,index)  in report.taskSummary">
+                  <span class="state">【{{item.state}}】</span>
+                  <span class="name">{{item.name}}</span>
+                  <span class="task-progress">
+                    <i-progress :percent="item.progress" status="active"></i-progress>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </fieldset>
+        </div>
       </div>
-    </div>
+    </slot>
     <div class="report-charts" ref="chart" style="height:300px;" v-if="chartReports.length"></div>
     <div class="empty-tips" v-if="!hasDate">暂无数据</div>
   </div>
