@@ -11,7 +11,9 @@
       </span>
       <span class="week-range-tips text-muted">{{selectedWeek}}</span>
     </div>
-    <GroupSummary :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" unitScope="周" v-if="weekReports.length"></GroupSummary>
+
+    <GroupSummary :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" unitScope="周" v-if="weekReports.length" />
+    <div class="empty-tips" v-if="!weekReports.length">暂无数据</div>
     <div style="margin-top: 30px;">
       <span>按月汇总：</span>
       <span class="range-select">
@@ -20,7 +22,8 @@
         </i-select>
       </span>
     </div>
-    <GroupSummary :chartReports="monthWeekReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月">
+
+    <GroupSummary :chartReports="monthWeekReports" :reports="monthReports" :timeScope="selectedMonthText" ref="monthSummary" unitScope="月">
       <div v-if="monthReports.length">
         <div :key="item.objectId" class="group-report-item" v-for="item in monthReports">
           <h3>{{item.group.name}}</h3>
@@ -34,7 +37,7 @@
               </div>
             </fieldset>
             <fieldset>
-              <legend>月计划</legend>
+              <legend>本月计划</legend>
               <ul v-if="item.plans && item.plans.length">
                 <li :key="index" class="task-item" v-for="(item,index)  in item.plans">
                   <span class="name">{{item.name}}</span>
@@ -46,7 +49,7 @@
               <div v-else>无相关数据</div>
             </fieldset>
             <fieldset>
-              <legend>月完成情况</legend>
+              <legend>本月完成情况</legend>
               <ul v-if="item.taskList.length">
                 <li :key="index" class="task-item" v-for="(item,index)  in item.taskList">
                   <span class="state">【{{item.state}}】</span>
