@@ -152,12 +152,10 @@ export default {
           }
         });
         const nextTasks = r.nextTasks.map(t => {
-          if (t.progress === 100) {
-            t.state = '完成';
-          } else {
+          if (t.type === 'postpone') {
             t.state = `${100 - t.progress}% 延至下${this.unitScope}`;
+            return t;
           }
-          return t;
         });
         d.taskSummary = r.taskList.concat(nextTasks);
         return d;
