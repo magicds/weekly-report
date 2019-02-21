@@ -8,7 +8,7 @@
 
     <div slot="footer">
       <Checkbox v-model="notNotify">我知道了，不再提醒</Checkbox>
-      <i-button @click="ok" type="primary">确定</i-button>
+      <i-button @click="ok" type="primary" style="margin-left:10px;">确定</i-button>
     </div>
   </Modal>
 </template>
