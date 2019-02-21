@@ -2,12 +2,17 @@
   <div id="app" class="container">
     <!-- <img src="./assets/logo.png"> -->
     <router-view></router-view>
+    <Notify />
   </div>
 </template>
 
 <script>
+import Notify from '@/views/notify/Notify.vue';
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    Notify
+  }
 }
 </script>
 
