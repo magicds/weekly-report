@@ -2,7 +2,7 @@
   <Modal title="通知提醒" v-model="show">
     <p>工作太忙，想不起来；玩的太嗨，总是忘记，试试微信通知吧：</p>
     <p style="text-align:center;">
-      <img alt src="./images/qrcode.png">
+      <img ref="qrcode" v-bind:src="qrcode">
     </p>
     <p>扫码订阅即可收到微信通知提醒。</p>
 
@@ -17,21 +17,23 @@
 import Checkbox from 'iview/src/components/checkbox/checkbox';
 import Button from 'iview/src/components/button/button';
 import Modal from 'iview/src/components/Modal/index.js';
+import config from '@/config/pushbear.config.js';
 
 const SAVE_KEY = '_weekly-report_notNotify';
 
 export default {
   components: {
     Checkbox,
-    'i-button':Button,
+    'i-button': Button,
     Modal
   },
   data() {
     const notNotify = localStorage.getItem(SAVE_KEY);
-    const needShow = JSON.parse(notNotify) ? false : true;
+    const needShow = config.enable ? (JSON.parse(notNotify) ? false : true) : false;
     return {
       notNotify: notNotify === null ? false : JSON.parse(notNotify),
-      show: needShow
+      show: needShow,
+      qrcode: config.qrcode || ''
     };
   },
   methods: {

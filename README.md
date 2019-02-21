@@ -13,6 +13,10 @@
 
 ## Changelog
 
+- **2019-02-21**
+  新增 [pushbear](http://pushbear.ftqq.com/) 微信推送填写提醒。（广播通知，通知全部订阅者） 云函数仓库 [https://github.com/cdswyda/weekly-report-pushbear](https://github.com/cdswyda/weekly-report-pushbear)
+
+  请修改 [pushbear.config-example.js](./src/config/pushbear.config-example.js) 文件，并重命名为 pushbear.config.js 即可
 - **2018-09-03**
   - 新增用户删除功能
   - 邮件发送迁移到云函数，详情参看云函数仓库
