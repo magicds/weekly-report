@@ -12,7 +12,7 @@
       <span class="week-range-tips text-muted">{{selectedWeek}}</span>
     </div>
 
-    <GroupSummary :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" unitScope="周" v-if="weekReports.length" />
+    <GroupSummary :chartReports="weekReports" :reports="weekReports" :timeScope="selectedWeekText" ref="weekSummary" unitScope="周" v-if="weekReports.length"/>
     <div class="empty-tips" v-if="!weekReports.length">暂无数据</div>
     <div style="margin-top: 30px;">
       <span>按月汇总：</span>
@@ -303,13 +303,16 @@ export default {
             t.state = '完成';
           }
         });
-        const unDoneArr = r.report.nextTasks.map(t => {
-          if (t.progress === 100) {
-            t.state = '完成';
-          } else {
-            t.state = `${100 - t.progress}% 延至下一月`;
+        const unDoneArr = [];
+        r.report.nextTasks.forEach(t => {
+          if (t.type === 'postpone') {
+            if (t.progress === 100) {
+              t.state = '完成';
+            } else {
+              t.state = `${100 - t.progress}% 延至下一月`;
+            }
+            unDoneArr.push(t);
           }
-          return t;
         });
         r.taskList = r.report.taskList.concat(unDoneArr);
       });

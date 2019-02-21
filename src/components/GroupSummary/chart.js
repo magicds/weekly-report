@@ -117,15 +117,8 @@ function renderChart(el, data) {
   if (!chart) {
     chart = echarts.init(el);
   }
-  // data.groups.push(...data.groups);
-  // data.done.push(...data.done);
-  // data.delay.push(...data.delay);
-  // data.extra.push(...data.extra);
   var opt = getOpt(data);
-  // console.log('chartOpt', opt);
-  // console.log('chartOpt', JSON.stringify(opt));
   chart.setOption(opt);
-
 }
 
 export default renderChart;

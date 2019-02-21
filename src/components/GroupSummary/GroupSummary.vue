@@ -71,6 +71,11 @@ export default {
       chartData: this.dealChartData(this.chartReports)
     };
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.drawChart();
+    });
+  },
   watch: {
     reports() {
       this.$set(this, 'cloneData', this.dealData(this.reports));
@@ -82,7 +87,7 @@ export default {
     },
     chartData() {
       this.$nextTick(() => {
-        this.renderChart();
+        this.drawChart();
       });
     }
   },
@@ -151,17 +156,18 @@ export default {
             t.state = '完成';
           }
         });
-        const nextTasks = r.nextTasks.map(t => {
+        const nextTasks = [];
+        r.nextTasks.forEach(t => {
           if (t.type === 'postpone') {
             t.state = `${100 - t.progress}% 延至下${this.unitScope}`;
-            return t;
+            nextTasks.push(t);
           }
         });
         d.taskSummary = r.taskList.concat(nextTasks);
         return d;
       });
     },
-    renderChart() {
+    drawChart() {
       if (!this.chartReports.length) {
         return;
       }
