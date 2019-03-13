@@ -171,3 +171,11 @@ assetsPublicPath: '/weeklyreport/',
 ![管理员对成员查看和管理 https://qiniu.cdswyda.com/images/201802/person-manage.png](https://qiniu.cdswyda.com/images/201802/person-manage.png)
 
 对了，还可以导出表格为csv
+
+
+
+```bash
+# 忽略本地修改过的配置文件
+git update-index --assume-unchanged src\config\av.config.js
+git update-index --assume-unchanged src\config\pushbear.config.js
+```
