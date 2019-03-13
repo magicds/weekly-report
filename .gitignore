@@ -13,6 +13,5 @@ yarn-error.log*
 *.sln
 .vscode/
 src/config/av.config.js
-src/config/pushbear.config.js
 mail/mailer.php
 .svn

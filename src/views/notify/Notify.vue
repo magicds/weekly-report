@@ -8,7 +8,7 @@
 
     <div slot="footer">
       <Checkbox v-model="notNotify">我知道了，不再提醒</Checkbox>
-      <i-button @click="ok" type="primary" style="margin-left:10px;">确定</i-button>
+      <i-button @click="ok" style="margin-left:10px;" type="primary">确定</i-button>
     </div>
   </Modal>
 </template>
@@ -28,11 +28,11 @@ export default {
     Modal
   },
   data() {
-    const notNotify = localStorage.getItem(SAVE_KEY);
-    const needShow = config.enable ? (JSON.parse(notNotify) ? false : true) : false;
+    let notNotify = localStorage.getItem(SAVE_KEY);
+    notNotify = notNotify === null ? false : JSON.parse(notNotify);
     return {
-      notNotify: notNotify === null ? false : JSON.parse(notNotify),
-      show: needShow,
+      notNotify,
+      show: config.enable ? (notNotify ? false : true) : false,
       qrcode: config.qrcode || ''
     };
   },
