@@ -31,9 +31,10 @@
             <fieldset>
               <legend>管理情况</legend>
               <div>
-                <ul>
+                <ul v-if="item.managementArr.length">
                   <li :key="index" v-for="(item,index)  in item.managementArr">{{item}}</li>
                 </ul>
+                <div v-else>无相关数据</div>
               </div>
             </fieldset>
             <fieldset>
@@ -272,61 +273,80 @@ export default {
         .catch(throwError);
     },
     // 汇总月报的数据
-    dealMonthReoprts(data) {
-      const currMonth = [];
-      const prevMonth = [];
+    dealMonthReoprts(result) {
+      let currMonth = [];
+      let prevMonth = [];
       // 分离当月和上月
-      data.forEach(item => {
+      result.forEach(item => {
         if (item.title == this.selectedMonth) {
           currMonth.push(item);
         } else {
           prevMonth.push(item);
         }
       });
-      if (!currMonth.length) {
-        return [];
-      }
 
-      // 按组归档
+      // 构造组数据
       const groupMap = new Map();
       currMonth.forEach(r => {
-        groupMap.set(r.group.objectId, r);
-        r.managementArr = r.report.management.split(/(?:\n|\r\n|\r)/).map(managementItem => {
-          managementItem = managementItem.trim();
-          if (managementItem) {
-            return managementItem;
-          }
-        });
-
-        r.report.taskList.forEach(t => {
-          if (t.progress === 100) {
-            t.state = '完成';
-          }
-        });
-        const unDoneArr = [];
-        r.report.nextTasks.forEach(t => {
-          if (t.type === 'postpone') {
-            if (t.progress === 100) {
-              t.state = '完成';
-            } else {
-              t.state = `${100 - t.progress}% 延至下一月`;
-            }
-            unDoneArr.push(t);
-          }
-        });
-        r.taskList = r.report.taskList.concat(unDoneArr);
+        groupMap.set(r.group.objectId, { curr: r });
       });
-
-      // 遍历上月获取当月计划
-      prevMonth.forEach(item => {
-        const g = groupMap.get(item.group.objectId);
-        if (g) {
-          g.plans = item.report.nextTasks || [];
+      prevMonth.forEach(r => {
+        const gid = r.group.objectId;
+        const group = groupMap.get(gid);
+        if (group) {
+          group.prev = r;
+        } else {
+          groupMap.set(gid, { prev: r });
         }
       });
+      currMonth = prevMonth = null;
 
+      // 处理数据
+      const data = [];
+      groupMap.forEach(groupData => {
+        const { prev, curr } = groupData;
+        const group = curr || prev;
+
+        // 当月未填 则 管理情况、完成情况置空
+        if (!curr) {
+          group.managementArr = [];
+          group.taskList = [];
+        } else {
+          // 已经填写 则记录管理和完成情况
+          group.managementArr = curr.report.management
+            .split(/(?:\n|\r\n|\r)/)
+            .filter(m => m.trim())
+            .map(m => m.trim());
+          const doneArr = curr.report.taskList.map(t => {
+            if (t.progress === 100) {
+              t.state = '完成';
+            }
+            return t;
+          });
+          const unDoneArr = [];
+          curr.report.nextTasks.forEach(t => {
+            if (t.type === 'postpone') {
+              if (t.progress === 100) {
+                t.state = '完成';
+              } else {
+                t.state = `${100 - t.progress}% 延至下一月`;
+              }
+              unDoneArr.push(t);
+            }
+          });
+          group.taskList = doneArr.concat(unDoneArr);
+        }
+
+        // 上月未填 则无当月计划
+        if (!prev) {
+          group.plans = [];
+        } else {
+          group.plans = prev.report.nextTasks || [];
+        }
+        data.push(group);
+      });
       groupMap.clear();
-      return currMonth;
+      return data;
     },
     // 月度的统计数字是按照周计算的需要单独获取
     getMonthChartData() {
