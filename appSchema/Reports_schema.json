@@ -1,1 +1,1 @@
-{"schema":{"objectId":{"type":"String"},"ACL":{"type":"ACL"},"createdAt":{"type":"Date"},"updatedAt":{"type":"Date"}}}
+{"schema":{"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"startDate":{"type":"Date"},"createdAt":{"type":"Date"},"title":{"type":"String"},"endDate":{"type":"Date"},"reports":{"type":"Array"}}}

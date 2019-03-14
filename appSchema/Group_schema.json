@@ -1,1 +1,1 @@
-{"schema":{"objectId":{"type":"String"},"ACL":{"type":"ACL"},"createdAt":{"type":"Date"},"updatedAt":{"type":"Date"},"name":{"type":"String","v":2},"index":{"type":"Number","v":2}}}
+{"schema":{"updatedAt":{"type":"Date"},"index":{"type":"Number","v":2},"ACL":{"type":"ACL"},"name":{"type":"String","v":2},"objectId":{"type":"String"},"createdAt":{"type":"Date"},"leader":{"type":"Pointer","className":"_User"}}}

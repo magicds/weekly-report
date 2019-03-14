@@ -1,0 +1,1 @@
+{"schema":{"updatedAt":{"type":"Date"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"createdAt":{"type":"Date"},"type":{"type":"String"},"targetUser":{"type":"Pointer","className":"_User"},"info":{"type":"String"},"user":{"type":"Pointer","className":"_User"}}}

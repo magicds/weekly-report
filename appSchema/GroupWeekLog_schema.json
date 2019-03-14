@@ -1,0 +1,1 @@
+{"schema":{"report":{"type":"Object"},"updatedAt":{"type":"Date"},"group":{"type":"Pointer","className":"Group"},"ACL":{"type":"ACL"},"objectId":{"type":"String"},"createdAt":{"type":"Date"},"title":{"type":"String"}}}
