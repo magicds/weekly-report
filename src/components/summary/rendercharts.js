@@ -26,7 +26,10 @@ let prepareDataForCharts = function (data) {
     person.rate.push(item.saturation);
 
     // 分离出小组
-    const g = item.group;
+    let g = item.group;
+    if(!g) {
+      g = { name: item.groupName };
+    }
     if (g && g.name) {
       if (!_group[g.name]) {
         _group[g.name] = [item.saturation];
