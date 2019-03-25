@@ -138,9 +138,9 @@ export default {
 
         if (o.username !== c.username) data.username = c.username;
         if (o.email !== c.email) data.email = c.email;
+        if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
 
         if (this.isAdmin) {
-          if (o.extInfo !== c.extInfo) data.extInfo = c.extInfo;
           if (o.memberIndex !== c.memberIndex) data.memberIndex = c.memberIndex;
           if (o.isAdmin !== c.isAdmin) data.isAdmin = c.isAdmin;
           if (o.noReport !== c.noReport) data.noReport = c.noReport;
