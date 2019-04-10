@@ -100,7 +100,7 @@ export default {
     prevMonthText() {
       const arr = this.selectedMonth.split('-');
       const s = new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);
-      s.setDate(s.getMonth() - 1);
+      s.setMonth(s.getMonth() - 1);
       return `${s.getFullYear()}-${(s.getMonth() + 1 + '').padStart(2, 0)}`;
     }
   },
