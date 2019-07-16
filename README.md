@@ -13,6 +13,10 @@
 
 ## Changelog
 
+- **2019-07-16**
+  - 更新一些依赖库版本
+  - 暂时移除 [pushbear](http://pushbear.ftqq.com/)
+  - 更新后问题修复 [7237](https://github.com/vuejs/vue/issues/7237)
 - **2019-02-21**
   新增 [pushbear](http://pushbear.ftqq.com/) 微信推送填写提醒。（广播通知，通知全部订阅者） 云函数仓库 [https://github.com/cdswyda/weekly-report-pushbear](https://github.com/cdswyda/weekly-report-pushbear)
 
