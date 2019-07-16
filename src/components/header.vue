@@ -36,7 +36,7 @@ import UserInfo from './userInfo';
 import userApi from '@/api/user';
 
 export default {
-  name: 'header',
+  name: 'Header',
   components: {
     Dropdown,
     Icon,

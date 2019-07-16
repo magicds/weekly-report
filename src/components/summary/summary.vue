@@ -99,7 +99,7 @@ function getCloneData(data) {
 }
 
 export default {
-  name: 'summary',
+  name: 'Summary',
   components: {
     'i-button': Button,
     Modal,

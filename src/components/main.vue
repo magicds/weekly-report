@@ -33,7 +33,7 @@ import easeout from '@/util/easeout.js';
 
 let doc = document.body.scrollTop ? document.body : document.documentElement;
 export default {
-  name: 'main',
+  name: 'Main',
   components: {
     BackTop,
     Tooltip,
