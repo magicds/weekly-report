@@ -118,9 +118,9 @@ private static $NICKNAME = '新点前端周报'; // 发件人的昵称
 
 此项目直接使用 **Vue-cli** 工具初始化，配置进行了略微修改，相关命令如下：
 
-``` bash
+```bash
 # install dependencies
-npm install
+npm ci
 
 # serve with hot reload at localhost:8086
 npm run dev
