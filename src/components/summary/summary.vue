@@ -409,6 +409,7 @@ export default {
 .summary ul {
   margin: 0;
   padding: 0;
+  padding-left: 20px;
 }
 .ivu-tree-arrow {
   margin-right: 5px;
