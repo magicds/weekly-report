@@ -7,7 +7,7 @@ require('echarts/lib/component/title');
 require('echarts/lib/component/tooltip');
 require('echarts/lib/component/markLine');
 // 处理为需要的数据格式
-let prepareDataForCharts = function (data) {
+let prepareDataForCharts = function(data) {
   // 个人数据
   let person = {
       name: [],
@@ -27,7 +27,7 @@ let prepareDataForCharts = function (data) {
 
     // 分离出小组
     let g = item.group;
-    if(!g) {
+    if (!g) {
       g = { name: item.groupName };
     }
     if (g && g.name) {
@@ -44,7 +44,7 @@ let prepareDataForCharts = function (data) {
       group.name.push(key);
       // 求和并处以数组长度
       group.rate.push(
-        _group[key].reduce(function (pre, cur) {
+        _group[key].reduce(function(pre, cur) {
           return pre + cur;
         }) / _group[key].length
       );
@@ -81,12 +81,28 @@ let comomOptions = {
     }
   },
   animationEasing: 'elasticOut',
-  animationDelayUpdate: function (idx) {
+  animationDelayUpdate: function(idx) {
     return idx * 15;
   }
 };
 // person charts
 function renderPerson(person) {
+  const valueNameMap = (() => {
+    const map = {};
+    person.rate.forEach((value, i) => {
+      const v = (value * 100).toFixed(0);
+      if (!map[v]) {
+        map[v] = [person.name[i]];
+      } else {
+        map[v].push(person.name[i]);
+      }
+    });
+    Object.keys(map).forEach(k => {
+      map[k] = map[k].join('、');
+    });
+    return map;
+  })();
+  person.rate = person.rate.map(item => item + '');
   let p_opt = Object.assign({}, comomOptions, {
     title: {
       text: '成员工作饱和度',
@@ -100,17 +116,15 @@ function renderPerson(person) {
       }
     },
     tooltip: {
-      formatter: function (data) {
+      formatter: function(data) {
         let item = data instanceof Array ? data[0] : data;
-        return (
-          item.name +
-          '<br/>' +
-          item.marker +
-          item.seriesName +
-          ':' +
-          (item.value * 100).toFixed(0) +
-          '%'
-        );
+        const v = (item.value * 100).toFixed(0);
+        if (item.componentType == 'markLine') {
+          let personName = valueNameMap[v];
+          let prefix = personName ? item.name + '<br/>' + personName : item.name;
+          return prefix + ': ' + v + '%';
+        }
+        return item.name + '<br/>' + item.marker + item.seriesName + ': ' + v + '%';
       }
     },
     xAxis: {
@@ -123,83 +137,89 @@ function renderPerson(person) {
     yAxis: {
       axisLabel: {
         // formatter: '{value * 100} %'
-        formatter: function (value) {
+        formatter: function(value) {
           return (value * 100).toFixed(0) + '%';
         }
       }
     },
-    series: [{
-      name: '工作饱和度',
-      type: 'bar',
-      data: person.rate,
-      markLine: {
-        symbol: ['circle', 'circle'],
-        // symbolSize: [0, 0, 0, 0],
-        data: [{
-          name: '平均值',
-          type: 'average',
-          valueIndex: 1,
-          lineStyle: {
-            type: 'solid'
-          },
-          label: {
-            // position: 'middle',
-            formatter: function (v) {
-              return (v.value * 100).toFixed(0) + '%';
+    series: [
+      {
+        name: '工作饱和度',
+        type: 'bar',
+        data: person.rate,
+        markLine: {
+          symbol: ['circle', 'circle'],
+          // symbolSize: [0, 0, 0, 0],
+          data: [
+            {
+              name: '平均值',
+              type: 'average',
+              valueIndex: 1,
+              valueDim: 'x',
+              lineStyle: {
+                type: 'solid'
+              },
+              label: {
+                // position: 'middle',
+                formatter: function(v) {
+                  return (v.value * 100).toFixed(0) + '%';
+                }
+              }
+            },
+            {
+              name: '最大值',
+              type: 'max',
+              valueIndex: 1,
+              lineStyle: {
+                type: 'dashed'
+              },
+              label: {
+                // position: 'middle',
+                formatter: function(v) {
+                  return (v.value * 100).toFixed(0) + '%';
+                }
+              }
+            }
+          ]
+        },
+        barMinHeight: 10,
+        barMaxWidth: 50,
+        label: {
+          normal: {
+            show: true,
+            position: 'top',
+            formatter: function(item) {
+              return (item.data * 100).toFixed(0) + '%';
             }
           }
-        }, {
-          name: '最大值',
-          type: 'max',
-          valueIndex: 1,
-          lineStyle: {
-            type: 'dashed'
-          },
-          label: {
-            // position: 'middle',
-            formatter: function (v) {
-              return (v.value * 100).toFixed(0) + '%';
+        },
+        itemStyle: {
+          normal: {
+            color: function name(item) {
+              let rate = item.data * 100;
+              if (rate >= 140) {
+                return '#ea644a';
+              }
+              if (rate > 120) {
+                return '#f1a325';
+              }
+              if (rate > 90) {
+                return '#38b03f';
+              }
+              if (rate >= 70) {
+                return '#f1a325';
+              } else {
+                return '#ea644a';
+              }
             }
           }
-        }]
-      },
-      barMinHeight: 10,
-      barMaxWidth: 50,
-      label: {
-        normal: {
-          show: true,
-          position: 'top',
-          formatter: function (item) {
-            return (item.data * 100).toFixed(0) + '%';
-          }
+        },
+        animationDelay: 3000,
+        animationDurationUpdate: function(idx) {
+          return idx * 200;
         }
-      },
-      itemStyle: {
-        normal: {
-          color: function name(item) {
-            let rate = item.data * 100;
-            if (rate >= 140) {
-              return '#ea644a';
-            }
-            if (rate > 120) {
-              return '#f1a325';
-            }
-            if (rate > 90) {
-              return '#38b03f';
-            }
-            if (rate >= 70) {
-              return '#f1a325';
-            } else {
-              return '#ea644a';
-            }
-          }
-        }
-      },
-      animationDelay: 3000,
-      animationDurationUpdate: function (idx) {
-        return idx * 200;
       }
-    }]
+    ]
   });
 
   personChart.setOption(p_opt);
@@ -225,68 +245,62 @@ function renderGroup(group) {
     yAxis: {
       axisLabel: {
         // formatter: '{value * 100} %'
-        formatter: function (value) {
+        formatter: function(value) {
           return (value * 100).toFixed(0) + '%';
         }
       }
     },
     tooltip: {
-      formatter: function (data) {
+      formatter: function(data) {
         // console.log(item);
         let item = data instanceof Array ? data[0] : data;
-        return (
-          item.name +
-          '<br/>' +
-          item.marker +
-          item.seriesName +
-          ':' +
-          (item.value * 100).toFixed(0) +
-          '%'
-        );
+        return item.name + '<br/>' + item.marker + item.seriesName + ':' + (item.value * 100).toFixed(0) + '%';
       }
       // formatter: '{b} <br/> {a} : {c}'
     },
-    series: [{
-      name: '小组平均工作饱和度',
-      type: 'bar',
-      label: {
-        normal: {
-          show: true,
-          position: 'top',
-          formatter: function (item) {
-            return (item.data * 100).toFixed(0) + '%';
-          }
-        }
-      },
-      data: group.rate,
-      barMinHeight: 10,
-      barMaxWidth: 50,
-      itemStyle: {
-        normal: {
-          color: function name(item) {
-            let rate = item.data * 100;
-            if (rate >= 140) {
-              return '#ea644a';
-            }
-            if (rate > 120) {
-              return '#f1a325';
-            }
-            if (rate > 90) {
-              return '#38b03f';
-            }
-            if (rate >= 70) {
-              return '#f1a325';
-            } else {
-              return '#ea644a';
+    series: [
+      {
+        name: '小组平均工作饱和度',
+        type: 'bar',
+        label: {
+          normal: {
+            show: true,
+            position: 'top',
+            formatter: function(item) {
+              return (item.data * 100).toFixed(0) + '%';
             }
           }
+        },
+        data: group.rate,
+        barMinHeight: 10,
+        barMaxWidth: 50,
+        itemStyle: {
+          normal: {
+            color: function name(item) {
+              let rate = item.data * 100;
+              if (rate >= 140) {
+                return '#ea644a';
+              }
+              if (rate > 120) {
+                return '#f1a325';
+              }
+              if (rate > 90) {
+                return '#38b03f';
+              }
+              if (rate >= 70) {
+                return '#f1a325';
+              } else {
+                return '#ea644a';
+              }
+            }
+          }
+        },
+        animationDelay: 3000,
+        animationDurationUpdate: function(idx) {
+          return idx * 200;
         }
-      },
-      animationDelay: 3000,
-      animationDurationUpdate: function (idx) {
-        return idx * 200;
       }
-    }]
+    ]
   });
 
   groupChart.setOption(g_opt);
@@ -295,7 +309,7 @@ function renderGroup(group) {
 // chart
 let personChart, groupChart;
 
-export default function (reports, personEl, groupEl) {
+export default function(reports, personEl, groupEl) {
   if (!personEl || !groupEl) return;
   let data = prepareDataForCharts(reports);
 

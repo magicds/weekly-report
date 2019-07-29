@@ -97,7 +97,7 @@ function dealReports(data, users, weeks) {
   for (let uid in reportMap) {
     if (
       Object.prototype.hasOwnProperty.call(reportMap, uid) &&
-      !userMap[uid].noReport
+      userMap[uid] && !userMap[uid].noReport
     ) {
       submitedUsers[uid] = true;
       reports.push(Object.assign(userMap[uid], reportMap[uid]));
