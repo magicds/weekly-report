@@ -53,19 +53,22 @@
 
 **LeanCloud 应用配置**
 
-前往 [LeanCloud](https://leancloud.cn/) 新增应用。 并导入 `/appSchema/` 下的 schema
+前往 [LeanCloud](https://leancloud.cn/) 或 [LeanCloud 国际版](https://leancloud.app) 新增应用。 并导入 `/appSchema/` 下的 schema
 
-修改 `src/config/av.config-example.js` 文件，填入 LeanCloud 应用的 **App ID** 和 **App key**。
+修改 `src/config/av.config-example.js` 文件，填入 LeanCloud 应用的 **App ID**、**App key**、**服务器地址**。
 
-此 `id` 和 `key` 可以从 [LeanCloud](https://leancloud.cn/)  `要关联的应用 => 设置 => 应用 Key` 中获取。
+此 `id`、`key`、`url` 可以从 [LeanCloud](https://leancloud.cn/)  `要关联的应用 => 设置 => 应用 Key` 中获取。
 
 ```js
 // 填写配置后重命名此文件为av.config.js
 export default {
   id: '填写LeanCloud应用的ID',
-  key: '填写LeanCloud应用的Key'
+  key: '填写LeanCloud应用的Key',
+  url: '填写 leancloud 的 REST API 服务器地址'
 }
 ```
+
+LeanCloud 国际版应用不强制要求绑定自有域名，如果使用 LeanCloud 国际版应用，`url` 可以留空（`url: ''`）。
 
 **周报配置**
 
