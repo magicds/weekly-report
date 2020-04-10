@@ -1,8 +1,10 @@
 # 使用 Vue + LeanCloud 的周报系统
 
-> **<span style="color:#da3218">deprecated</span>**:  
-> 这是一个小白入门半年时候写的代码，已不建议直接使用。  
-> 不过可以当做一个参考，基于 LeanCloud 一个不会一点后端的前端也可以做出一个完整产品来。
+<blockquote>
+  <p><span style="color:#da3218">deprecated</span></p>:  
+  <p>这是一个小白入门半年时候写的代码，已不建议直接使用。  </p>
+  <p>不过可以当做一个参考，基于 LeanCloud 一个不会一点后端的前端也可以做出一个完整产品来。</p>
+</blockquote>
 
 [![GitHub issues](https://img.shields.io/github/issues/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/cdswyda/weekly-report.svg)](https://github.com/cdswyda/weekly-report/pulls)
